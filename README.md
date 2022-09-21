@@ -47,3 +47,6 @@ Now that you're more familiar with your Bitbucket repository, go ahead and add a
 1. Yash Patel
 ## Invite Trello Link 
  https://trello.com/invite/b/ktZREaYO/6223f419fbe085536c4393c2cb3ff528/tutorial-board-1
+ 
+ ## Link for folder with project resources
+ https://drive.google.com/drive/folders/1bG9Afm0etEM5-NCcldsnn2dRRtsRPe1x?usp=sharing
