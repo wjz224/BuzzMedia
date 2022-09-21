@@ -1,0 +1,274 @@
+commit 89b98652d9911a29312ecf6031abb26970aca031
+Author: yash017 <yap224@lehigh.edu>
+Date:   Wed Sep 14 23:35:01 2022 -0400
+
+    added local to .gitignore
+
+commit 78a0b381c95ad1c49295381a8945073d48bd4294
+Author: yash017 <yap224@lehigh.edu>
+Date:   Wed Sep 14 22:48:10 2022 -0400
+
+    Adding CORS functionality to the web and backend
+
+commit 7b6fcad1622409546be224d832404f0d8302bb35
+Author: yash017 <yap224@lehigh.edu>
+Date:   Tue Sep 13 17:05:43 2022 -0400
+
+    Heoruku server implementation
+
+commit eda027dcd4b70bde7ee674937c099dc33364a04b
+Author: yash017 <yap224@lehigh.edu>
+Date:   Mon Sep 12 23:26:10 2022 -0400
+
+    Did task 1
+
+commit 6de1e06abda0f01ab4ab8be0406c79e87c0616f1
+Merge: 1713034 3d86de7
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 11 16:48:32 2022 -0400
+
+    merged web front-end into master
+
+commit 3d86de7d48ac1682a477efb0b2205b95f15caa8c
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 11 16:48:01 2022 -0400
+
+    finished the web front-end tutorial
+
+commit cad188d603bc232174cdadfbdcedd7cdfa6fce11
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 11 16:43:08 2022 -0400
+
+    Scripted the UI behaviors
+
+commit 93b3c38b208dd3fb820f4ffa7bd93950b6d80d25
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 11 16:21:22 2022 -0400
+
+    our typescript now displays a table of the messages
+
+commit 8f8093a74536828ec7b0838b35a49fa46c907751
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 11 16:06:52 2022 -0400
+
+    Our typescript now correctly does AJAX
+
+commit 67b1a70fa79587b41d095dde9c485aee93361152
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 11 16:03:41 2022 -0400
+
+    Typescript now used for submitting and clearing form
+
+commit c04489ac058f3438f84eb9a2894c1f70ee6ed8dd
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 11 15:54:06 2022 -0400
+
+    front end now shows the todo work from previous web tutorial
+
+commit ccca785332146ea1fcf18fb48bcbc894de1f61eb
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 11 15:44:17 2022 -0400
+
+    Added form to index_simple.html
+
+commit 0e61a48605ebd35f38f49397549b9cd73b7ac8e9
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 11 15:33:28 2022 -0400
+
+    front-end fetches messages from the back-end!
+
+commit d9e073850d69f993acb173a800c6c5aab4d1a5a9
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 11 14:46:20 2022 -0400
+
+    set up a simple script for deploying the web front-end
+
+commit 88fa49cfae8eb0710d57e67ac159221c8b4c4447
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 11 14:46:00 2022 -0400
+
+    updated backend to serve static files from a location given by the environment
+
+commit cbd40778fe7a0b7998ac52aea54740d3816762c2
+Merge: 105b663 686496a
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 11 14:07:43 2022 -0400
+
+    merged backend into web
+
+commit 17130342089bc48a1407505860400400be411b9b
+Merge: 4f58767 105b663
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 11 14:04:09 2022 -0400
+
+    Merge branch 'web'
+
+commit 105b6630a7e8942ad6554cf4669c08aec0d15a25
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 11 14:03:56 2022 -0400
+
+    commiting to web branch the todo website
+
+commit 4f58767de5d05fc0995fbfc92b676d6728f0d1eb
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 11 13:58:26 2022 -0400
+
+    adding todo website
+
+commit 681ffe727843918ca1f47110ab0f2b1a70710835
+Merge: 65800eb 7d7730c
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sat Sep 10 20:14:29 2022 -0400
+
+    merged mobile into master
+
+commit 7d7730cda9921041e45cdbfd749504f433402d4c
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sat Sep 10 20:13:59 2022 -0400
+
+    now uses dart object to marshall json data
+
+commit 24d12b735ef2e262f57d7c6e98ed0e08fa1ab563
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sat Sep 10 19:14:38 2022 -0400
+
+    can display simple list data from the internet
+
+commit eace255a4464a574ca1a236f80a424bb1b636267
+Author: yash017 <yap224@lehigh.edu>
+Date:   Fri Sep 9 21:04:00 2022 -0400
+
+    modified default flutter app to display stateful widget with random word pair
+
+commit 9708a03347ff391f77caa532a5de37a8e74eabf8
+Author: yash017 <yap224@lehigh.edu>
+Date:   Fri Sep 9 20:12:37 2022 -0400
+
+    created default flutter app
+
+commit 65800eb5eda028b871b3c0b5b6a46a7532199a6b
+Merge: 8707e0f 686496a
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 4 22:50:07 2022 -0400
+
+    merged backend tutorial into master
+
+commit 686496a5391c2b1474b3450b73ac26465899d58c
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 4 22:49:25 2022 -0400
+
+    updated App.java and Datastore.java to succesfully create a backend for hte app
+
+commit edc5dea93160ccb379788ed1f1eab7acc119cede
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 4 22:35:55 2022 -0400
+
+    initial backend with GET and POST routes
+
+commit 8707e0f7ba432c859c44e5b3348fd78ec664d94d
+Merge: 751886a 687d817
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 4 15:33:30 2022 -0400
+
+    merged admn-app/postgres tutorial into master
+
+commit 687d81751b549644761565bbe8363d64efd36196
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Sep 4 15:32:54 2022 -0400
+
+    completed the admin-app/postgres tutorial
+
+commit 751886a5647c33c84eab4f96889f24631bc26155
+Merge: 53e74ba f1ed2d6
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sat Sep 3 22:39:40 2022 -0400
+
+    merged admin-app/maven tutorial into master
+
+commit f1ed2d6e4a0b107a8230af5e934c4f8649c73c1c
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sat Sep 3 22:39:01 2022 -0400
+
+    completed the admin-app/maven tutorial
+
+commit ce9ec3c85b4c7ac71e1a864599675e488e84d761
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sat Sep 3 22:35:49 2022 -0400
+
+    added a .gitignore file for the admin app
+
+commit 1d0f9ab12869001ae35252e0949a37b092367830
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sat Sep 3 21:38:58 2022 -0400
+
+    added the skeleton of an admin app, using default maven archetype
+
+commit 53e74ba42bc34f65432d7f5dfa124bbe710f891d
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Aug 28 16:02:50 2022 -0400
+
+    Added Trello Link
+
+commit d52fd1a449d8621ce45917af5629a681f512c552
+Merge: 0e5bec6 ca41bb0
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Aug 28 15:56:16 2022 -0400
+
+    Merge backend into master
+
+commit 0e5bec601f96cdfcdd48be1248de15bc880a2480
+Merge: ea9660b 8b554a7
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Aug 28 15:55:57 2022 -0400
+
+     Merging mobile branch into master
+
+commit ea9660be4567b1dd1048bbd1fe15cda44aa9eb1a
+Merge: 1d38309 a487491
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Aug 28 15:55:18 2022 -0400
+
+    Merging Admin
+
+commit 8b554a78599c24a911a9898017dcc88a5bda3e18
+Merge: a68cca7 1d38309
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Aug 28 15:51:38 2022 -0400
+
+    Merge branch 'mobile' of bitbucket.org:yash017/cse216_yap224 into mobile
+
+commit a68cca7f037d3566ead2c561f6facfc5bfa37228
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Aug 28 15:47:24 2022 -0400
+
+    Added README.md to the mobile folder
+
+commit ca41bb03637c6a7e12d937a761972ebfa9be065b
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Aug 28 15:42:47 2022 -0400
+
+    Added README.md to the backend folder
+
+commit a4874914ccf19dcb4a9d59d5e1831dec52db97e1
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Aug 28 15:35:09 2022 -0400
+
+    Added README.md to the admin folder
+
+commit 1d38309781c056862998a5b9075f80fe8ffdc3a1
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Aug 28 15:27:30 2022 -0400
+
+    added README.md to web folder
+
+commit 05c635d62b79c2dcc7aa5c27bff7f02187a2f995
+Author: yash017 <yap224@lehigh.edu>
+Date:   Sun Aug 28 15:04:10 2022 -0400
+
+    Updated README.md to list contributors to the project
+
+commit 99db4130fde7672022c1861d79c593739814012e
+Author: Yash Patel <yap224@lehigh.edu>
+Date:   Sun Aug 28 18:28:03 2022 +0000
+
+    Initial commit
