@@ -8,8 +8,9 @@ var $: any;
 // that we can reference it from methods of the NewEntryForm in situations where
 // 'this' won't work correctly.
 var newEntryForm: NewEntryForm;
+
 // This constant indicates the path to our backend server (change to your own)
-const backendUrl = "https://fast-headland-48977.herokuapp.com";
+const backendUrl = "https://thebuzzomega.herokuapp.com";
 /**
  * NewEntryForm encapsulates all of the code for the form for adding an entry
  */
@@ -29,7 +30,7 @@ class NewEntryForm {
     clearForm() {
         (<HTMLInputElement>document.getElementById("newTitle")).value = "";
         (<HTMLInputElement>document.getElementById("newMessage")).value = "";
-         // reset the UI
+        // reset the UI
         (<HTMLElement>document.getElementById("editElement")).style.display = "none";
         (<HTMLElement>document.getElementById("addElement")).style.display = "none";
         (<HTMLElement>document.getElementById("showElements")).style.display = "block"; 
@@ -94,6 +95,7 @@ class NewEntryForm {
         // If we get an "ok" message, clear the form
         if (data.mStatus === "ok") {
             newEntryForm.clearForm();
+            mainList.refresh();
         }
         // Handle explicit errors with a detailed popup message
         else if (data.mStatus === "error") {
@@ -105,6 +107,206 @@ class NewEntryForm {
         }
     }
 } // end class NewEntryForm
+
+// a global for the main ElementList of the program.  See newEntryForm for 
+// explanation
+var mainList: ElementList;
+
+/**
+ * ElementList provides a way of seeing all of the data stored on the server.
+ */
+class ElementList {
+    /**
+     * refresh is the public method for updating messageList
+     */
+    refresh() {
+        // Issue an AJAX GET and then pass the result to update(). 
+        const doAjax = async () => {
+            await fetch(`${backendUrl}/messages`, {
+                method: 'GET',
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8'
+                }
+            }).then( (response) => {
+                // If we get an "ok" message, clear the form
+                if (response.ok) {
+                    return Promise.resolve( response.json() );
+                }
+                // Otherwise, handle server errors with a detailed popup message
+                else{
+                    window.alert(`The server replied not ok: ${response.status}\n` + response.statusText);
+                }
+                return Promise.reject(response);
+            }).then( (data) => {
+                mainList.update(data);
+                console.log(data);
+            }).catch( (error) => {
+                console.warn('Something went wrong.', error);
+                window.alert("Unspecified error");
+            });
+        }
+
+        // make the AJAX post and output value or error message to console
+        doAjax().then(console.log).catch(console.log);
+    }
+
+    private update(data: any) {
+        let elem_messageList = document.getElementById("messageList");
+
+        if(elem_messageList !== null) {
+            elem_messageList.innerHTML = "";
+
+            let fragment = document.createDocumentFragment();
+            let table = document.createElement('table');
+
+            for (let i = 0; i < data.mData.length; ++i) {
+                let tr = document.createElement('tr');
+                let td_title = document.createElement('td');
+                let td_id = document.createElement('td');
+                td_title.innerHTML = data.mData[i].mTitle;
+                td_id.innerHTML = data.mData[i].mId;
+                tr.appendChild(td_id);
+                tr.appendChild(td_title);
+                tr.appendChild( this.buttons(data.mData[i].mId) );
+                table.appendChild(tr);
+            }
+            fragment.appendChild(table);
+
+            elem_messageList.appendChild(fragment);
+        } 
+        // Find all of the delete buttons, and set their behavior
+        const all_delbtns = (<HTMLCollectionOf<HTMLInputElement>>document.getElementsByClassName("delbtn"));
+        for (let i = 0; i < all_delbtns.length; ++i) {
+            all_delbtns[i].addEventListener("click", (e) => {mainList.clickDelete( e );});
+        }  
+        // Find all of the edit buttons, and set their behavior
+        const all_editbtns = (<HTMLCollectionOf<HTMLInputElement>>document.getElementsByClassName("editbtn"));
+        for (let i = 0; i < all_editbtns.length; ++i) {
+            all_editbtns[i].addEventListener("click", (e) => {mainList.clickEdit( e );});
+        }    
+    }
+
+    /**
+    * clickDelete is the code we run in response to a click of a delete button
+    */
+     private clickDelete(e: Event) {
+        const id = (<HTMLElement>e.target).getAttribute("data-value");
+
+        // Issue an AJAX DELETE and then invoke refresh()
+        const doAjax = async () => {
+            await fetch(`${backendUrl}/messages/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8'
+                }
+            }).then( (response) => {
+                if (response.ok) {
+                    return Promise.resolve( response.json() );
+                }
+                else{
+                    window.alert(`The server replied not ok: ${response.status}\n` + response.statusText);
+                }
+                return Promise.reject(response);
+            }).then( (data) => {
+                mainList.refresh();
+                console.log(data);
+            }).catch( (error) => {
+                console.warn('Something went wrong.', error);
+                window.alert("Unspecified error");
+            });
+        }
+
+        // make the AJAX post and output value or error message to console
+        doAjax().then(console.log).catch(console.log);
+
+        // TODO: we've reapeated the same pattern 3+ times now, so we should really
+        //       think about refactoring and abstracting this boilerplate into something
+        //       easier to reuse, if possible 
+    }
+
+       /**
+     * buttons() adds a 'delete' button and an 'edit' button to the HTML for each row
+     */
+    private buttons(id: string): DocumentFragment {
+        let fragment = document.createDocumentFragment();
+        let td = document.createElement('td');
+
+        // create edit button, add to new td, add td to returned fragment
+        let btn = document.createElement('button');
+        btn.classList.add("editbtn");
+        btn.setAttribute('data-value', id);
+        btn.innerHTML = 'Edit';
+        td.appendChild(btn);
+        fragment.appendChild(td);
+
+        // create delete button, add to new td, add td to returned fragment
+        td = document.createElement('td');
+        btn = document.createElement('button');
+        btn.classList.add("delbtn");
+        btn.setAttribute('data-value', id);
+        btn.innerHTML = 'Delete';
+        td.appendChild(btn);
+        fragment.appendChild(td);
+
+        return fragment;
+    }
+     /**
+    * clickEdit is the code we run in response to a click of a delete button
+    */
+      private clickEdit(e: Event) {
+        // as in clickDelete, we need the ID of the row
+        const id = (<HTMLElement>e.target).getAttribute("data-value");
+
+        // Issue an AJAX GET and then pass the result to editEntryForm.init()
+        const doAjax = async () => {
+            await fetch(`${backendUrl}/messages/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8'
+                }
+            }).then( (response) => {
+                if (response.ok) {
+                    return Promise.resolve( response.json() );
+                }
+                else{
+                    window.alert(`The server replied not ok: ${response.status}\n` + response.statusText);
+                }
+                return Promise.reject(response);
+            }).then( (data) => {
+                editEntryForm.init(data);
+                console.log(data);
+            }).catch( (error) => {
+                console.warn('Something went wrong.', error);
+                window.alert("Unspecified error");
+            });
+        }
+
+        // make the AJAX post and output value or error message to console
+        doAjax().then(console.log).catch(console.log);        
+    }
+    
+} // end class ElementList
+
+// Run some configuration code when the web page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Create the object that controls the "New Entry" form
+    newEntryForm = new NewEntryForm();
+    // Create the object that controls the "Edit Entry" form
+    editEntryForm = new EditEntryForm();
+    // Create the object for the main data list, and populate it with data from the server
+    mainList = new ElementList();
+    mainList.refresh();
+    window.alert('DOMContentLoaded');
+     // set up initial UI state
+     (<HTMLElement>document.getElementById("editElement")).style.display = "none";
+     (<HTMLElement>document.getElementById("addElement")).style.display = "none";
+     (<HTMLElement>document.getElementById("showElements")).style.display = "block";
+     document.getElementById("showFormButton")?.addEventListener("click", (e) => {
+        (<HTMLElement>document.getElementById("addElement")).style.display = "block";
+        (<HTMLElement>document.getElementById("showElements")).style.display = "none";
+    });
+}, false);
+
 // a global for the EditEntryForm of the program.  See newEntryForm for explanation
 var editEntryForm: EditEntryForm;
 
@@ -132,10 +334,10 @@ class EditEntryForm {
             (<HTMLInputElement>document.getElementById("editMessage")).value = data.mData.mContent;
             (<HTMLInputElement>document.getElementById("editId")).value = data.mData.mId;
             (<HTMLInputElement>document.getElementById("editCreated")).value = data.mData.mCreated;
-            // show the edit form
-            (<HTMLElement>document.getElementById("editElement")).style.display = "block";
-            (<HTMLElement>document.getElementById("addElement")).style.display = "none";
-            (<HTMLElement>document.getElementById("showElements")).style.display = "none";
+             // show the edit form
+             (<HTMLElement>document.getElementById("editElement")).style.display = "block";
+             (<HTMLElement>document.getElementById("addElement")).style.display = "none";
+             (<HTMLElement>document.getElementById("showElements")).style.display = "none";
         }
         // Handle explicit errors with a detailed popup message
         else if (data.mStatus === "error") {
@@ -154,11 +356,11 @@ class EditEntryForm {
         (<HTMLInputElement>document.getElementById("editTitle")).value = "";
         (<HTMLInputElement>document.getElementById("editMessage")).value = "";        
         (<HTMLInputElement>document.getElementById("editId")).value = "";       
-        (<HTMLInputElement>document.getElementById("editCreated")).value = ""; 
+        (<HTMLInputElement>document.getElementById("editCreated")).value = "";      
         // reset the UI
         (<HTMLElement>document.getElementById("editElement")).style.display = "none";
         (<HTMLElement>document.getElementById("addElement")).style.display = "none";
-        (<HTMLElement>document.getElementById("showElements")).style.display = "block";     
+        (<HTMLElement>document.getElementById("showElements")).style.display = "block"; 
     }
 
     /**
@@ -237,201 +439,3 @@ class EditEntryForm {
         }
     }
 } // end class EditEntryForm
-// a global for the main ElementList of the program.  See newEntryForm for 
-// explanation
-var mainList: ElementList;
-
-/**
- * ElementList provides a way of seeing all of the data stored on the server.
- */
-class ElementList {
-    /**
-     * refresh is the public method for updating messageList
-     */
-    refresh() {
-        // Issue an AJAX GET and then pass the result to update(). 
-        const doAjax = async () => {
-            await fetch(`${backendUrl}/messages`, {
-                method: 'GET',
-                headers: {
-                    'Content-type': 'application/json; charset=UTF-8'
-                }
-            }).then( (response) => {
-                // If we get an "ok" message, clear the form
-                if (response.ok) {
-                    return Promise.resolve( response.json() );
-                }
-                // Otherwise, handle server errors with a detailed popup message
-                else{
-                    window.alert(`The server replied not ok: ${response.status}\n` + response.statusText);
-                }
-                return Promise.reject(response);
-            }).then( (data) => {
-                mainList.update(data);
-                console.log(data);
-            }).catch( (error) => {
-                console.warn('Something went wrong.', error);
-                window.alert("Unspecified error");
-            });
-        }
-
-        // make the AJAX post and output value or error message to console
-        doAjax().then(console.log).catch(console.log);
-    }
-    /**
-    * clickDelete is the code we run in response to a click of a delete button
-    */
-     private clickDelete(e: Event) {
-        const id = (<HTMLElement>e.target).getAttribute("data-value");
-
-        // Issue an AJAX DELETE and then invoke refresh()
-        const doAjax = async () => {
-            await fetch(`${backendUrl}/messages/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-type': 'application/json; charset=UTF-8'
-                }
-            }).then( (response) => {
-                if (response.ok) {
-                    return Promise.resolve( response.json() );
-                }
-                else{
-                    window.alert(`The server replied not ok: ${response.status}\n` + response.statusText);
-                }
-                return Promise.reject(response);
-            }).then( (data) => {
-                mainList.refresh();
-                console.log(data);
-            }).catch( (error) => {
-                console.warn('Something went wrong.', error);
-                window.alert("Unspecified error");
-            });
-        }
-
-        // make the AJAX post and output value or error message to console
-        doAjax().then(console.log).catch(console.log);
-
-        // TODO: we've reapeated the same pattern 3+ times now, so we should really
-        //       think about refactoring and abstracting this boilerplate into something
-        //       easier to reuse, if possible 
-    }
-    /**
-    * clickEdit is the code we run in response to a click of a delete button
-    */
-     private clickEdit(e: Event) {
-        // as in clickDelete, we need the ID of the row
-        const id = (<HTMLElement>e.target).getAttribute("data-value");
-
-        // Issue an AJAX GET and then pass the result to editEntryForm.init()
-        const doAjax = async () => {
-            await fetch(`${backendUrl}/messages/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Content-type': 'application/json; charset=UTF-8'
-                }
-            }).then( (response) => {
-                if (response.ok) {
-                    return Promise.resolve( response.json() );
-                }
-                else{
-                    window.alert(`The server replied not ok: ${response.status}\n` + response.statusText);
-                }
-                return Promise.reject(response);
-            }).then( (data) => {
-                editEntryForm.init(data);
-                console.log(data);
-            }).catch( (error) => {
-                console.warn('Something went wrong.', error);
-                window.alert("Unspecified error");
-            });
-        }
-
-        // make the AJAX post and output value or error message to console
-        doAjax().then(console.log).catch(console.log);        
-    }
-    private update(data: any) {
-        let elem_messageList = document.getElementById("messageList");
-
-        if(elem_messageList !== null) {
-            elem_messageList.innerHTML = "";
-
-            let fragment = document.createDocumentFragment();
-            let table = document.createElement('table');
-
-            for (let i = 0; i < data.mData.length; ++i) {
-                let tr = document.createElement('tr');
-                let td_title = document.createElement('td');
-                let td_id = document.createElement('td');
-                td_title.innerHTML = data.mData[i].mTitle;
-                td_id.innerHTML = data.mData[i].mId;
-                tr.appendChild(td_id);
-                tr.appendChild(td_title);
-                tr.appendChild( this.buttons(data.mData[i].mId) );
-                table.appendChild(tr);
-            }
-            fragment.appendChild(table);
-
-            elem_messageList.appendChild(fragment);
-        }       
-        // Find all of the delete buttons, and set their behavior
-        const all_delbtns = (<HTMLCollectionOf<HTMLInputElement>>document.getElementsByClassName("delbtn"));
-        for (let i = 0; i < all_delbtns.length; ++i) {
-            all_delbtns[i].addEventListener("click", (e) => {mainList.clickDelete( e );});
-        }
-        // Find all of the edit buttons, and set their behavior
-        const all_editbtns = (<HTMLCollectionOf<HTMLInputElement>>document.getElementsByClassName("editbtn"));
-        for (let i = 0; i < all_editbtns.length; ++i) {
-            all_editbtns[i].addEventListener("click", (e) => {mainList.clickEdit( e );});
-        }       
-    }
-
-    /**
-     * buttons() adds a 'delete' button and an 'edit' button to the HTML for each row
-     */
-     private buttons(id: string): DocumentFragment {
-        let fragment = document.createDocumentFragment();
-        let td = document.createElement('td');
-
-        // create edit button, add to new td, add td to returned fragment
-        let btn = document.createElement('button');
-        btn.classList.add("editbtn");
-        btn.setAttribute('data-value', id);
-        btn.innerHTML = 'Edit';
-        td.appendChild(btn);
-        fragment.appendChild(td);
-
-        // create delete button, add to new td, add td to returned fragment
-        td = document.createElement('td');
-        btn = document.createElement('button');
-        btn.classList.add("delbtn");
-        btn.setAttribute('data-value', id);
-        btn.innerHTML = 'Delete';
-        td.appendChild(btn);
-        fragment.appendChild(td);
-
-        return fragment;
-    }
-} // end class ElementList
-
-// Run some configuration code when the web page loads
-document.addEventListener('DOMContentLoaded', () => {
-    // Create the object that controls the "New Entry" form
-    newEntryForm = new NewEntryForm();
-    // Create the object that controls the "Edit Entry" form
-    editEntryForm = new EditEntryForm();
-    // Create the object for the main data list, and populate it with data from the server
-    mainList = new ElementList();
-    mainList.refresh();
-    window.alert('DOMContentLoaded');
-    // set up initial UI state
-    (<HTMLElement>document.getElementById("editElement")).style.display = "none";
-    (<HTMLElement>document.getElementById("addElement")).style.display = "none";
-    (<HTMLElement>document.getElementById("showElements")).style.display = "block";
-        // set up the "Add Message" button
-    document.getElementById("showFormButton")?.addEventListener("click", (e) => {
-        (<HTMLElement>document.getElementById("addElement")).style.display = "block";
-        (<HTMLElement>document.getElementById("showElements")).style.display = "none";
-    });
-
-    
-}, false);

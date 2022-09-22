@@ -22,7 +22,6 @@ cp -r src $TARGETFOLDER/src
 cp app.css $TARGETFOLDER
 
 # step 4: compile TypeScript files
-node_modules/typescript/bin/tsc app.ts --strict --outFile $TARGETFOLDER/app.js
 node_modules/typescript/bin/tsc app.ts --lib "es2015","dom" --target es5 --strict --outFile $TARGETFOLDER/app.js
 
 # step final: launch the server.  Be sure to disable caching
