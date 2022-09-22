@@ -1,5 +1,9 @@
+<<<<<<<< HEAD:admin-cli/src/main/java/edu/lehigh/cse216/yap224/admin/Database.java
 package edu.lehigh.cse216.yap224.admin;
 
+========
+package edu.lehigh.cse216.yap224.backend;
+>>>>>>>> backend:backend/src/main/java/edu/lehigh/cse216/yap224/backend/Database.java
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,12 +11,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+<<<<<<<< HEAD:admin-cli/src/main/java/edu/lehigh/cse216/yap224/admin/Database.java
+========
+import java.net.URI;
+import java.net.URISyntaxException;
+
+
+>>>>>>>> backend:backend/src/main/java/edu/lehigh/cse216/yap224/backend/Database.java
 import java.util.ArrayList;
 
 public class Database {
     /**
-     * The connection to the database.  When there is no connection, it should
-     * be null.  Otherwise, there is a valid open connection
+     * The connection to the database. When there is no connection, it should
+     * be null. Otherwise, there is a valid open connection
      */
     private Connection mConnection;
 
@@ -51,16 +62,33 @@ public class Database {
      */
     private PreparedStatement mDropTable;
 
-    /**
-     * RowData is like a struct in C: we use it to hold data, and we allow 
-     * direct access to its fields.  In the context of this Database, RowData 
+    /***
+     * DataRow is like a struct in C: we use it to hold data, and we allow
+     * direct access to its fields. In the context of this Database, DataRow
      * represents the data we'd see in a row.
      * 
-     * We make RowData a static class of Database because we don't really want
-     * to encourage users to think of RowData as being anything other than an
-     * abstract representation of a row of the database.  RowData and the 
+     * We make DataRow a static class of Database because we don't really want
+     * to encourage users to think of DataRow as being anything other than an
+     * abstract representation of a row of the database. DataRow and the
      * Database are tightly coupled: if one changes, the other should too.
+     * 
+     * public static class DataRow {
+     * 
+     * int mId;
+     * 
+     * String mSubject;
+     * 
+     * String mMessage;
+     * 
+     * 
+     * public DataRow(int id, String subject, String message) {
+     * mId = id;
+     * mSubject = subject;
+     * mMessage = message;
+     * }
+     * }
      */
+<<<<<<<< HEAD:admin-cli/src/main/java/edu/lehigh/cse216/yap224/admin/Database.java
     public static class RowData {
         /**
          * The ID of this row of the database
@@ -84,9 +112,11 @@ public class Database {
             mMessage = message;
         }
     }
+========
+>>>>>>>> backend:backend/src/main/java/edu/lehigh/cse216/yap224/backend/Database.java
 
     /**
-     * The Database constructor is private: we only create Database objects 
+     * The Database constructor is private: we only create Database objects
      * through the getDatabase() method.
      */
     private Database() {
@@ -109,7 +139,16 @@ public class Database {
 
         // Give the Database object a connection, fail if we cannot get one
         try {
+<<<<<<<< HEAD:admin-cli/src/main/java/edu/lehigh/cse216/yap224/admin/Database.java
             Connection conn = DriverManager.getConnection("jdbc:postgresql://" + ip + ":" + port + "/", user, pass);
+========
+            Class.forName("org.postgresql.Driver");
+            URI dbUri = new URI(db_url);
+            String username = dbUri.getUserInfo().split(":")[0];
+            String password = dbUri.getUserInfo().split(":")[1];
+            String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
+            Connection conn = DriverManager.getConnection(dbUrl, username, password);
+>>>>>>>> backend:backend/src/main/java/edu/lehigh/cse216/yap224/backend/Database.java
             if (conn == null) {
                 System.err.println("Error: DriverManager.getConnection() returned a null object");
                 return null;
@@ -121,19 +160,23 @@ public class Database {
             return null;
         }
 
+<<<<<<<< HEAD:admin-cli/src/main/java/edu/lehigh/cse216/yap224/admin/Database.java
         // Attempt to create all of our prepared statements.  If any of these 
+========
+        // Attempt to create all of our prepared statements. If any of these
+>>>>>>>> backend:backend/src/main/java/edu/lehigh/cse216/yap224/backend/Database.java
         // fail, the whole getDatabase() call should fail
         try {
             // NB: we can easily get ourselves in trouble here by typing the
-            //     SQL incorrectly.  We really should have things like "tblData"
-            //     as constants, and then build the strings for the statements
-            //     from those constants.
+            // SQL incorrectly. We really should have things like "tblData"
+            // as constants, and then build the strings for the statements
+            // from those constants.
 
-            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
+            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
             // creation/deletion, so multiple executions will cause an exception
             db.mCreateTable = db.mConnection.prepareStatement(
                     "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) "
-                    + "NOT NULL, message VARCHAR(500) NOT NULL)");
+                            + "NOT NULL, message VARCHAR(500) NOT NULL)");
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
 
             // Standard CRUD operations
@@ -154,8 +197,8 @@ public class Database {
     /**
      * Close the current connection to the database, if one exists.
      * 
-     * NB: The connection will always be null after this call, even if an 
-     *     error occurred during the closing operation.
+     * NB: The connection will always be null after this call, even if an
+     * error occurred during the closing operation.
      * 
      * @return True if the connection was cleanly closed, false otherwise
      */
@@ -242,7 +285,7 @@ public class Database {
      * 
      * @param id The id of the row to delete
      * 
-     * @return The number of rows that were deleted.  -1 indicates an error.
+     * @return The number of rows that were deleted. -1 indicates an error.
      */
     int deleteRow(int id) {
         int res = -1;
@@ -258,10 +301,10 @@ public class Database {
     /**
      * Update the message for a row in the database
      * 
-     * @param id The id of the row to update
+     * @param id      The id of the row to update
      * @param message The new message contents
      * 
-     * @return The number of rows that were updated.  -1 indicates an error.
+     * @return The number of rows that were updated. -1 indicates an error.
      */
     int updateOne(int id, String message) {
         int res = -1;
@@ -276,7 +319,7 @@ public class Database {
     }
 
     /**
-     * Create tblData.  If it already exists, this will print an error
+     * Create tblData. If it already exists, this will print an error
      */
     void createTable() {
         try {
@@ -287,7 +330,7 @@ public class Database {
     }
 
     /**
-     * Remove tblData from the database.  If it does not exist, this will print
+     * Remove tblData from the database. If it does not exist, this will print
      * an error.
      */
     void dropTable() {
