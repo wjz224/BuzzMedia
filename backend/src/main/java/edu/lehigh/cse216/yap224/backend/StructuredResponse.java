@@ -1,4 +1,4 @@
-package edu.lehigh.cse216.wjz224.backend;
+package edu.lehigh.cse216.yap224.backend;
 
 /**
  * StructuredResponse provides a common format for success and failure messages,
@@ -23,6 +23,7 @@ public class StructuredResponse {
      * Any JSON-friendly object can be referenced here, so that we can have a
      * rich reply to the client
      */
+    
     public Object mData;
 
     /**

@@ -1,19 +1,21 @@
-package edu.lehigh.cse216.wjz224.backend;
+package edu.lehigh.cse216.yap224.backend;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.ArrayList;
-import java.net.URISyntaxException;
+
 import java.net.URI;
+import java.net.URISyntaxException;
+
+
+import java.util.ArrayList;
 
 public class Database {
     /**
-     * The connection to the database.  When there is no connection, it should
-     * be null.  Otherwise, there is a valid open connection
+     * The connection to the database. When there is no connection, it should
+     * be null. Otherwise, there is a valid open connection
      */
     private Connection mConnection;
 
@@ -52,73 +54,35 @@ public class Database {
      */
     private PreparedStatement mDropTable;
 
-    /**
-     * RowData is like a struct in C: we use it to hold data, and we allow 
-     * direct access to its fields.  In the context of this Database, RowData 
+    /***
+     * DataRow is like a struct in C: we use it to hold data, and we allow
+     * direct access to its fields. In the context of this Database, DataRow
      * represents the data we'd see in a row.
      * 
-     * We make RowData a static class of Database because we don't really want
-     * to encourage users to think of RowData as being anything other than an
-     * abstract representation of a row of the database.  RowData and the 
+     * We make DataRow a static class of Database because we don't really want
+     * to encourage users to think of DataRow as being anything other than an
+     * abstract representation of a row of the database. DataRow and the
      * Database are tightly coupled: if one changes, the other should too.
+     * 
+     * public static class DataRow {
+     * 
+     * int mId;
+     * 
+     * String mSubject;
+     * 
+     * String mMessage;
+     * 
+     * 
+     * public DataRow(int id, String subject, String message) {
+     * mId = id;
+     * mSubject = subject;
+     * mMessage = message;
+     * }
+     * }
      */
-    public static class DataRow {
-        /**
-         * The unique identifier associated with this element.  It's final, because
-         * we never want to change it.
-         */
-        public final int mId;
-    
-        /**
-         * The title for this row of data
-         */
-        public String mTitle;
-    
-        /**
-         * The content for this row of data
-         */
-        public String mContent;
-    
-        /**
-         * The creation date for this row of data.  Once it is set, it cannot be 
-         * changed
-         */
-        public final Date mCreated;
-    
-        /**
-         * Create a new DataRow with the provided id and title/content, and a 
-         * creation date based on the system clock at the time the constructor was
-         * called
-         * 
-         * @param id The id to associate with this row.  Assumed to be unique 
-         *           throughout the whole program.
-         * 
-         * @param title The title string for this row of data
-         * 
-         * @param content The content string for this row of data
-         */
-        DataRow(int id, String title, String content) {
-            mId = id;
-            mTitle = title;
-            mContent = content;
-            mCreated = new Date();
-        }
-    
-        /**
-         * Copy constructor to create one datarow from another
-         */
-        DataRow(DataRow data) {
-            mId = data.mId;
-            // NB: Strings and Dates are immutable, so copy-by-reference is safe
-            mTitle = data.mTitle;
-            mContent = data.mContent;
-            mCreated = data.mCreated;
-        }
-        
-    }
 
     /**
-     * The Database constructor is private: we only create Database objects 
+     * The Database constructor is private: we only create Database objects
      * through the getDatabase() method.
      */
     private Database() {
@@ -139,8 +103,8 @@ public class Database {
         // Create an un-configured Database object
         Database db = new Database();
 
-         // Give the Database object a connection, fail if we cannot get one
-         try {
+        // Give the Database object a connection, fail if we cannot get one
+        try {
             Class.forName("org.postgresql.Driver");
             URI dbUri = new URI(db_url);
             String username = dbUri.getUserInfo().split(":")[0];
@@ -164,20 +128,19 @@ public class Database {
             return null;
         }
 
-
-        // Attempt to create all of our prepared statements.  If any of these 
+        // Attempt to create all of our prepared statements. If any of these
         // fail, the whole getDatabase() call should fail
         try {
             // NB: we can easily get ourselves in trouble here by typing the
-            //     SQL incorrectly.  We really should have things like "tblData"
-            //     as constants, and then build the strings for the statements
-            //     from those constants.
+            // SQL incorrectly. We really should have things like "tblData"
+            // as constants, and then build the strings for the statements
+            // from those constants.
 
-            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
+            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
             // creation/deletion, so multiple executions will cause an exception
             db.mCreateTable = db.mConnection.prepareStatement(
                     "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) "
-                    + "NOT NULL, message VARCHAR(500) NOT NULL)");
+                            + "NOT NULL, message VARCHAR(500) NOT NULL)");
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
 
             // Standard CRUD operations
@@ -198,8 +161,8 @@ public class Database {
     /**
      * Close the current connection to the database, if one exists.
      * 
-     * NB: The connection will always be null after this call, even if an 
-     *     error occurred during the closing operation.
+     * NB: The connection will always be null after this call, even if an
+     * error occurred during the closing operation.
      * 
      * @return True if the connection was cleanly closed, false otherwise
      */
@@ -286,7 +249,7 @@ public class Database {
      * 
      * @param id The id of the row to delete
      * 
-     * @return The number of rows that were deleted.  -1 indicates an error.
+     * @return The number of rows that were deleted. -1 indicates an error.
      */
     int deleteRow(int id) {
         int res = -1;
@@ -302,10 +265,10 @@ public class Database {
     /**
      * Update the message for a row in the database
      * 
-     * @param id The id of the row to update
+     * @param id      The id of the row to update
      * @param message The new message contents
      * 
-     * @return The number of rows that were updated.  -1 indicates an error.
+     * @return The number of rows that were updated. -1 indicates an error.
      */
     int updateOne(int id, String message) {
         int res = -1;
@@ -320,7 +283,7 @@ public class Database {
     }
 
     /**
-     * Create tblData.  If it already exists, this will print an error
+     * Create tblData. If it already exists, this will print an error
      */
     void createTable() {
         try {
@@ -331,7 +294,7 @@ public class Database {
     }
 
     /**
-     * Remove tblData from the database.  If it does not exist, this will print
+     * Remove tblData from the database. If it does not exist, this will print
      * an error.
      */
     void dropTable() {

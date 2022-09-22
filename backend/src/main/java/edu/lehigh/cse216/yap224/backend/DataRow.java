@@ -1,4 +1,4 @@
-package edu.lehigh.cse216.wjz224.backend;
+package edu.lehigh.cse216.yap224.backend;
 
 import java.util.Date;
 
@@ -63,5 +63,4 @@ public class DataRow {
         mContent = data.mContent;
         mCreated = data.mCreated;
     }
-    
 }

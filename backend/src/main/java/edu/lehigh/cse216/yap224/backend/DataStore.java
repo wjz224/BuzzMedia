@@ -1,4 +1,4 @@
-package edu.lehigh.cse216.wjz224.backend;
+package edu.lehigh.cse216.yap224.backend;
 
 import java.util.ArrayList;
 
@@ -83,28 +83,37 @@ public class DataStore {
         }
         return data;
     }
+    
+        /**
+     * Update the title and content of a row in the DataStore
+     *
+     * @param id The Id of the row to update
+     * @param title The new title for the row
+     * @param content The new content for the row
+     * @return a copy of the data in the row, if it exists, or null otherwise
+     */
     public synchronized DataRow updateOne(int id, String title, String content) {
-    // Do not update if we don't have valid data
-    if (title == null || content == null)
-        return null;
-    // Only update if the current entry is valid (not null)
-    if (id >= mRows.size())
-        return null;
-    DataRow data = mRows.get(id);
-    if (data == null)
-        return null;
-    // Update and then return a copy of the data, as a DataRow
-    data.mTitle = title;
-    data.mContent = content;
-    return new DataRow(data);
+        // Do not update if we don't have valid data
+        if (title == null || content == null)
+            return null;
+        // Only update if the current entry is valid (not null)
+        if (id >= mRows.size())
+            return null;
+        DataRow data = mRows.get(id);
+        if (data == null)
+            return null;
+        // Update and then return a copy of the data, as a DataRow
+        data.mTitle = title;
+        data.mContent = content;
+        return new DataRow(data);
     }
 
     /**
-    * Delete a row from the DataStore
-    * 
-    * @param id The Id of the row to delete
-    * @return true if the row was deleted, false otherwise
-    */
+     * Delete a row from the DataStore
+     * 
+     * @param id The Id of the row to delete
+     * @return true if the row was deleted, false otherwise
+     */
     public synchronized boolean deleteOne(int id) {
         // Deletion fails for an invalid Id or an Id that has already been 
         // deleted
@@ -117,4 +126,6 @@ public class DataStore {
         mRows.set(id, null);
         return true;
     }
+
+    
 }
