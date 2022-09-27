@@ -1,7 +1,7 @@
-import "./style.css"
 import * as React from 'react'
 import * as ReactDOM from "react-dom";
 
-const Hello = () => <h1>Hello from React</h1>;
+import { App } from "./App"
+import "./style.css"
 
-ReactDOM.render(<Hello />, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('app'));
