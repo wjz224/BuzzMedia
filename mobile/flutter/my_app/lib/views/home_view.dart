@@ -25,7 +25,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-   @override
+  @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called
     //
@@ -37,24 +37,34 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+        //TODO: create an add button on the title bar
+        //TODO: OnPress the switchScreen function is called
+        actions: <Widget>[TextButton(
+                onPressed: () {},
+                child: Text('Add'),
+                
+              ),
+        ],
       ),
+
+      //TODO: display a lit of posts from the database using a column widget
       body: const Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: HttpReqWords(),
+        child: HttpReqPosts(),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
 
-class HttpReqWords  extends StatefulWidget {
-  const HttpReqWords({Key? key}) : super(key: key);
+class HttpReqPosts extends StatefulWidget {
+  const HttpReqPosts({Key? key}) : super(key: key);
 
-    @override
-    State<HttpReqWords> createState() => _HttpReqWordsState();
-  }
+  @override
+  State<HttpReqPosts> createState() => _HttpReqPostsState();
+}
 
-class _HttpReqWordsState extends State<HttpReqWords> {
+class _HttpReqPostsState extends State<HttpReqPosts> {
   late Future<List<NumberWordPair>> _future_list_numword_pairs;
 
   final _biggerFont = const TextStyle(fontSize: 18);
@@ -75,7 +85,8 @@ class _HttpReqWordsState extends State<HttpReqWords> {
   Widget build(BuildContext context) {
     var fb = FutureBuilder<List<NumberWordPair>>(
       future: _future_list_numword_pairs,
-      builder: (BuildContext context, AsyncSnapshot<List<NumberWordPair>> snapshot) {
+      builder:
+          (BuildContext context, AsyncSnapshot<List<NumberWordPair>> snapshot) {
         Widget child;
 
         if (snapshot.hasData) {
@@ -99,7 +110,8 @@ class _HttpReqWordsState extends State<HttpReqWords> {
                   ],
                 );
               });
-        } else if (snapshot.hasError) { // newly added
+        } else if (snapshot.hasError) {
+          // newly added
           child = Text('${snapshot.error}');
         } else {
           // awaiting snapshot data, return simple text widget

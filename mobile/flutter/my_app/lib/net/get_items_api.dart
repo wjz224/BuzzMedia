@@ -23,7 +23,7 @@ Future<List<String>> getWebData() async {
   developer.log('Making web request...');
   // var url = Uri.http('www.cse.lehigh.edu', '~spear/courses.json');
   // var url = Uri.parse('http://www.cse.lehigh.edu/~spear/courses.json'); // list of strings
-  var url = Uri.parse('http://www.cse.lehigh.edu/~spear/5k.json');      // list of maps
+  var url = Uri.parse('https://thebuzzomega.herokuapp.com/messages');      // list of maps
   // var url = Uri.parse('https://jsonplaceholder.typicode.com/albums/1'); // single map
   var headers = {"Accept": "application/json"};  // <String,String>{};
 
@@ -44,7 +44,7 @@ Future<List<String>> getWebData() async {
     }else if( res is Map ){
       returnData = <String>[(res as Map<String,dynamic>).toString()];
     }else{
-      developer.log('ERROR: Unexpected json response type (was not a List or Map).');
+      developer.log('ERROR: Unexpected json response typ e (was not a List or Map).');
       returnData = List.empty();
     }
   }else{
@@ -58,7 +58,7 @@ Future<List<String>> getWebData() async {
 
 Future<List<NumberWordPair>> fetchNumberWordPairs() async {
   final response = await http
-      .get(Uri.parse('http://www.cse.lehigh.edu/~spear/5k.json'));
+      .get(Uri.parse('https://thebuzzomega.herokuapp.com/messages'));
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response, then parse the JSON.
@@ -67,9 +67,12 @@ Future<List<NumberWordPair>> fetchNumberWordPairs() async {
     print('json decode: $res');
 
     if( res is List ){
+      print('list statement');
       returnData = (res as List<dynamic>).map( (x) => NumberWordPair.fromJson(x) ).toList();
     }else if( res is Map ){
+      print('Map statement');
       returnData = <NumberWordPair>[NumberWordPair.fromJson(res as Map<String,dynamic>)];
+      print('done');
     }else{
       developer.log('ERROR: Unexpected json response type (was not a List or Map).');
       returnData = List.empty();
