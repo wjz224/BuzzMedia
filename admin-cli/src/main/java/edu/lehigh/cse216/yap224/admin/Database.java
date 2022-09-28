@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<<< HEAD:admin-cli/src/main/java/edu/lehigh/cse216/yap224/admin/Database.java
 ========
 import java.net.URI;
@@ -19,6 +20,11 @@ import java.net.URISyntaxException;
 
 
 >>>>>>>> backend:backend/src/main/java/edu/lehigh/cse216/yap224/backend/Database.java
+=======
+import java.net.URI;
+import java.net.URISyntaxException;
+
+>>>>>>> admin
 =======
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -146,9 +152,12 @@ public class Database {
         // Give the Database object a connection, fail if we cannot get one
         try {
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<<< HEAD:admin-cli/src/main/java/edu/lehigh/cse216/yap224/admin/Database.java
             Connection conn = DriverManager.getConnection("jdbc:postgresql://" + ip + ":" + port + "/", user, pass);
 ========
+=======
+>>>>>>> admin
 =======
 >>>>>>> admin
             Class.forName("org.postgresql.Driver");
@@ -158,7 +167,10 @@ public class Database {
             String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
             Connection conn = DriverManager.getConnection(dbUrl, username, password);
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>>> backend:backend/src/main/java/edu/lehigh/cse216/yap224/backend/Database.java
+=======
+>>>>>>> admin
 =======
 >>>>>>> admin
             if (conn == null) {
