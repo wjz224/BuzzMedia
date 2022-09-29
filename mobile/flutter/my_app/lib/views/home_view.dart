@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'dart:convert';
 import 'package:my_app/net/get_items_api.dart';
 import 'package:my_app/model/item_model.dart';
+import 'package:my_app/views/post_view.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -38,13 +39,15 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
-        //TODO: create an add button on the title bar
         //TODO: OnPress the switchScreen function is called
          actions: <Widget>[
     Padding(
       padding: EdgeInsets.only(right: 20.0),
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return const PostPage(title: 'The Buzz');
+        }));},
         child: Text('add'),
       )
     ),
