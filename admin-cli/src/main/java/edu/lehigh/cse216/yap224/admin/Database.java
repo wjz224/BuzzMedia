@@ -17,6 +17,7 @@ import java.sql.SQLException;
 ========
 import java.net.URI;
 import java.net.URISyntaxException;
+<<<<<<< HEAD
 
 
 >>>>>>>> backend:backend/src/main/java/edu/lehigh/cse216/yap224/backend/Database.java
@@ -29,6 +30,9 @@ import java.net.URISyntaxException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+>>>>>>> admin
+=======
+import java.nio.file.LinkPermission;
 >>>>>>> admin
 import java.util.ArrayList;
 
@@ -114,14 +118,18 @@ public class Database {
          * The message stored in this row
          */
         String mMessage;
-
+        /**
+         * The likes stored in this row
+         */
+        int mLikes;
         /**
          * Construct a RowData object by providing values for its fields
          */
-        public RowData(int id, String subject, String message) {
+        public RowData(int id, String subject, String message, int likes) {
             mId = id;
             mSubject = subject;
             mMessage = message;
+            mLikes = likes;
         }
     }
 ========
@@ -206,13 +214,17 @@ public class Database {
             // creation/deletion, so multiple executions will cause an exception
             db.mCreateTable = db.mConnection.prepareStatement(
                     "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) "
+<<<<<<< HEAD
                             + "NOT NULL, message VARCHAR(500) NOT NULL)");
+=======
+                    + "NOT NULL, message VARCHAR(500) NOT NULL, likes int NOT NULL)");
+>>>>>>> admin
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
 
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?)");
-            db.mSelectAll = db.mConnection.prepareStatement("SELECT id, subject FROM tblData");
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, ?)");
+            db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblData");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET message = ? WHERE id = ?");
         } catch (SQLException e) {
@@ -227,8 +239,13 @@ public class Database {
     /**
      * Close the current connection to the database, if one exists.
      * 
+<<<<<<< HEAD
      * NB: The connection will always be null after this call, even if an
      * error occurred during the closing operation.
+=======
+     * NB: The connection will alw  ays be null after this call, even if an 
+     *     error occurred during the closing operation.
+>>>>>>> admin
      * 
      * @return True if the connection was cleanly closed, false otherwise
      */
@@ -257,11 +274,12 @@ public class Database {
      * 
      * @return The number of rows that were inserted
      */
-    int insertRow(String subject, String message) {
+    int insertRow(String subject, String message, int likes) {
         int count = 0;
         try {
             mInsertOne.setString(1, subject);
             mInsertOne.setString(2, message);
+            mInsertOne.setInt(3, likes);
             count += mInsertOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -279,7 +297,7 @@ public class Database {
         try {
             ResultSet rs = mSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getInt("id"), rs.getString("subject"), null));
+                res.add(new RowData(rs.getInt("id"), rs.getString("subject"), rs.getString("message"),rs.getInt("likes")));
             }
             rs.close();
             return res;
@@ -296,13 +314,13 @@ public class Database {
      * 
      * @return The data for the requested row, or null if the ID was invalid
      */
-    RowData selectOne(int id) {
+    RowData selectOne(int id) { 
         RowData res = null;
         try {
             mSelectOne.setInt(1, id);
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
-                res = new RowData(rs.getInt("id"), rs.getString("subject"), rs.getString("message"));
+                res = new RowData(rs.getInt("id"), rs.getString("subject"), rs.getString("message"),rs.getInt("likes"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -336,11 +354,12 @@ public class Database {
      * 
      * @return The number of rows that were updated. -1 indicates an error.
      */
-    int updateOne(int id, String message) {
+    int updateOne(int id, String message, int likes) { 
         int res = -1;
         try {
             mUpdateOne.setString(1, message);
             mUpdateOne.setInt(2, id);
+            mUpdateOne.setInt(3,likes);
             res = mUpdateOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
