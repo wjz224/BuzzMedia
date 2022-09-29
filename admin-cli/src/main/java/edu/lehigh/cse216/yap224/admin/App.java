@@ -150,7 +150,7 @@ public class App {
                 System.out.println("  Current Database Contents");
                 System.out.println("  -------------------------");
                 for (Database.RowData rd : res) {
-                    System.out.println("  [" + rd.mId + "] " + rd.mSubject);
+                    System.out.println("  [" + rd.mId + "] " + rd.mSubject + " " + rd.mMessage + " " + rd.mLikes);
                 }
             } else if (action == '-') {
                 int id = getInt(in, "Enter the row ID");
@@ -163,16 +163,18 @@ public class App {
             } else if (action == '+') {
                 String subject = getString(in, "Enter the subject");
                 String message = getString(in, "Enter the message");
+                int likes = getInt(in, "Enter the number of likes");
                 if (subject.equals("") || message.equals(""))
                     continue;
-                int res = db.insertRow(subject, message);
+                int res = db.insertRow(subject, message, likes);
                 System.out.println(res + " rows added");
             } else if (action == '~') {
                 int id = getInt(in, "Enter the row ID :> ");
                 if (id == -1)
                     continue;
                 String newMessage = getString(in, "Enter the new message");
-                int res = db.updateOne(id, newMessage);
+                int newLikes = getInt(in, "Enter the new number of likes");
+                int res = db.updateOne(id, newMessage,newLikes);
                 if (res == -1)
                     continue;
                 System.out.println("  " + res + " rows updated");
