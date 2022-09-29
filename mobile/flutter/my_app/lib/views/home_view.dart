@@ -39,7 +39,6 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
-        //TODO: OnPress the switchScreen function is called
          actions: <Widget>[
     Padding(
       padding: EdgeInsets.only(right: 20.0),
@@ -54,8 +53,6 @@ class _MyHomePageState extends State<MyHomePage> {
    
   ],
       ),
-
-      //TODO: display a lit of posts from the database using a column widget
       body: const Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
