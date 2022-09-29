@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'dart:convert';
 import 'package:my_app/net/get_items_api.dart';
 import 'package:my_app/model/item_model.dart';
@@ -39,12 +40,16 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         //TODO: create an add button on the title bar
         //TODO: OnPress the switchScreen function is called
-        actions: <Widget>[TextButton(
-                onPressed: () {},
-                child: Text('Add'),
-                
-              ),
-        ],
+         actions: <Widget>[
+    Padding(
+      padding: EdgeInsets.only(right: 20.0),
+      child: GestureDetector(
+        onTap: () {},
+        child: Text('add'),
+      )
+    ),
+   
+  ],
       ),
 
       //TODO: display a lit of posts from the database using a column widget
@@ -57,6 +62,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+// class _MyAppState extends State<MyApp> {
+//   late Future<message> futureMessage;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     futureMessage = fetchMessage();
+//   }
+// }
+
 class HttpReqPosts extends StatefulWidget {
   const HttpReqPosts({Key? key}) : super(key: key);
 
@@ -65,28 +80,29 @@ class HttpReqPosts extends StatefulWidget {
 }
 
 class _HttpReqPostsState extends State<HttpReqPosts> {
-  late Future<List<NumberWordPair>> _future_list_numword_pairs;
+  late Future<List<String>> _future_list_message;
 
   final _biggerFont = const TextStyle(fontSize: 18);
 
   @override
   void initState() {
     super.initState();
-    _future_list_numword_pairs = fetchNumberWordPairs();
+    print(fetchMessage().runtimeType);
+    _future_list_message = fetchMessage();
   }
 
   void _retry() {
     setState(() {
-      _future_list_numword_pairs = fetchNumberWordPairs();
+      _future_list_message = fetchMessage();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var fb = FutureBuilder<List<NumberWordPair>>(
-      future: _future_list_numword_pairs,
+    var fb = FutureBuilder<List<String>>(
+      future: _future_list_message,
       builder:
-          (BuildContext context, AsyncSnapshot<List<NumberWordPair>> snapshot) {
+          (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
         Widget child;
 
         if (snapshot.hasData) {
@@ -101,7 +117,7 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                   children: <Widget>[
                     ListTile(
                       title: Text(
-                        "row ${i}: num=${snapshot.data![i].num} str=${snapshot.data![i].str}",
+                        " ${snapshot.data?[i]}",
                         // snapshot.data![i].str,
                         style: _biggerFont,
                       ),
@@ -125,3 +141,72 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
     return fb;
   }
 }
+
+// class HttpReqPosts extends StatefulWidget {
+//   const HttpReqPosts({Key? key}) : super(key: key);
+
+//   @override
+//   State<HttpReqPosts> createState() => _HttpReqPostsState();
+// }
+
+// class _HttpReqPostsState extends State<HttpReqPosts> {
+//   late Future<List<NumberWordPair>> _future_list_numword_pairs;
+
+//   final _biggerFont = const TextStyle(fontSize: 18);
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _future_list_numword_pairs = fetchNumberWordPairs();
+//   }
+
+//   void _retry() {
+//     setState(() {
+//       _future_list_numword_pairs = fetchNumberWordPairs();
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     var fb = FutureBuilder<List<NumberWordPair>>(
+//       future: _future_list_numword_pairs,
+//       builder:
+//           (BuildContext context, AsyncSnapshot<List<NumberWordPair>> snapshot) {
+//         Widget child;
+
+//         if (snapshot.hasData) {
+//           // developer.log('`using` ${snapshot.data}', name: 'my.app.category');
+//           // create  listview to show one row per array element of json response
+//           child = ListView.builder(
+//               //shrinkWrap: true, //expensive! consider refactoring. https://api.flutter.dev/flutter/widgets/ScrollView/shrinkWrap.html
+//               padding: const EdgeInsets.all(16.0),
+//               itemCount: snapshot.data!.length,
+//               itemBuilder: /*1*/ (context, i) {
+//                 return Column(
+//                   children: <Widget>[
+//                     ListTile(
+//                       title: Text(
+//                         "row ${i}: num=${snapshot.data![i].num} str=${snapshot.data![i].str}",
+//                         // snapshot.data![i].str,
+//                         style: _biggerFont,
+//                       ),
+//                     ),
+//                     Divider(height: 1.0),
+//                   ],
+//                 );
+//               });
+//         } else if (snapshot.hasError) {
+//           // newly added
+//           child = Text('${snapshot.error}');
+//         } else {
+//           // awaiting snapshot data, return simple text widget
+//           // child = Text('Calculating answer...');
+//           child = const CircularProgressIndicator(); //show a loading spinner.
+//         }
+//         return child;
+//       },
+//     );
+
+//     return fb;
+//   }
+// }
