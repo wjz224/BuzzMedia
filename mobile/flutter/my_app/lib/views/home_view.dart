@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:my_app/net/get_items_api.dart';
 import 'package:my_app/model/item_model.dart';
 import 'package:my_app/views/post_view.dart';
+import 'package:my_app/net/put_like_api.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -104,15 +105,19 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
       builder:
           (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
         Widget child;
-
+        
         if (snapshot.hasData) {
           // developer.log('`using` ${snapshot.data}', name: 'my.app.category');
+          
           // create  listview to show one row per array element of json response
           child = ListView.builder(
+            
               //shrinkWrap: true, //expensive! consider refactoring. https://api.flutter.dev/flutter/widgets/ScrollView/shrinkWrap.html
               padding: const EdgeInsets.all(16.0),
               itemCount: snapshot.data!.length,
               itemBuilder: /*1*/ (context, i) {
+                var dataStr = snapshot.data?[i];
+                var id = dataStr?[6];
                 return Column(
                   children: <Widget>[
                     ListTile(
@@ -122,6 +127,12 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                         style: _biggerFont,
                       ),
                     ),
+                      GestureDetector(
+                        onTap: () { addLike('$id'); },
+                        child: Icon(
+                          Icons.thumb_up  // add custom icons also
+                        ),
+                      ),
                     Divider(height: 1.0),
                   ],
                 );

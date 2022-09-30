@@ -6,21 +6,17 @@ import 'package:http/http.dart';
 import 'dart:convert';
 import 'package:my_app/model/item_model.dart';
 
-//the server url
 const urlPrefix = 'https://thebuzzomega.herokuapp.com';
 
-//a function where you pass in the title and content of a post
-//this should add a post to the database
-Future<void> makePostRequest(
-  String mTitle,
-  String mContent,
+Future<void> addLike(
+  String messageId
 ) async {
   
-  final url = Uri.parse('$urlPrefix/messages');
+  print(messageId);
+  final url = Uri.parse('$urlPrefix/messages/$messageId/3');
   final headers = {"Content-type": "application/json"};
-  final json = jsonEncode({"mTitle": "$mTitle", "mMessage": "$mContent"});
-  final response = await post(url, headers: headers, body: json);
+  final json = jsonEncode('$messageId');
+  final response = await put(url, headers: headers, body: json);
   print('Status code: ${response.statusCode}');
   print('Body: ${response.body}');
 }
-
