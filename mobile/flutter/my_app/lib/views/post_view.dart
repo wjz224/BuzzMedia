@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/views/home_view.dart';
+import 'package:my_app/net/post_items_api.dart';
 
 class PostPage extends StatelessWidget {
   const PostPage({Key? key, required this.title}) : super(key: key);
@@ -63,11 +64,12 @@ class MyCustomForm extends StatelessWidget {
   
 void createPost(BuildContext context) {
     //TODO add post to the database
-
+    makePostRequest('test','#1');
     //switches page back to home page
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return const MyHomePage(title: 'The Buzz');
-}));}
+}));
+}
 
 
     
