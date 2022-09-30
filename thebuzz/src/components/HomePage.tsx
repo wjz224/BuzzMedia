@@ -18,8 +18,6 @@ function HomePage() {
     }, []
     );
 
-    const [likes, setLikes] = useState<any[]>([]);
-
     function LikeMsg(id: number, likes: number){
 
         fetch("https://thebuzzomega.herokuapp.com/messages/" + id,
@@ -28,17 +26,20 @@ function HomePage() {
                 body: JSON.stringify({mLikes: ++likes})
             })
 
-        //window.location.reload()
+        window.location.reload()
     }
 
     function DeleteMsg(id: number){
 
         fetch("https://thebuzzomega.herokuapp.com/messages/" + id,
             {
-                method: "DELETE"
+                method: "DELETE",
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8'
+                }
             })
 
-        //window.location.reload()
+        window.location.reload()
     }
 
     function UpdateMsg(){
@@ -46,7 +47,7 @@ function HomePage() {
         //need to find way to update whatever thing the user wants to update
         //maybe display ned component or reuse old text boxes
 
-        //window.location.reload()
+        window.location.reload()
     }
 
     return (

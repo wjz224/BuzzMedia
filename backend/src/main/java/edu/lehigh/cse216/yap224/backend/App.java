@@ -57,7 +57,7 @@ public class App {
         // with IDs starting over from 0.
         // final db db = new db();
         // Set up the location for serving static files
-        Spark.staticFileLocation("/web");
+        //Spark.staticFileLocation("/web");
         // Set up the location for serving static files. If the STATIC_LOCATION
         // environment variable is set, we will serve from it. Otherwise, serve
         // from "/web"
