@@ -7,6 +7,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import java.util.ArrayList;
 
 
 public class DatabaseTest extends TestCase{
@@ -39,8 +40,8 @@ public class DatabaseTest extends TestCase{
 
     public void testDatabaseGETRoute()
     {
-        //ArrayList test = db.selectAll();
-        assertTrue( true );
+        ArrayList test = db.selectAll();
+        assertTrue( test != null );
     }
 
     public void testDatabaseDELETERoute()
@@ -50,7 +51,10 @@ public class DatabaseTest extends TestCase{
 
     public void testDatabasePOSTRoute()
     {
-        assertTrue( true );
+
+        int testInt = db.insertRow("Test", "Testmessage");
+        assertTrue( testInt == 1 );
+        
     }
 
     public void testDatabasePUTLikeRoute()
