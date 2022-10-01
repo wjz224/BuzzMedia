@@ -10,11 +10,10 @@ afterEach(() => {
 
 describe("AddMessage Component" , () => {
 
-  test("Add Button Rendering", () => {
-    expect(screen.queryByTestId("addbtn")).toBeEnabled()
-  })
-
-  test("Add Button Text", () => {
-    expect(screen.queryByTestId("addbtn")).toHaveTextContent("Add")
-  })  
+  test('Render text for add message', () => {
+  render(<AddMessage />);
+  const linkElement = screen.getByText('Add Message:');
+  expect(linkElement).toBeInTheDocument();
+  
+})
 })

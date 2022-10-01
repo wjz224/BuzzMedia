@@ -2,6 +2,7 @@ import React from 'react';
 import { cleanup, getByTestId, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import "@testing-library/jest-dom/extend-expect"
+import EditMsg from './EditMsg'
 
 afterEach(() => { 
   cleanup();
@@ -9,11 +10,9 @@ afterEach(() => {
 
 describe("EditMsg Component" , () => {
 
-  test("Update Button Rendering", () => {
-    expect(screen.queryByTestId('updatebtn')).toBeEnabled()
-  })
-
-  test("Update Button Text", () => {
-    expect(screen.queryByTestId('updatebtn')).toHaveTextContent("Update")
-  })  
+  test('Render update message', () => {
+    render(<EditMsg />);
+    const linkElement = screen.getByText('Update Message:');
+    expect(linkElement).toBeInTheDocument();
+  }) 
 })

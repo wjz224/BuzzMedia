@@ -5,9 +5,6 @@ import AddMessage from './components/AddMessage';
 import EditMsg from './components/EditMsg';
 
 function App() {
-
-
-
     return (
       <div>
         <HomePage />
