@@ -10,9 +10,6 @@ const urlPrefix = 'https://thebuzzomega.herokuapp.com';
 
 Future<void> addLike(
   String messageId,
-  // String title,
-  // String content,
-  // String likes
 ) async {
   
   final url = Uri.parse('$urlPrefix/messages/$messageId/3');

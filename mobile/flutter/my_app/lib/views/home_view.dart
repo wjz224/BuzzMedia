@@ -48,7 +48,10 @@ class _MyHomePageState extends State<MyHomePage> {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
           return const PostPage(title: 'The Buzz');
         }));},
-        child: Text('add'),
+        child: Text('+',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),),
+        
+
       )
     ),
    
@@ -116,21 +119,35 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
               padding: const EdgeInsets.all(16.0),
               itemCount: snapshot.data!.length,
               itemBuilder: /*1*/ (context, i) {
+
+                //!!There has got to be a better way to do this sorry
+                //dataStr is the string of data for each post in json format
                 var dataStr = snapshot.data?[i];
+                //attempt to split the components of this string up
+                var dataArr = dataStr?.split(',');
+                var titleArr = dataArr?[1]?.split(':');
+                var messageArr = dataArr?[2]?.split(':');
+                var likesArr = dataArr?[3]?.split(':');
+                //seperate out the title, message, id, and numLikes into their own variables
+                var title = titleArr?[1];
+                var message = messageArr?[1];
+                var likes = likesArr?[1];
                 var id = dataStr?[6];
+                
+                
                 return Column(
                   children: <Widget>[
                     ListTile(
                       title: Text(
-                        " ${snapshot.data?[i]}",
+                        " $title:  $message   likes: $likes",
                         // snapshot.data![i].str,
                         style: _biggerFont,
                       ),
                     ),
                       GestureDetector(
-                        onTap: () { addLike('$id'); setState(() {});},
+                        onTap: () { addLike('$id'); print(id);}, 
                         child: Icon(
-                          Icons.thumb_up  // add custom icons also
+                          Icons.thumb_up  //added thumbs up icon for like button
                         ),
                       ),
                     Divider(height: 1.0),
@@ -152,72 +169,3 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
     return fb;
   }
 }
-
-// class HttpReqPosts extends StatefulWidget {
-//   const HttpReqPosts({Key? key}) : super(key: key);
-
-//   @override
-//   State<HttpReqPosts> createState() => _HttpReqPostsState();
-// }
-
-// class _HttpReqPostsState extends State<HttpReqPosts> {
-//   late Future<List<NumberWordPair>> _future_list_numword_pairs;
-
-//   final _biggerFont = const TextStyle(fontSize: 18);
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _future_list_numword_pairs = fetchNumberWordPairs();
-//   }
-
-//   void _retry() {
-//     setState(() {
-//       _future_list_numword_pairs = fetchNumberWordPairs();
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     var fb = FutureBuilder<List<NumberWordPair>>(
-//       future: _future_list_numword_pairs,
-//       builder:
-//           (BuildContext context, AsyncSnapshot<List<NumberWordPair>> snapshot) {
-//         Widget child;
-
-//         if (snapshot.hasData) {
-//           // developer.log('`using` ${snapshot.data}', name: 'my.app.category');
-//           // create  listview to show one row per array element of json response
-//           child = ListView.builder(
-//               //shrinkWrap: true, //expensive! consider refactoring. https://api.flutter.dev/flutter/widgets/ScrollView/shrinkWrap.html
-//               padding: const EdgeInsets.all(16.0),
-//               itemCount: snapshot.data!.length,
-//               itemBuilder: /*1*/ (context, i) {
-//                 return Column(
-//                   children: <Widget>[
-//                     ListTile(
-//                       title: Text(
-//                         "row ${i}: num=${snapshot.data![i].num} str=${snapshot.data![i].str}",
-//                         // snapshot.data![i].str,
-//                         style: _biggerFont,
-//                       ),
-//                     ),
-//                     Divider(height: 1.0),
-//                   ],
-//                 );
-//               });
-//         } else if (snapshot.hasError) {
-//           // newly added
-//           child = Text('${snapshot.error}');
-//         } else {
-//           // awaiting snapshot data, return simple text widget
-//           // child = Text('Calculating answer...');
-//           child = const CircularProgressIndicator(); //show a loading spinner.
-//         }
-//         return child;
-//       },
-//     );
-
-//     return fb;
-//   }
-// }

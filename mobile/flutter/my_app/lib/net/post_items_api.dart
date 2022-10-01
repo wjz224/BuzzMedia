@@ -15,7 +15,6 @@ Future<void> makePostRequest(
   String mTitle,
   String mContent,
 ) async {
-  
   final url = Uri.parse('$urlPrefix/messages');
   final headers = {"Content-type": "application/json"};
   final json = jsonEncode({"mTitle": "$mTitle", "mMessage": "$mContent"});
@@ -23,4 +22,3 @@ Future<void> makePostRequest(
   print('Status code: ${response.statusCode}');
   print('Body: ${response.body}');
 }
-
