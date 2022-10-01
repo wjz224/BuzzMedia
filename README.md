@@ -24,7 +24,7 @@ Admin
 
 - As a User I want to be able to set preferences so I can see posts that I want to see. (Automatic test)
 
-- As a User I want to be able to block people so I can stop seeing posts that I donâ€™t want to see. (Automatic test)
+- As a User I want to be able to block people so I can stop seeing posts that I don’t want to see. (Automatic test)
 
 ## Routes / Purposes
 - __Get__: returns one entity from the table
@@ -61,6 +61,6 @@ Admin
 
 ## Invite Trello Link 
  https://trello.com/invite/b/ktZREaYO/6223f419fbe085536c4393c2cb3ff528/tutorial-board-1
-
+ 
  ## Link for folder with project resources
  https://drive.google.com/drive/folders/1bG9Afm0etEM5-NCcldsnn2dRRtsRPe1x?usp=sharing
