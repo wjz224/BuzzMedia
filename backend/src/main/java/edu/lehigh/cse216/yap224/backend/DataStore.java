@@ -42,15 +42,16 @@ public class DataStore {
      * 
      * @param title The title for this newly added row
      * @param content The content for this row
+     * @param likes The number of like for this row
      * @return the ID of the new row, or -1 if no row was created
      */
-    public synchronized int createEntry(String title, String content) {
+    public synchronized int createEntry(String title, String content, int likes) {
         if (title == null || content == null)
             return -1;
         // NB: we can safely assume that id is greater than the largest index in 
         //     mRows, and thus we can use the index-based add() method
         int id = mCounter++;
-        DataRow data = new DataRow(id, title, content);
+        DataRow data = new DataRow(id, title, content, likes);
         mRows.add(id, data);
         return id;
     }
@@ -90,9 +91,10 @@ public class DataStore {
      * @param id The Id of the row to update
      * @param title The new title for the row
      * @param content The new content for the row
+     * @param likes The number of likes for the row
      * @return a copy of the data in the row, if it exists, or null otherwise
      */
-    public synchronized DataRow updateOne(int id, String title, String content) {
+    public synchronized DataRow updateOne(int id, String title, String content, int likes) {
         // Do not update if we don't have valid data
         if (title == null || content == null)
             return null;
@@ -105,6 +107,7 @@ public class DataStore {
         // Update and then return a copy of the data, as a DataRow
         data.mTitle = title;
         data.mContent = content;
+        data.mLikes = likes;
         return new DataRow(data);
     }
 

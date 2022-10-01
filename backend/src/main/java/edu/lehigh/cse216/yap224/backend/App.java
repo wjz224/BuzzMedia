@@ -6,8 +6,9 @@ import spark.Spark;
 
 // Import Google's JSON library
 import com.google.gson.*;
-import java.util.Map;
 
+import java.io.Console;
+import java.util.Map;
 /**
  * For now, our app creates an HTTP server that can only get and add data.
  */
@@ -25,8 +26,10 @@ public class App {
        
         
         Database db = Database.getDatabase(db_url);
+        
         if (db == null)
             return;
+        
         db.createTable();    
         db_url.concat("?sslmode=require");
 
@@ -57,7 +60,7 @@ public class App {
         // with IDs starting over from 0.
         // final db db = new db();
         // Set up the location for serving static files
-        Spark.staticFileLocation("/web");
+        // Spark.staticFileLocation("/web");
         // Set up the location for serving static files. If the STATIC_LOCATION
         // environment variable is set, we will serve from it. Otherwise, serve
         // from "/web"
@@ -69,9 +72,9 @@ public class App {
             Spark.staticFiles.externalLocation(static_location_override);
         }
 
-        String cors_enabled = env.get("CORS_ENABLED");
+        String cors_enabled = env.get("ENABLE_CORS");
 
-        if ("True".equalsIgnoreCase(cors_enabled)) {
+        if ("TRUE".equalsIgnoreCase(cors_enabled)) {
             final String acceptCrossOriginRequestsFrom = "*";
             final String acceptedCrossOriginRoutes = "GET,PUT,POST,DELETE,OPTIONS";
             final String supportedRequestHeaders = "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin";
@@ -116,6 +119,23 @@ public class App {
             }
         });
 
+        Spark.get("/messages/:id/3", (request, response) -> {
+            int idx = Integer.parseInt(request.params("id"));
+            
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            DataRow data = db.selectOne(idx);
+
+            
+            
+            if (data == null) {
+                return gson.toJson(new StructuredResponse("error", idx + " not found", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, data.mLikes));
+            }
+        });
+
         // POST route for adding a new element to the db. This will read
         // JSON from the body of the request, turn it into a SimpleRequest
         // object, extract the title and message, insert them, and return the
@@ -155,6 +175,27 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null, result));
             }
         });
+
+        Spark.put("/messages/:id/3", (request, response) -> {
+            // If we can't get an ID or can't parse the JSON, Spark will send
+            // a status 500
+            int idx = Integer.parseInt(request.params("id"));
+            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            DataRow current = db.selectOne(idx);
+            int numOfLikes = current.mLikes;
+            int result = db.updateLike(idx, numOfLikes);
+            if (result <= 0) {
+                return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, result));
+            }
+        });
+
+        
+        
 
         // DELETE route for removing a row from the db
         Spark.delete("/messages/:id", (request, response) -> {
