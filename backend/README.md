@@ -16,3 +16,17 @@
 6. Does DELETE work?
 
 ## Routes
+- __Get__: returns one entity from the table
+  GET /messages 
+
+- __Post__: adds a new message, title, and like counter to the current database table
+  POST /messages
+
+- __Delete__: removes an entity specified by an ID number from the table
+  DELETE /messages/#
+
+- __Put__: changes an existing entity in the table by specifying an ID number
+  PUT /messages/#
+
+- __Put__: Adds like or dislikes if already liked
+  PUT /messages/#3
