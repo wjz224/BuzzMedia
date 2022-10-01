@@ -282,12 +282,11 @@ public class Database {
      * 
      * @return The number of rows that were updated.  -1 indicates an error.
      */
-    int updateOne(int id, String message, int likes) { 
+    int updateOne(int id, String message) { 
         int res = -1;
         try {
             mUpdateOne.setString(1, message);
             mUpdateOne.setInt(2, id);
-            mUpdateOne.setInt(3,likes);
             res = mUpdateOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
