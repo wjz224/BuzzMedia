@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
-function AddMessage(){
+function EditMsg(){
 
+    const [id, setId] = useState("")
     const [title, setTitle] = useState("")
     const [content, setContent] = useState("")
 
-    const handleChangeTitle = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-        setTitle(e.target.value)
+    const handleChangeId = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+        setId(e.target.value)
     }
 
     const handleChangeContent = (e: { target: { value: React.SetStateAction<string>; }; }) => {
@@ -16,38 +17,36 @@ function AddMessage(){
     function submit(){
         var subData = 
         {
-            mTitle: title,
             mMessage: content
         }
         
-        fetch("https://thebuzzomega.herokuapp.com/messages",
+        fetch("https://thebuzzomega.herokuapp.com/messages/" + id,
             {
-                method: "POST",
+                method: "Put",
                 headers: {
                     'Content-type': 'application/json; charset=UTF-8'
                 },
                 mode: "cors",
                 body: JSON.stringify(subData)
             })
+
             window.location.reload()
     }
 
     return(
         <div>
+            <p>Update Message:</p>
             <form>
-                <p>Add Message:</p>
                 <label>
-                    Title: <input type="text" value={title} onChange={handleChangeTitle}/>
+                    Message Id: <input type="text" value={id} onChange={handleChangeId}/>
                     Content: <input type="text" value={content} onChange={handleChangeContent}/>
                 </label>
             </form>
-            New Message: {title} | {content}   
-            <button data-testid = 'addbtn' onClick={submit}> Add</button>
+            Updated Message: {id} | {title} | {content}   
+            <button data-testid = 'updatebtn' onClick={submit}> Update</button>
         </div>
     )
-    
 
-    
 }
 
-export default AddMessage
+export default EditMsg
