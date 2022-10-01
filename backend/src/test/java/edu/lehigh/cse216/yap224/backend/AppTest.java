@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Unit test for simple App.
+ * Unit test for simple App. Hello World
  */
 public class AppTest 
     extends TestCase
@@ -28,11 +28,11 @@ public class AppTest
         return new TestSuite( AppTest.class );
     }
 
-    /**
-     * Rigourous Test :-)
-     */
+    
+    
     public void testApp()
     {
         assertTrue( true );
     }
+    
 }
