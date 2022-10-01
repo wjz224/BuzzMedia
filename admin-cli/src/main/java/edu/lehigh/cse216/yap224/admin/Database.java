@@ -151,7 +151,7 @@ public class Database {
             // creation/deletion, so multiple executions will cause an exception
             db.mCreateTable = db.mConnection.prepareStatement(
                     "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) "
-                    + "NOT NULL, message VARCHAR(500) NOT NULL, likes int NOT NULL)");
+                    + "NOT NULL, message VARCHAR(1024) NOT NULL, likes int NOT NULL)");
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
 
             // Standard CRUD operations
@@ -282,12 +282,11 @@ public class Database {
      * 
      * @return The number of rows that were updated.  -1 indicates an error.
      */
-    int updateOne(int id, String message, int likes) { 
+    int updateOne(int id, String message) { 
         int res = -1;
         try {
             mUpdateOne.setString(1, message);
             mUpdateOne.setInt(2, id);
-            mUpdateOne.setInt(3,likes);
             res = mUpdateOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -54,6 +54,11 @@ public class Database {
      */
     private PreparedStatement mDropTable;
 
+    /**\
+     * A prepared statment for adding a like to out database
+     */
+    private PreparedStatement mUpdateLike;
+
     /***
      * DataRow is like a struct in C: we use it to hold data, and we allow
      * direct access to its fields. In the context of this Database, DataRow
@@ -140,15 +145,16 @@ public class Database {
             // creation/deletion, so multiple executions will cause an exception
             db.mCreateTable = db.mConnection.prepareStatement(
                     "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) "
-                            + "NOT NULL, message VARCHAR(500) NOT NULL)");
+                            + "NOT NULL, message VARCHAR(500) NOT NULL, likes int)");
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
 
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?)");
-            db.mSelectAll = db.mConnection.prepareStatement("SELECT id, subject FROM tblData");
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, ?)");
+            db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblData");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET message = ? WHERE id = ?");
+            db.mUpdateLike = db.mConnection.prepareStatement("UPDATE tblData SET likes = ? where id = ?");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -188,6 +194,7 @@ public class Database {
      * 
      * @param subject The subject for this new row
      * @param message The message body for this new row
+     * @param likes The number of likes this post has
      * 
      * @return The number of rows that were inserted
      */
@@ -196,9 +203,13 @@ public class Database {
         try {
             mInsertOne.setString(1, subject);
             mInsertOne.setString(2, message);
+            mInsertOne.setInt(3, 0);
             count += mInsertOne.executeUpdate();
+            //count = 1;
         } catch (SQLException e) {
+        
             e.printStackTrace();
+            
         }
         return count;
     }
@@ -213,7 +224,7 @@ public class Database {
         try {
             ResultSet rs = mSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new DataRow(rs.getInt("id"), rs.getString("subject"), null));
+                res.add(new DataRow(rs.getInt("id"), rs.getString("subject"), rs.getString("message"), rs.getInt("likes")));
             }
             rs.close();
             return res;
@@ -236,7 +247,7 @@ public class Database {
             mSelectOne.setInt(1, id);
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
-                res = new DataRow(rs.getInt("id"), rs.getString("subject"), rs.getString("message"));
+                res = new DataRow(rs.getInt("id"), rs.getString("subject"), rs.getString("message"), rs.getInt("likes"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -281,6 +292,36 @@ public class Database {
         }
         return res;
     }
+
+    /**
+     * Update the message for a row in the database
+     * 
+     * @param id      The id of the row to update
+     * @param like The new message contents
+     * 
+     * @return The number of rows that were updated. -1 indicates an error.
+     */
+    int updateLike(int id, int numOfLikes) {
+        int res = -1;
+        try {
+            if (numOfLikes == 0){
+                mUpdateLike.setInt(1, 1);
+                mUpdateLike.setInt(2, id);
+            }else if(numOfLikes == 1){
+                mUpdateLike.setInt(1, 0);
+                mUpdateLike.setInt(2, id);
+            }else{
+                mUpdateLike.setInt(1, 0);
+                mUpdateLike.setInt(2, id);
+            }
+            
+            res = mUpdateLike.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
 
     /**
      * Create tblData. If it already exists, this will print an error
