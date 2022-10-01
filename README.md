@@ -82,6 +82,9 @@ Admin
 
 - __Put__: changes an existing entity in the table by specifying an ID number
   PUT /messages/#
+
+- __Put__: Adds like or dislikes if already liked
+  PUT /messages/#3
   
 ## Test Description
 - __Backend__: Use the AppTest.js file to create script that automatically runs the routes for get, post, put, and delete then makes sures then Make sure that posts added through the front end/mobile actually appear in database
