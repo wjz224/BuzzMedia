@@ -105,24 +105,6 @@ Admin
 
 ## Invite Trello Link 
  https://trello.com/invite/b/ktZREaYO/6223f419fbe085536c4393c2cb3ff528/tutorial-board-1
-## ERD
 
-![ERD Diagram for backend](images/ERD Diagram.png)
-
-## State Machine
-
-![State Machine](images/State Machine.png)
-
-## System Diagram
-
-![System Diagram](images/System Diagram.png)
-
-## Desktop and Mobile Renders
-
-![Desktop 1](images/desktop 1.png)
-
-![Desktop 2](images/desktop 2.png)
-
-![Android](images/Android Large.png)
  ## Link for folder with project resources
  https://drive.google.com/drive/folders/1bG9Afm0etEM5-NCcldsnn2dRRtsRPe1x?usp=sharing
