@@ -128,7 +128,7 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                       ),
                     ),
                       GestureDetector(
-                        onTap: () { addLike('$id'); },
+                        onTap: () { addLike('$id'); setState(() {});},
                         child: Icon(
                           Icons.thumb_up  // add custom icons also
                         ),
