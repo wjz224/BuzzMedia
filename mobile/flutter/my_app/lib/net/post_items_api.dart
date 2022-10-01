@@ -12,13 +12,13 @@ const urlPrefix = 'https://thebuzzomega.herokuapp.com';
 //a function where you pass in the title and content of a post
 //this should add a post to the database
 Future<void> makePostRequest(
-  String mTitle,
-  String mContent,
+	String mTitle,
+	String mContent,
 ) async {
-  final url = Uri.parse('$urlPrefix/messages');
-  final headers = {"Content-type": "application/json"};
-  final json = jsonEncode({"mTitle": "$mTitle", "mMessage": "$mContent"});
-  final response = await post(url, headers: headers, body: json);
-  print('Status code: ${response.statusCode}');
-  print('Body: ${response.body}');
+	final url = Uri.parse('$urlPrefix/messages');
+	final headers = {"Content-type": "application/json"};
+	final json = jsonEncode({"mTitle": "$mTitle", "mMessage": "$mContent"});
+	final response = await post(url, headers: headers, body: json);
+	print('Status code: ${response.statusCode}');
+	print('Body: ${response.body}');
 }
