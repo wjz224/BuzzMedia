@@ -40,10 +40,12 @@ Admin
   PUT /messages/#
 
 - __Put__: Adds like or dislikes if already liked
-  PUT /messages/#3
+  PUT /messages/#/3
   
 ## Test Description
-- __Backend__: Use the AppTest.js file to create script that automatically runs the routes for get, post, put, and delete then makes sures then Make sure that posts added through the front end/mobile actually appear in database
+- __Backend__: Use the AppTest.java file to create script that automatically runs the routes for get, post, put, and delete then makes sures then Make sure that posts added through the front end/mobile actually appear in database
+
+Use Database.java to test the different methods in the Database.java class
 
 - __Admin__: Check that tables can be edited and created/deleted
 
@@ -51,6 +53,27 @@ Admin
 
 
 - __Mobile__: Make sure buttons correctly display respective behavior, make sure user is able to add text to necessary fields, make sure messages are displayed correctly
+
+
+## ERD
+
+![ERD Diagram for backend](images/ERD Diagram.png)
+
+## State Machine
+
+![State Machine](images/State Machine.png)
+
+## System Diagram
+
+![System Diagram](images/System Diagram.png)
+
+## Desktop and Mobile Renders
+
+![Desktop 1](images/desktop 1.png)
+
+![Desktop 2](images/desktop 2.png)
+
+![Android Interaction](images/Android Large.png)
 
 ## Contributors
 1. Yash Patel
