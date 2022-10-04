@@ -4,27 +4,9 @@ Now that you're more familiar with your Bitbucket repository, go ahead and add a
 Admin
 - As an Admin I want to edit the database directly because I need to update and maintain it. (Manual test)
 
-- As an Admin I want to be able to ban users because I want to prevent users from breaking rules. (Manual test)
-
-- As an Admin I want to get different users different tiers so I can control what these users can use. (Manual test)
-
-- As an Admin I want to have the authority to authorize who can join the app so I can prevent users not affiliated with the company from joining the app. (Manual test)
-
-- As an Admin I want to be able to time out users because I want to prevent users from spamming. (Manual test)
-
-- As a User I want to make my posts private, public, or seen by only a select number of people so I can control who can see my post. (Manual test)
-
 - As a User I want to like and unlike posts so I can show support for the posts I like. (Automatic test)
 
-- As a User I want to post images, code files, text, and videos so I can share my ideas to others. (Automatic test)
-
-- As a User I want to be able to write and see comments on posts because I want to be able to share and see other peoples opinions and ideas.  (Automatic test)
-
-- As a User I want to be able to add tags so I can organize where my post go. (Automatic test)
-
-- As a User I want to be able to set preferences so I can see posts that I want to see. (Automatic test)
-
-- As a User I want to be able to block people so I can stop seeing posts that I don’t want to see. (Automatic test)
+- As a User I want to post text so I can share my ideas to others. (Automatic test)
 
 ## Routes / Purposes
 - __Get__: returns one entity from the table
