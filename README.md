@@ -1,14 +1,25 @@
-Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
-## Team Name: The Buzz
+## Project: The Buzz
+
+## Descrition:
+- The Buzz is a social media app where users can post, delete, like, and edit messages. 
+
+## Contributors
+1. Yash Patel - yap224@lehigh.edu
+2. Sean Noto - scn224@lehigh.edu
+3. Tiana Aldroubi - tma224@lehigh.edu
+4. Aryan Tawde - art223@lrhigh.edu
+4. Wilson Zheng - wjz224@lehigh.edu
 
 ## User Stories
 
-Admin
-- As an Admin I want to edit the database directly because I need to update and maintain it. (Manual test)
+U1: As an Admin I want to edit the database directly because I need to update and maintain it. (Manual test)
 
-- As a User I want to like and unlike posts so I can show support for the posts I like. (Automatic test)
+U2: As an Admin I want to add/drop tables for maintenance purposes
 
-- As a User I want to post text so I can share my ideas to others. (Automatic test)
+U3: As a User I want to like and unlike posts so I can show support for the posts I like. (Automatic test)
+
+U4: As a User I want to post text so I can share my ideas to others. (Automatic test)
+
 
 ## Routes / Purposes
 - __Get__: returns one entity from the table
@@ -59,15 +70,8 @@ Use Database.java to test the different methods in the Database.java class
 
 ![Android Interaction](images/Android Large.png)
 
-## Contributors
-1. Yash Patel
-2. Sean Noto
-3. Tiana Aldroubi
-4. Aryan Tawde
-4. Wilson Zheng
-
 ## Invite Trello Link 
  https://trello.com/invite/b/ktZREaYO/6223f419fbe085536c4393c2cb3ff528/tutorial-board-1
  
- ## Link for folder with project resources
- https://drive.google.com/drive/folders/1bG9Afm0etEM5-NCcldsnn2dRRtsRPe1x?usp=sharing
+## Link for folder with project resources
+https://drive.google.com/drive/folders/1bG9Afm0etEM5-NCcldsnn2dRRtsRPe1x?usp=sharing
