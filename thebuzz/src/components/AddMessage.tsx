@@ -1,25 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState} from 'react';
+
+//AddMessage component of App.tsx
 
 function AddMessage(){
 
+    //States for title and content
     const [title, setTitle] = useState("")
     const [content, setContent] = useState("")
 
+    //Handler method for when the title state changes. Allows for "live typing"
     const handleChangeTitle = (e: { target: { value: React.SetStateAction<string>; }; }) => {
         setTitle(e.target.value)
     }
 
+    //Handler method for when the content state changes. Allows for "live typing"
     const handleChangeContent = (e: { target: { value: React.SetStateAction<string>; }; }) => {
         setContent(e.target.value)
     }
 
+    //Standalone function. Called on button click
     function submit(){
+        //New json for added title and content
         var subData = 
         {
             mTitle: title,
             mMessage: content
         }
         
+        //POST request
         fetch("https://thebuzzomega.herokuapp.com/messages",
             {
                 method: "POST",
@@ -29,9 +37,13 @@ function AddMessage(){
                 mode: "cors",
                 body: JSON.stringify(subData)
             })
+
+            //reloads page
             window.location.reload()
     }
 
+    //"Main" method. Whatever is in the div is run whenever the component is used in App.tsx
+    //Puts title, then a form. The form has two textbboxes, one for title and one for content. 
     return(
         <div>
             <form>
