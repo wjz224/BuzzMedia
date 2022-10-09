@@ -1,38 +1,19 @@
 package edu.lehigh.cse216.yap224.backend;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+//import junit.framework.Test;
+//import junit.framework.TestCase;
+//import junit.framework.TestSuite;
 
+import static io.restassured.RestAssured.*;
+import org.testng.annotations.Test;
 /**
  * Unit test for simple App. Hello World
  */
-public class AppTest 
-    extends TestCase
-{
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest( String testName )
-    {
-        super( testName );
+public class AppTest{
+    @Test
+    void getTest(){
+        given().get("https://thebuzzomega.herokuapp.com/messages").then().statusCode(200);
     }
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( AppTest.class );
-    }
 
-    
-    
-    public void testApp()
-    {
-        assertTrue( true );
-    }
-    
 }
