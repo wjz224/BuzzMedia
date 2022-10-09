@@ -1,3 +1,4 @@
+TARGETFOLDER=../backend/src/main/resources
 WEBFOLDERNAME=web
 rm -rf $TARGETFOLDER
 mkdir $TARGETFOLDER
