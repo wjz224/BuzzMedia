@@ -77,4 +77,4 @@ Use Database.java to test the different methods in the Database.java class
 https://drive.google.com/drive/folders/1bG9Afm0etEM5-NCcldsnn2dRRtsRPe1x?usp=sharing
 
 ## Documentation for React branch:
-![React Documentation](C:\Users\seanc\omega\thebuzz\docs\index.html)
+![React Documentatin](theBuzz/docs/index.html)
