@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
 
-//EditMsg component of App.tsx
+/**
+ * Component for editing messages.
+ * @component 
+ */
 
 function EditMsg(){
 
@@ -18,7 +21,9 @@ function EditMsg(){
         setContent(e.target.value)
     }
 
-    //Standalone function. Called on button click
+    /**
+     * Submits form data to the database for editing a message. Called on button click.
+     */
     function submit(){
         //New json for the updated content
         var subData = 
