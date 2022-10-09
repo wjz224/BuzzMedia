@@ -7,24 +7,31 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:my_app/net/get_items_api.dart';
+import 'package:my_app/net/post_items_api.dart';
+import 'package:my_app/net/put_like_api.dart';
+import 'package:my_app/net/put_like_api.dart';
 import 'package:my_app/views/main.dart';
+import 'package:http/http.dart' as http;
 
-void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+Future<void> main() async {
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  //checks if the get messages function works
+  test('get request messages from server',() async{
+      expect(
+          (await makeGetRequest()).statusCode,
+          200,
+        );
+    });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
-  });
-}
+  //checks if the post request function works
+  // test('make a post request',() async{
+  //     expect(
+  //         (await makePostRequest('Unit Test', 'Tested')).statusCode,
+  //         200,
+  //       );
+  //   });
+  }
+
+//class _MyHttpOverrides extends HttpOverrides {}
