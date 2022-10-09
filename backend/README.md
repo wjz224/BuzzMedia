@@ -17,16 +17,37 @@
 
 ## Routes
 - __Get__: returns one entity from the table
-  GET /messages 
+  \GET /messages 
+  JSON Route: {
+    "mId" = int
+    "mTitle" = String
+    "mContent" = String
+    "mLikes" = int
+    "mCreated" = timecreated
+  }
 
 - __Post__: adds a new message, title, and like counter to the current database table
-  POST /messages
+  \POST /messages
+  JSON Route: {
+    "mTitle" = String
+    "mContent" = String
+  }
 
 - __Delete__: removes an entity specified by an ID number from the table
-  DELETE /messages/#
+  \DELETE /messages/#
+  JSON Route: {
+    "mId" = int
+  }
 
 - __Put__: changes an existing entity in the table by specifying an ID number
-  PUT /messages/#
+  \PUT /messages/#
+JSON Route:{
+  "mId" = int
+  "mContent" = String
+}
 
 - __Put__: Adds like or dislikes if already liked
-  PUT /messages/#3
+  \PUT /messages/#/3
+JSON Route:{
+  "mID" = int
+}
