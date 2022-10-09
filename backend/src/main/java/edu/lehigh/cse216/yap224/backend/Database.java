@@ -297,7 +297,7 @@ public class Database {
      * Update the message for a row in the database
      * 
      * @param id      The id of the row to update
-     * @param like The new message contents
+     * @param numOfLikes Inputs the number of Likes on the message
      * 
      * @return The number of rows that were updated. -1 indicates an error.
      */
@@ -319,7 +319,7 @@ public class Database {
      * Update the message for a row in the database
      * 
      * @param id      The id of the row to update
-     * @param like The new message contents
+     * @param numOfLikes inputs the current amount of likes
      * 
      * @return The number of rows that were updated. -1 indicates an error.
      */

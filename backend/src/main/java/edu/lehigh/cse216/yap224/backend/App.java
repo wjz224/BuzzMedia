@@ -34,6 +34,7 @@ public class App {
             return;
         
         db.createTable();    
+        
         db_url.concat("?sslmode=require");
 
         // Get a fully-configured connection to the database, or exit

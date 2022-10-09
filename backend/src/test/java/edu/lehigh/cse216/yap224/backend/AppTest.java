@@ -1,19 +1,81 @@
 package edu.lehigh.cse216.yap224.backend;
 
-//import junit.framework.Test;
-//import junit.framework.TestCase;
-//import junit.framework.TestSuite;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-import static io.restassured.RestAssured.*;
-import org.testng.annotations.Test;
+import io.restassured.RestAssured.*;
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+
 /**
  * Unit test for simple App. Hello World
  */
-public class AppTest{
-    @Test
-    void getTest(){
-        given().get("https://thebuzzomega.herokuapp.com/messages").then().statusCode(200);
+
+
+import io.restassured.RestAssured;
+import io.restassured.specification.RequestSpecification;
+public class AppTest extends TestCase{
+
+    /**
+     *  Create the test case
+     * @param testName name of the test case
+     */
+
+    public AppTest( String testName){
+        super(testName);
     }
+
+    public static Test suite(){
+        return new TestSuite( AppTest.class );
+    }
+
+
+    public void testApp()
+    {
+        assertTrue( true );
+    }
+
+    public void testGet(){
+        RestAssured.baseURI = "https://thebuzzomega.herokuapp.com/";
+        RequestSpecification request = RestAssured.given();
+
+        request.header("COntent-Type", "application/json");
+        Response response = request.get("/messages");
+        assertEquals(response.getStatusCode(), 200);
+    }
+
+
+
+    public void testPost(){
+        RestAssured.baseURI = "https://thebuzzomega.herokuapp.com/";
+        RequestSpecification request = RestAssured.given();
+
+        request.header("Content-Type", "application/json");
+        Response response = request.body("{\"mTitle\": \"unitTestPost\", \"mMessage\": \"unitTestPostMessage\"}").post("/messages");
+        assertEquals(response.getStatusCode(), 200);
+    }
+
+    public void testLike(){
+        RestAssured.baseURI = "https://thebuzzomega.herokuapp.com/";
+        RequestSpecification request = RestAssured.given();
+
+        request.header("Content-Type", "application/json");
+        Response response = request.put("/messages/11/likes");
+        assertEquals(response.getStatusCode(), 200);
+    }
+
+    public void testDisike(){
+        RestAssured.baseURI = "https://thebuzzomega.herokuapp.com/";
+        RequestSpecification request = RestAssured.given();
+
+        request.header("Content-Type", "application/json");
+        Response response = request.put("/messages/11/dislikes");
+        assertEquals(response.getStatusCode(), 200);
+    }
+    
+
 
 
 }
