@@ -33,7 +33,22 @@ function HomePage() {
      */
     function LikeMsg(id: number){
         //PUT request
-        fetch("https://thebuzzomega.herokuapp.com/messages/" + id + '/3',
+        fetch("https://thebuzzomega.herokuapp.com/messages/:" + id + '/likes',
+            {
+                method: "PUT",
+            })
+        
+        //reloads page
+        window.location.reload()
+    }
+
+    /**
+     * Updates the number of likes. Called on button click.
+     * @param id 
+     */
+     function UnLikeMsg(id: number){
+        //PUT request
+        fetch("https://thebuzzomega.herokuapp.com/messages/:" + id + '/dislikes',
             {
                 method: "PUT",
             })
@@ -70,7 +85,7 @@ function HomePage() {
             {Array.isArray(messages)
                 ? messages.map((item) => (
                     <li key={item['mId']}>
-                        {item['mId']} | {item['mTitle']} | {item['mContent']} | Likes: {item['mLikes']} <button data-testid='likebtn' onClick={() => LikeMsg(item['mId'])}> Like</button> <button data-testid = 'deletebtn' onClick={() => DeleteMsg(item['mId'])}> Delete</button> 
+                        {item['mId']} | {item['mTitle']} | {item['mContent']} | Likes: {item['mLikes']} <button data-testid='likebtn' onClick={() => LikeMsg(item['mId'])}> Like</button> <button data-testid='likebtn' onClick={() => UnLikeMsg(item['mId'])}> UnLike</button> <button data-testid = 'deletebtn' onClick={() => DeleteMsg(item['mId'])}> Delete</button> 
                     </li>
                 ))
                 : messages 
