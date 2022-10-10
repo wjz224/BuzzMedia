@@ -57,6 +57,7 @@ public class AppTest extends TestCase{
         assertEquals(response.getStatusCode(), 200);
     }
 
+    
     public void testLike(){
         RestAssured.baseURI = "https://thebuzzomega.herokuapp.com/";
         RequestSpecification request = RestAssured.given();
@@ -74,6 +75,7 @@ public class AppTest extends TestCase{
         Response response = request.put("/messages/3/dislikes");
         assertEquals(response.getStatusCode(), 200);
     }
+    
     
 
 

@@ -59,7 +59,7 @@ JSON Route:{
 }
 
 ## Javadoc documentation
-Read HTML file for App.java and Database.java [here](./backend\src\main\java\edu\lehigh\cse216\yap224\backend\JavadocHTMLFiles\index-all.html.md) 
+Read HTML file for App.java and Database.java [here](./backend\src\main\java\edu\lehigh\cse216\yap224\backend\JavadocHTMLFiles\index-all.html) 
 
   
 ## Test Description
