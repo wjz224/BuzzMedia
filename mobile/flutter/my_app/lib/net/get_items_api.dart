@@ -1,40 +1,29 @@
-import 'package:flutter/material.dart';
-import 'package:english_words/english_words.dart';
 import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 import 'dart:convert';
-import 'package:my_app/model/item_model.dart';
 
 //the server url
 const urlPrefix = 'https://thebuzzomega.herokuapp.com';
 
-Future<http.Response> makeGetRequest() {
-	//final url =
-	return http.get(Uri.parse('$urlPrefix/messages'));
-	//   Response response = await
-	// get(url);
-	//   print('Status code: ${response.statusCode}');
-	//   print('Headers: ${response.headers}');
-	//   print('Body: ${response.body}');
-}
 
 Future<List<String>> fetchMessage() async {
+  /// Gets the posts from the database 
+
+  // Get request to /messages route
 	final response = await http.get(Uri.parse('$urlPrefix/messages'));
 
+  // Variable to contain the data from the get request
 	var returnData;
 
+  // If get requet is succesful parse through the data and return as a list of strings
 	if (response.statusCode == 200) {
 		var res = jsonDecode(response.body);
 		var resData = res['mData'];
 
-		print(response.body);
-		print(resData);
-		//return Message.fromJson(jsonDecode(response.body));
 		if (resData is List) {
 			returnData = (resData).map((x) => x.toString()).toList();
 		} else if (resData is Map) {
-			returnData = <String>[(resData as Map<String, dynamic>).toString()];
+			returnData = jsonDecode((resData as Map<String, dynamic>).toString());
 			print('map');
 			print('$returnData');
 		} else {
@@ -46,7 +35,16 @@ Future<List<String>> fetchMessage() async {
 		}
 	}
 
+  // Return all posts as a list of strings
 	return returnData;
 
 }
+
+/// Simple get request without response parsing for unit testing purposes
+Future<http.Response> makeGetRequest() {
+	
+	return http.get(Uri.parse('$urlPrefix/messages'));
+	
+}
+
 

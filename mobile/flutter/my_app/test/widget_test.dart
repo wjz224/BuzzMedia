@@ -26,12 +26,12 @@ Future<void> main() async {
     });
 
   //checks if the post request function works
-  // test('make a post request',() async{
-  //     expect(
-  //         (await makePostRequest('Unit Test', 'Tested')).statusCode,
-  //         200,
-  //       );
-  //   });
+  test('make a post request',() async{
+      expect(
+          (await makePostRequest('Unit Test', 'Tested')),
+          200,
+        );
+    });
   }
 
 //class _MyHttpOverrides extends HttpOverrides {}

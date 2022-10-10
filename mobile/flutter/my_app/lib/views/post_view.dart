@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:my_app/views/home_view.dart';
 import 'package:my_app/net/post_items_api.dart';
 
+
+ 
 class PostPage extends StatelessWidget {
+ /// The main view of the post screen on the app containing a blank form with title and message fields and an add and cancel button
+ 
 	const PostPage({Key? key, required this.title}) : super(key: key);
 	final String title;
 
@@ -18,17 +22,20 @@ class PostPage extends StatelessWidget {
 	}
 }
 
+
 class MyCustomForm extends StatefulWidget {
+  /// Creates a blank form for user to fill out title and message to post
 	const MyCustomForm({super.key});
 	@override
 	State<MyCustomForm> createState() => _MyCustomFormState();
 }
 
-// Define a corresponding State class.
-// This class holds the data related to the Form.
+
 class _MyCustomFormState extends State<MyCustomForm> {
-	// Create a text controller and use it to retrieve the current value
-	// of the TextField.
+  /// Corresponding State class which holds data related to MyCustomForm
+  
+  
+	// Create a text controller and use it to retrieve the current value of the text field
 	final myController = TextEditingController();
 	final myController2 = TextEditingController();
 
