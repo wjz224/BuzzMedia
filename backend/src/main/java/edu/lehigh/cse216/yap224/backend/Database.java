@@ -297,23 +297,17 @@ public class Database {
      * Update the message for a row in the database
      * 
      * @param id      The id of the row to update
-     * @param like The new message contents
+     * @param numOfLikes Inputs the number of Likes on the message
      * 
      * @return The number of rows that were updated. -1 indicates an error.
      */
-    int updateLike(int id, int numOfLikes) {
+    int likes(int id, int numOfLikes) {
         int res = -1;
+        
         try {
-            if (numOfLikes == 0){
-                mUpdateLike.setInt(1, 1);
-                mUpdateLike.setInt(2, id);
-            }else if(numOfLikes == 1){
-                mUpdateLike.setInt(1, 0);
-                mUpdateLike.setInt(2, id);
-            }else{
-                mUpdateLike.setInt(1, 0);
-                mUpdateLike.setInt(2, id);
-            }
+            numOfLikes = numOfLikes + 1;
+            mUpdateLike.setInt(1, numOfLikes);
+            mUpdateLike.setInt(2, id);
             
             res = mUpdateLike.executeUpdate();
         } catch (SQLException e) {
@@ -321,6 +315,30 @@ public class Database {
         }
         return res;
     }
+
+    /**
+     * Update the message for a row in the database
+     * 
+     * @param id      The id of the row to update
+     * @param numOfLikes inputs the current amount of likes
+     * 
+     * @return The number of rows that were updated. -1 indicates an error.
+     */
+    int dislikes(int id, int numOfLikes) {
+        int res = -1;
+        try {
+            numOfLikes = numOfLikes -  1;
+            mUpdateLike.setInt(1, numOfLikes);
+            mUpdateLike.setInt(2, id);
+            
+            res = mUpdateLike.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+
 
 
     /**

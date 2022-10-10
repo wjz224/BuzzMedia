@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+// ResultSetMetaData is a new import that I added to create an object that can return ColumnNames. Refer to getColNames to see implementation.
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import java.net.URI;
@@ -53,6 +55,11 @@ public class Database {
      * A prepared statement for dropping the table in our database
      */
     private PreparedStatement mDropTable;
+    /**
+     * A prepared statement for getting the name of the columns in our database
+     */
+    private PreparedStatement mGetColNames;
+
 
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow 
@@ -83,6 +90,10 @@ public class Database {
         int mLikes;
         /**
          * Construct a RowData object by providing values for its fields
+         * @param id represents the id 
+         * @param subject represents the subject
+         * @param message represents the message 
+         * @param likes  represents the number of likes
          */
         public RowData(int id, String subject, String message, int likes) {
             mId = id;
@@ -159,7 +170,8 @@ public class Database {
             db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, ?)");
             db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblData");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
-            db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET message = ? WHERE id = ?");
+            db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET subject = ?, message = ?,  likes = ? WHERE id = ?");
+            db.mGetColNames = db.mConnection.prepareStatement("SELECT * FROM tblData");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -199,7 +211,7 @@ public class Database {
      * 
      * @param subject The subject for this new row
      * @param message The message body for this new row
-     * 
+     * @param likes The number of likes for this new row
      * @return The number of rows that were inserted
      */
     int insertRow(String subject, String message, int likes) {
@@ -255,6 +267,34 @@ public class Database {
         }
         return res;
     }
+    /***
+     * Get all column names from the table.
+     * 
+     * @param none
+     * 
+     * @return the column names as strings from the table.
+     */
+    ArrayList<String> getColNames(){
+        ArrayList<String> names = new ArrayList<String>();
+        try {
+            
+            ResultSet rs = mGetColNames.executeQuery();
+            // Create ResultSetMetaData object (rsmd) by calling getMetaData() function from the ResultSet object (rs).
+            ResultSetMetaData rsmd = rs.getMetaData();
+            // Get columnCount by using getColumnCount() method from rsmd.
+            int columnCount = rsmd.getColumnCount();
+            // Get column name by using getColumnName(index) method from rsmd. The index represents the ascending order in which columns appear (starting from 1 which is id)
+            // For loop adds all column names into the Arraylist<String> and after returns it.
+            for (int i = 1; i <= columnCount; i++ ) {
+                names.add(rsmd.getColumnName(i));
+              }
+            rs.close();
+            return names;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     /**
      * Delete a row by ID
@@ -279,14 +319,17 @@ public class Database {
      * 
      * @param id The id of the row to update
      * @param message The new message contents
-     * 
+     * @param subject The new subject contents
+     * @param likes The new number of likes
      * @return The number of rows that were updated.  -1 indicates an error.
      */
-    int updateOne(int id, String message) { 
+    int updateOne(int id, String subject, String message, int likes) { 
         int res = -1;
         try {
-            mUpdateOne.setString(1, message);
-            mUpdateOne.setInt(2, id);
+            mUpdateOne.setString(1, subject);
+            mUpdateOne.setString(2, message);
+            mUpdateOne.setInt(3, likes);
+            mUpdateOne.setInt(4, id);
             res = mUpdateOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
