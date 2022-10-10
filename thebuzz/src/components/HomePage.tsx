@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 
-//Homepage component of App.tsx
+/**
+ * Component for displaying messages and message information, as well as liking and deleting messages.
+ * @component 
+ */
 
 function HomePage() {
 
@@ -24,10 +27,28 @@ function HomePage() {
     }, []
     );
 
-    //Standalone function for updating the number of likes. Called on button click
-    function LikeMsg(id: number, likes: number){
+    /**
+     * Updates the number of likes. Called on button click.
+     * @param id 
+     */
+    function LikeMsg(id: number){
         //PUT request
-        fetch("https://thebuzzomega.herokuapp.com/messages/" + id + '/3',
+        fetch("https://thebuzzomega.herokuapp.com/messages/" + id + '/likes',
+            {
+                method: "PUT",
+            })
+        
+        //reloads page
+        window.location.reload()
+    }
+
+    /**
+     * Updates the number of likes. Called on button click.
+     * @param id 
+     */
+     function UnLikeMsg(id: number){
+        //PUT request
+        fetch("https://thebuzzomega.herokuapp.com/messages/" + id + '/dislikes',
             {
                 method: "PUT",
             })
@@ -37,6 +58,11 @@ function HomePage() {
     }
 
     //Standalone function for deleting a message. Called on button click
+
+    /**
+     * Deletes a message. Called on button click.
+     * @param id 
+     */
     function DeleteMsg(id: number){
         //DELETE request
         fetch("https://thebuzzomega.herokuapp.com/messages/" + id,
@@ -59,7 +85,7 @@ function HomePage() {
             {Array.isArray(messages)
                 ? messages.map((item) => (
                     <li key={item['mId']}>
-                        {item['mId']} | {item['mTitle']} | {item['mContent']} | Likes: {item['mLikes']} <button data-testid='likebtn' onClick={() => LikeMsg(item['mId'], item['mLikes'])}> Like</button> <button data-testid = 'deletebtn' onClick={() => DeleteMsg(item['mId'])}> Delete</button> 
+                        {item['mId']} | {item['mTitle']} | {item['mContent']} | Likes: {item['mLikes']} <button data-testid='likebtn' onClick={() => LikeMsg(item['mId'])}> Like</button> <button data-testid='likebtn' onClick={() => UnLikeMsg(item['mId'])}> UnLike</button> <button data-testid = 'deletebtn' onClick={() => DeleteMsg(item['mId'])}> Delete</button> 
                     </li>
                 ))
                 : messages 

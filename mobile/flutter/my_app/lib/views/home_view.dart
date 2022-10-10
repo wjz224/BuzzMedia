@@ -1,25 +1,17 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
-import 'package:english_words/english_words.dart';
-import 'dart:developer' as developer;
-import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
-import 'dart:convert';
 import 'package:my_app/net/get_items_api.dart';
-import 'package:my_app/model/item_model.dart';
+import 'package:my_app/net/put_dislike_api.dart';
 import 'package:my_app/views/post_view.dart';
 import 'package:my_app/net/put_like_api.dart';
 
+
+
 class MyHomePage extends StatefulWidget {
+  /// This stateful widget is the home page of the application
+  
 	const MyHomePage({super.key, required this.title});
-
-	// This widget is the home page of your application. It is stateful, meaning
-	// that it has a State object (defined below) that contains fields that affect
-	// how it looks.
-
-	// This class is the configuration for the state. It holds the values (in this
-	// case the title) provided by the parent (in this case the App widget) and
-	// used by the build method of the State. Fields in a Widget subclass are
-	// always marked "final".
 
 	final String title;
 
@@ -27,25 +19,26 @@ class MyHomePage extends StatefulWidget {
 	State<MyHomePage> createState() => _MyHomePageState();
 }
 
+
 class _MyHomePageState extends State<MyHomePage> {
-	@override
+  /// This method is rerun every time setState is called
+	
+  @override
 	Widget build(BuildContext context) {
-		// This method is rerun every time setState is called
-		//
-		// The Flutter framework has been optimized to make rerunning build methods
-		// fast, so that you can just rebuild anything that needs updating rather
-		// than having to individually change instances of widgets.
+	
 		return Scaffold(
+      // Set appBar title to "The Buzz"
 			appBar: AppBar(
-				// Here we take the value from the MyHomePage object that was created by
-				// the App.build method, and use it to set our appbar title.
 				title: Text(widget.title),
 				actions: <Widget>[
 				Padding(
 					padding: EdgeInsets.only(right: 20.0),
+          // A button in the top right used to add a post, looks like "+"
 					child: GestureDetector(
+            
 						onTap: () {
-						Navigator.push(context, MaterialPageRoute(builder: (context) {
+              /// When the "+" button is clicked, navigate to the post page (post_view.dart)
+						  Navigator.push(context, MaterialPageRoute(builder: (context) {
 							return const PostPage(title: 'The Buzz');
 						}));
 						},
@@ -56,33 +49,29 @@ class _MyHomePageState extends State<MyHomePage> {
 					)),
 				],
 			),
+      
 			body: const Center(
-				// Center is a layout widget. It takes a single child and positions it
-				// in the middle of the parent.
+        // Center is a layout widget. It takes a single child and positions it in the middle of the parent
+        // Displays a list of posts data
 				child: HttpReqPosts(),
-			), // This trailing comma makes auto-formatting nicer for build methods.
+			), 
 		);
 	}
 }
 
-// class _MyAppState extends State<MyApp> {
-//   late Future<message> futureMessage;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     futureMessage = fetchMessage();
-//   }
-// }
 
 class HttpReqPosts extends StatefulWidget {
+  /// Stateful widget get and display the posts from the database
 	const HttpReqPosts({Key? key}) : super(key: key);
 
 	@override
 	State<HttpReqPosts> createState() => _HttpReqPostsState();
 }
 
+
 class _HttpReqPostsState extends State<HttpReqPosts> {
+  /// Method for HttpReqPosts setState
+
 	late Future<List<String>> _future_list_message;
 
 	final _biggerFont = const TextStyle(fontSize: 18);
@@ -100,27 +89,28 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
 		});
 	}
 
+  
 	@override
 	Widget build(BuildContext context) {
+    /// The main view of the home screen on the app containing a list of posts, like, and dislike buttons
+
 		var fb = FutureBuilder<List<String>>(
 		future: _future_list_message,
 		builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
 			Widget child;
 
 			if (snapshot.hasData) {
-			// developer.log('`using` ${snapshot.data}', name: 'my.app.category');
 
-			// create  listview to show one row per array element of json response
+			// Create  listview to show one row per array element of json response
 			child = ListView.builder(
 
-				//shrinkWrap: true, //expensive! consider refactoring. https://api.flutter.dev/flutter/widgets/ScrollView/shrinkWrap.html
 				padding: const EdgeInsets.all(16.0),
 				itemCount: snapshot.data!.length,
 				itemBuilder: /*1*/ (context, i) {
-					//!!There has got to be a better way to do this sorry
-					//dataStr is the string of data for each post in json format
+
+					// DataStr is the string of data for each post in json format !This is Tech Debt!
 					var dataStr = snapshot.data?[i];
-					//attempt to split the components of this string up
+					// Split the components of dataString up
 					var dataArr = dataStr?.split(',');
 					var titleArr = dataArr?[1]?.split(':');
 					var messageArr = dataArr?[2]?.split(':');
@@ -133,22 +123,53 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
 
 					return Column(
 					children: <Widget>[
+            // One item in the list
 						ListTile(
+            // Displays the text and message of a post
 						title: Text(
-							" $title:  $message   	likes: $likes", //display the title content and like information
-							// snapshot.data![i].str,
+							" $title:  $message   	", 
 							style: _biggerFont,
 						),
 						),
-						GestureDetector(
-						onTap: () {
-							addLike(
-								'$id'); //function that adds or removes like from post with matching id
-						},
-						child: Icon(
-							Icons.thumb_up //added thumbs up icon for like button
-							),
-						),
+
+            // Row widget puts the like count and buttons in one horizontal row together
+            Row(
+              children: <Widget>[
+
+                // The dislike button display and functionality
+                GestureDetector(
+                  // When clicked run the dislike method
+                  onTap: () {
+                  
+                    dislike(
+                    '$id'); 
+                },
+                // Thumbs down icon
+                child: Icon(
+                  Icons.thumb_down 
+                  ),
+                ),   
+                // Spacing between button and text
+                SizedBox(width: 20),
+                // Number of likes displayed
+						    Text('$likes', style: _biggerFont,),
+                //Spacing between button and text
+                SizedBox(width: 20),
+
+                  // The like button display and functionality
+                  GestureDetector(
+                    //function that adds a like from post with matching id
+                    onTap: () {
+                      addLike(
+                        '$id'); 
+                    },
+                    // Thumbs up icon
+                    child: Icon(
+                      Icons.thumb_up //added thumbs up icon for like button
+                    ),
+                ),
+            ],),
+            // Space between each post item
 						Divider(height: 1.0),
 					],
 					);
@@ -157,8 +178,6 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
 			// newly added
 			child = Text('${snapshot.error}');
 			} else {
-			// awaiting snapshot data, return simple text widget
-			// child = Text('Calculating answer...');
 			child = const CircularProgressIndicator(); //show a loading spinner.
 			}
 			return child;

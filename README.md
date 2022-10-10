@@ -10,6 +10,11 @@
 4. Aryan Tawde - art223@lrhigh.edu
 4. Wilson Zheng - wjz224@lehigh.edu
 
+## Deployment
+1. Go into the thebuzz folder and run "sh deploy.sh"
+2. Go into backend folder and run "mvn package; mvn heroku:deploy"
+
+
 ## User Stories
 
 U1: As an Admin I want to edit the database directly because I need to update and maintain it. (Manual test)
@@ -21,21 +26,56 @@ U3: As a User I want to like and unlike posts so I can show support for the post
 U4: As a User I want to post text so I can share my ideas to others. (Automatic test)
 
 
-## Routes / Purposes
+## Routes
 - __Get__: returns one entity from the table
-  GET /messages 
+
+  \GET /messages 
+
+  JSON Route: {
+    "mId" = int
+    "mTitle" = String
+    "mContent" = String
+    "mLikes" = int
+    "mCreated" = timecreated
+  }
 
 - __Post__: adds a new message, title, and like counter to the current database table
-  POST /messages
+
+  \POST /messages
+
+  JSON Route: {
+    "mTitle" = String
+    "mContent" = String
+  }
 
 - __Delete__: removes an entity specified by an ID number from the table
-  DELETE /messages/#
+
+  \DELETE /messages/#
+
+  JSON Route: {
+    "mId" = int
+  }
 
 - __Put__: changes an existing entity in the table by specifying an ID number
-  PUT /messages/#
+
+  \PUT /messages/#
+
+JSON Route:{
+  "mId" = int
+  "mContent" = String
+}
 
 - __Put__: Adds like or dislikes if already liked
-  PUT /messages/#/3
+
+  \PUT /messages/#/3
+
+JSON Route:{
+  "mID" = int
+}
+
+## Javadoc documentation
+Read HTML file for App.java and Database.java [here](./backend\src\main\java\edu\lehigh\cse216\yap224\backend\JavadocHTMLFiles\index-all.html) 
+
   
 ## Test Description
 - __Backend__: Use the AppTest.java file to create script that automatically runs the routes for get, post, put, and delete then makes sures then Make sure that posts added through the front end/mobile actually appear in database

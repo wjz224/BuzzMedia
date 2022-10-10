@@ -37,10 +37,14 @@ public class App {
      * @return The character corresponding to the chosen menu option
      */
     static char prompt(BufferedReader in) {
-        // The valid actions:
+        /**
+         * The valid characters that the user can enter 
+         */
         String actions = "TD1*-+~q?";
 
-        // We repeat until a valid single-character option is selected        
+        /**
+         *  While loop that continues until the user enters the q character.
+        */ 
         while (true) {
             System.out.print("[" + actions + "] :> ");
             String action;
@@ -107,13 +111,15 @@ public class App {
      * @param argv Command-line options.  Ignored by this program.
      */
     public static void main(String[] argv) {
-        // get the Postgres configuration from the environment
+        /**
+         *  get the Postgres configuration from the environment
+         */
         Map<String, String> env = System.getenv();
         String db_url = env.get("DATABASE_URL");
         
-
-        // Get a fully-configured connection to the database, or exit 
-        // immediately
+        /**
+         * Get a fully-configured connection to the database, or exit  immediately
+         */
         Database db = Database.getDatabase(db_url);
         if (db == null)
             return;
@@ -147,10 +153,21 @@ public class App {
             // Print all rows from Database table
             else if (action == '*') {
                 ArrayList<Database.RowData> res = db.selectAll();
+                ArrayList<String> colNames = db.getColNames();
                 if (res == null)
                     continue;
                 System.out.println("  Current Database Contents");
                 System.out.println("  -------------------------");
+                // print all column names
+                for(String names : colNames){
+                    if(names.equals("id")){
+                        System.out.print(" [" + names + "] ");
+                    }
+                    else{
+                        System.out.print(names + " ");
+                    }
+                }
+                System.out.println();
                 for (Database.RowData rd : res) {
                     System.out.println("  [" + rd.mId + "] " + rd.mSubject + " " + rd.mMessage + " " + rd.mLikes);
                 }
@@ -181,10 +198,10 @@ public class App {
                 if (id == -1)
                     continue;
                 // Neet to implement subject and likes update
-                //String newSubject = getString(in, "Enter the new subject");
+                String newSubject = getString(in, "Enter the new subject");
                 String newMessage = getString(in, "Enter the new message");
-                //int newLikes = getInt(in, "Enter the new number of likes");
-                int res = db.updateOne(id,newMessage);
+                int newLikes = getInt(in, "Enter the new number of likes");
+                int res = db.updateOne(id,newSubject,newMessage, newLikes);
                 if (res == -1)
                     continue;
                 System.out.println("  " + res + " rows updated");
