@@ -62,7 +62,7 @@ public class AppTest extends TestCase{
         RequestSpecification request = RestAssured.given();
 
         request.header("Content-Type", "application/json");
-        Response response = request.put("/messages/11/likes");
+        Response response = request.put("/messages/3/likes");
         assertEquals(response.getStatusCode(), 200);
     }
 
@@ -71,7 +71,7 @@ public class AppTest extends TestCase{
         RequestSpecification request = RestAssured.given();
 
         request.header("Content-Type", "application/json");
-        Response response = request.put("/messages/11/dislikes");
+        Response response = request.put("/messages/3/dislikes");
         assertEquals(response.getStatusCode(), 200);
     }
     

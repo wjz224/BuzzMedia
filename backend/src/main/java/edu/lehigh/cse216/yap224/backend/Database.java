@@ -303,8 +303,9 @@ public class Database {
      */
     int likes(int id, int numOfLikes) {
         int res = -1;
+        
         try {
-            numOfLikes = numOfLikes +1;
+            numOfLikes = numOfLikes + 1;
             mUpdateLike.setInt(1, numOfLikes);
             mUpdateLike.setInt(2, id);
             
