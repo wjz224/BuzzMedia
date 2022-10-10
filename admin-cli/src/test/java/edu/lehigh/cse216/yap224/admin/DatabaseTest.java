@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class DatabaseTest extends TestCase{
 
-    String db_url = "postgres://mjvjoatyohzaka:18fb558a6a972731841f0b25746771babdaa53b0f9d1d0407919f477abccc725@ec2-54-163-34-107.compute-1.amazonaws.com:5432/d7au1ki28gl09q";
+    String db_url = "postgres://izfmydakonpxcn:eebbe11f587fed810de5c8427c555808043c8e0d1a408960b32b6c13d55e3942@ec2-3-209-39-2.compute-1.amazonaws.com:5432/ddsnjmei05mg8l";
     Database db = Database.getDatabase(db_url);
 
     /**
@@ -22,7 +22,7 @@ public class DatabaseTest extends TestCase{
      */
     public DatabaseTest( String testName )
     {
-        super( testName );
+        super(testName );
     }
 
     /**
@@ -35,37 +35,23 @@ public class DatabaseTest extends TestCase{
 
     public void testDatabaseCreation()
     {
+        Database db = Database.getDatabase(db_url);
         assertTrue( db != null );
     }
 
-    public void testDatabaseInsert()
+    public void testDatabaseInsertDelete()
     {
-        ArrayList test = db.selectAll();
-        assertTrue( test != null );
+        int testInt = db.insertRow("hello", "world", 1);
+        int testInt2 = db.deleteRow(testInt);
+        assertTrue(testInt != -1  && testInt2 != -1);
     }
 
     public void testDatabaseSelectAll()
-    {
-        assertTrue( true );
+    {   
+        ArrayList<Database.RowData> testArray = db.selectAll();
+        assertTrue( testArray != null );
     }
 
-    public void testDatabaseSelectOne()
-    {
-
-        assertTrue(true);
-        
-    }
-
-    public void testDatabaseDelete()
-    {
-        assertTrue( true );
-    }
-
-    public void testDatabaseUpdate()
-    {
-        assertTrue( true );
-    }
-    
     
     
 }
