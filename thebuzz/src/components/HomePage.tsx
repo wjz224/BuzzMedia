@@ -33,7 +33,7 @@ function HomePage() {
      */
     function LikeMsg(id: number){
         //PUT request
-        fetch("https://thebuzzomega.herokuapp.com/messages/:" + id + '/likes',
+        fetch("https://thebuzzomega.herokuapp.com/messages/" + id + '/likes',
             {
                 method: "PUT",
             })
@@ -48,7 +48,7 @@ function HomePage() {
      */
      function UnLikeMsg(id: number){
         //PUT request
-        fetch("https://thebuzzomega.herokuapp.com/messages/:" + id + '/dislikes',
+        fetch("https://thebuzzomega.herokuapp.com/messages/" + id + '/dislikes',
             {
                 method: "PUT",
             })
