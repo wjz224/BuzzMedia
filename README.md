@@ -10,6 +10,11 @@
 4. Aryan Tawde - art223@lrhigh.edu
 4. Wilson Zheng - wjz224@lehigh.edu
 
+## Deployment
+Go into the thebuzz folder and run "sh deploy.sh"
+Go into backend folder and run "mvn package; mvn heroku:deploy"
+
+
 ## User Stories
 
 U1: As an Admin I want to edit the database directly because I need to update and maintain it. (Manual test)
@@ -23,7 +28,9 @@ U4: As a User I want to post text so I can share my ideas to others. (Automatic 
 
 ## Routes
 - __Get__: returns one entity from the table
+
   \GET /messages 
+
   JSON Route: {
     "mId" = int
     "mTitle" = String
@@ -33,27 +40,35 @@ U4: As a User I want to post text so I can share my ideas to others. (Automatic 
   }
 
 - __Post__: adds a new message, title, and like counter to the current database table
+
   \POST /messages
+
   JSON Route: {
     "mTitle" = String
     "mContent" = String
   }
 
 - __Delete__: removes an entity specified by an ID number from the table
+
   \DELETE /messages/#
+
   JSON Route: {
     "mId" = int
   }
 
 - __Put__: changes an existing entity in the table by specifying an ID number
+
   \PUT /messages/#
+
 JSON Route:{
   "mId" = int
   "mContent" = String
 }
 
 - __Put__: Adds like or dislikes if already liked
+
   \PUT /messages/#/3
+  
 JSON Route:{
   "mID" = int
 }
