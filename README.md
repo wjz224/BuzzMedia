@@ -11,8 +11,8 @@
 4. Wilson Zheng - wjz224@lehigh.edu
 
 ## Deployment
-Go into the thebuzz folder and run "sh deploy.sh"
-Go into backend folder and run "mvn package; mvn heroku:deploy"
+1. Go into the thebuzz folder and run "sh deploy.sh"
+2. Go into backend folder and run "mvn package; mvn heroku:deploy"
 
 
 ## User Stories
@@ -68,7 +68,7 @@ JSON Route:{
 - __Put__: Adds like or dislikes if already liked
 
   \PUT /messages/#/3
-  
+
 JSON Route:{
   "mID" = int
 }
