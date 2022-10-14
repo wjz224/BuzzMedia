@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
 
-//AddMessage component of App.tsx
+/**
+ * Component for adding messages.
+ * @component 
+ */
 
 function AddMessage(){
 
@@ -18,7 +21,9 @@ function AddMessage(){
         setContent(e.target.value)
     }
 
-    //Standalone function. Called on button click
+    /**
+     * Submits form data to the database for adding a message. Called on button click.
+     */
     function submit(){
         //New json for added title and content
         var subData = 
