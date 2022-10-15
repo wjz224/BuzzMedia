@@ -159,7 +159,7 @@ Use Database.java to test the different methods in the Database.java class
 
 ## State Machine
 
-![State Machine](images/State Machine.png)
+![State Machine](images/StateMachine.png)
 
 ## System Diagram
 
