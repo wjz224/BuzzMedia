@@ -19,12 +19,23 @@
 
 U1: As an Admin I want to edit the database directly because I need to update and maintain it. (Manual test)
 
-U2: As an Admin I want to add/drop tables for maintenance purposes
+U2: As an Admin I want to add/drop tables for maintenance purposes. (Manual test)
 
-U3: As a User I want to like and unlike posts so I can show support for the posts I like. (Automatic test)
+U3: As an Admin I want to manage new columns because I want to maintain parts of the database data. (Manual Test)
 
-U4: As a User I want to post text so I can share my ideas to others. (Automatic test)
+U4: As an Admin  I want to manage new tables because I want to maintain the database as a whole. (Manual Test) 
 
+U5: As an Authenticated User I want to like and unlike posts so I can show support for the posts I like. (Automatic test)
+
+U6: As an Authenticated User I want to post text so I can share my ideas to others. (Automatic test)
+
+U7: As an Authenticated user  I want to post things because I enjoy sharing ideas. (Automatic test)
+
+U8: As an Authenticated user  I want to like posts because I want to interact with other idea creators. (Automatic test)
+
+U9: As an Authenticated user  I want to be able to delete my own posts because I may not like my old posts. (Automatic test)
+
+U10: As an Authenticated user  I want to edit my own posts because I may have typos on my posts. (Automatic test)
 
 ## Routes
 - __Get__: returns one entity from the table
