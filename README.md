@@ -111,7 +111,7 @@ Use Database.java to test the different methods in the Database.java class
 
 ## System Diagram
 
-![System Diagram](images/System Diagram.png)
+![System Diagram](images/SystemDiagram.png)
 
 ## Desktop and Mobile Renders
 
