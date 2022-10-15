@@ -12,7 +12,6 @@ import io.restassured.specification.RequestSpecification;
 /**
  * Unit test for simple App. Hello World
  */
-<<<<<<< HEAD
 
 
 import io.restassured.RestAssured;
@@ -29,20 +28,6 @@ public class AppTest extends TestCase{
     }
 
     public static Test suite(){
-=======
-public class AppTest 
-    extends TestCase
-{
-    /* 
-    public AppTest( String testName )
-    {
-        super( testName );
-    }
-
-    
-    public static Test suite()
-    {
->>>>>>> origin/react
         return new TestSuite( AppTest.class );
     }
 
@@ -51,7 +36,6 @@ public class AppTest
     {
         assertTrue( true );
     }
-<<<<<<< HEAD
 
     public void testGet(){
         RestAssured.baseURI = "https://thebuzzomega.herokuapp.com/";
@@ -94,11 +78,4 @@ public class AppTest
 
 
 
-=======
-    */
-
-    public void test2(){
-        assertTrue(true);
-    }
->>>>>>> origin/react
 }
