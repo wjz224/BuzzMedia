@@ -16,7 +16,7 @@ describe("Homepage Component" , () => {
   //Test 1: looking for the text "TheBuzz: Home Page"
   test('Render HomePage', () => {
     render(<HomePage />);
-    const linkElement = screen.getByText('TheBuzz: Home page');
+    const linkElement = screen.getByText('TheBuzz');
     expect(linkElement).toBeInTheDocument();
   }) 
   

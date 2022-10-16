@@ -1,0 +1,30 @@
+body {
+    background-color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    padding-left: 45%;
+}
+
+.headerContainer {
+    height: 4pc;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    display: flex;
+    align-items: center;
+    background-color: yellow;
+}
+
+.postsContainer {
+    padding-top: 6pc;
+    margin-left: 2pc;
+    margin-right: 2pc;
+}
+
+.addBtnNav {
+    margin-left: 36pc;
+    padding: 5px;
+}

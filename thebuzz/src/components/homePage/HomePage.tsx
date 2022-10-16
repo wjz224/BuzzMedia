@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import './HomePage.css';
 
 /**
  * Component for displaying messages and message information, as well as liking and deleting messages.
@@ -81,15 +82,21 @@ function HomePage() {
     //Prints a title, and maps the messages json to a list format
     return (
         <div>
-            <h1>TheBuzz: Home page</h1>
-            {Array.isArray(messages)
-                ? messages.map((item) => (
-                    <li key={item['mId']}>
-                        {item['mId']} | {item['mTitle']} | {item['mContent']} | Likes: {item['mLikes']} <button data-testid='likebtn' onClick={() => LikeMsg(item['mId'])}> Like</button> <button data-testid='likebtn' onClick={() => UnLikeMsg(item['mId'])}> UnLike</button> <button data-testid = 'deletebtn' onClick={() => DeleteMsg(item['mId'])}> Delete</button> 
-                    </li>
-                ))
-                : messages 
-            }
+            <div className='headerContainer'>
+                <h1 className='header'>TheBuzz</h1>
+                <button className='addBtnNav'>Add Post</button>
+            </div>
+            <div className='postsContainer'>
+                {Array.isArray(messages)
+                    ? messages.map((item) => (
+                        <li key={item['mId']}>
+                            {item['mId']} | {item['mTitle']} | {item['mContent']} | Likes: {item['mLikes']} <button data-testid='likebtn' onClick={() => LikeMsg(item['mId'])}> Like</button> <button data-testid='likebtn' onClick={() => UnLikeMsg(item['mId'])}> UnLike</button> <button data-testid = 'deletebtn' onClick={() => DeleteMsg(item['mId'])}> Delete</button> 
+                        </li>
+                    ))
+                    : messages 
+                }
+            </div>
+            
         </div>
     )
 }
