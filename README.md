@@ -98,6 +98,8 @@ Use Database.java to test the different methods in the Database.java class
 
 ![State Machine](images/State Machine.png)
 
+![State Machine](images/userStateMachine.png)
+
 ## System Diagram
 
 ![System Diagram](images/System Diagram.png)
