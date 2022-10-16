@@ -17,25 +17,26 @@
 
 ## User Stories
 
-U1: As an Admin I want to edit the database directly because I need to update and maintain it. (Manual test)
+1. U1: As an Admin I want to edit the database directly because I need to update and maintain it. (Manual test)
 
-U2: As an Admin I want to add/drop tables for maintenance purposes. (Manual test)
+2. U2: As an Admin I want to add/drop tables for maintenance purposes. (Manual test)
 
-U3: As an Admin I want to manage new columns because I want to maintain parts of the database data. (Manual Test)
+3. U3: As an Admin I want to manage new columns because I want to maintain parts of the database data. (Manual Test)
 
-U4: As an Admin  I want to manage new tables because I want to maintain the database as a whole. (Manual Test) 
+4. U4: As an Admin  I want to manage new tables because I want to maintain the database as a whole. (Manual Test) 
 
-U5: As an Authenticated User I want to like and unlike posts so I can show support for the posts I like. (Automatic test)
+5. U5: As an Authenticated User I want to like and unlike posts so I can show support for the posts I like. (Automatic test)
 
-U6: As an Authenticated User I want to post text so I can share my ideas to others. (Automatic test)
+6. U6: As an Authenticated User I want to post text so I can share my ideas to others. (Automatic test)
 
-U7: As an Authenticated user  I want to post things because I enjoy sharing ideas. (Automatic test)
+7. U7: As an Authenticated user  I want to like posts because I want to interact with other idea creators. (Automatic test)
 
-U8: As an Authenticated user  I want to like posts because I want to interact with other idea creators. (Automatic test)
+8. U8: As an Authenticated user  I want to edit my own comments because I may have typos on my comments. (Automatic test)
 
-U9: As an Authenticated user  I want to be able to delete my own posts because I may not like my old posts. (Automatic test)
+9. U9: As an Authenticated user  I want to create a user profile with personal information because I want people to know who is posting the text. (Automatic test)
 
-U10: As an Authenticated user  I want to edit my own posts because I may have typos on my posts. (Automatic test)
+
+
 
 ## Routes
 - __Get__: returns one entity from the table post
@@ -129,7 +130,13 @@ Use Database.java to test the different methods in the Database.java class
 - __Web front-end__: Make sure buttons correctly display respective behavior, make sure user is able to add text to necessary fields, make sure messages are displayed correctly
 
 
-- __Mobile__: Make sure buttons correctly display respective behavior, make sure user is able to add text to necessary fields, make sure messages are displayed correctly
+- __Mobile__: 
+
+1. Make sure like and dislike changes the appearance of the buttons 
+2. Use MobileTest to see if pages change with the appropriate click
+3. Make sure that the scroll feature for the main page and comment page work
+4. Make sure that buttons are connected to the right routes and the data changes on the webpage
+
 
 
 ## ERD
@@ -152,7 +159,15 @@ Use Database.java to test the different methods in the Database.java class
 
 ![Desktop 2](images/desktop 2.png)
 
-![Android Interaction](images/Android Large.png)
+## Mobile Page
+
+![Login Page](images/Login.png)
+
+![Main Page](images/Main Page.png)
+
+![User Profile Page](images/user profile Page.png)
+
+![Comment Page](images/comment page.png)
 
 ## Invite Trello Link 
  https://trello.com/invite/b/ktZREaYO/6223f419fbe085536c4393c2cb3ff528/tutorial-board-1
