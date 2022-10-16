@@ -19,60 +19,102 @@
 
 U1: As an Admin I want to edit the database directly because I need to update and maintain it. (Manual test)
 
-U2: As an Admin I want to add/drop tables for maintenance purposes
+U2: As an Admin I want to add/drop tables for maintenance purposes. (Manual test)
 
-U3: As a User I want to like and unlike posts so I can show support for the posts I like. (Automatic test)
+U3: As an Admin I want to manage new columns because I want to maintain parts of the database data. (Manual Test)
 
-U4: As a User I want to post text so I can share my ideas to others. (Automatic test)
+U4: As an Admin  I want to manage new tables because I want to maintain the database as a whole. (Manual Test) 
 
+U5: As an Authenticated User I want to like and unlike posts so I can show support for the posts I like. (Automatic test)
+
+U6: As an Authenticated User I want to post text so I can share my ideas to others. (Automatic test)
+
+U7: As an Authenticated user  I want to post things because I enjoy sharing ideas. (Automatic test)
+
+U8: As an Authenticated user  I want to like posts because I want to interact with other idea creators. (Automatic test)
+
+U9: As an Authenticated user  I want to be able to delete my own posts because I may not like my old posts. (Automatic test)
+
+U10: As an Authenticated user  I want to edit my own posts because I may have typos on my posts. (Automatic test)
 
 ## Routes
-- __Get__: returns one entity from the table
+- __Get__: returns one entity from the table post
+   - \GET /messages 
+   - JSON Route: 
+         - "mId" = int
+         - "mTitle" = String
+         - "mContent" = String
+         - "mLikes" = int
+         - "mCreated" = timecreated
+  
+- __Get__: returns one entity from the table comment
+    - \GET /comments
+    - JSON Route:
+        - "mId" = int
+        - "mCommentId" = int
+        - "mCommentLikes" = int
+        - "mCommentDislikes" = int
+        - "mComment" = String
+    
 
-  \GET /messages 
-
-  JSON Route: {
-    "mId" = int
-    "mTitle" = String
-    "mContent" = String
-    "mLikes" = int
-    "mCreated" = timecreated
-  }
-
-- __Post__: adds a new message, title, and like counter to the current database table
-
-  \POST /messages
-
-  JSON Route: {
-    "mTitle" = String
-    "mContent" = String
-  }
-
+- __Post__: adds a new message, title, messageId, and like counter to the current database table
+    - \POST /messages
+    - JSON Route: 
+         - "mTitle" = String
+         - "mContent" = String
+  
+- __Post__ : adds a new comment to the associated messageId
+    - \POST /comments
+    - JSON Route: 
+        - "mId" = int
+        - "mComment" = String
+  
 - __Delete__: removes an entity specified by an ID number from the table
-
-  \DELETE /messages/#
-
-  JSON Route: {
-    "mId" = int
-  }
-
+    - \DELETE /messages/#
+    - JSON Route: 
+        - "mId" = int
+  
+- __Delete__: Removes a comment specified by the commentId
+    - \DELETE /comments/#
+    - JSON Route: 
+         - "mCommentId" =  int
+   
 - __Put__: changes an existing entity in the table by specifying an ID number
+    - \PUT /messages/#
+    - JSON Route:
+        - "mId" = int
+        - "mContent" = String
 
-  \PUT /messages/#
-
-JSON Route:{
-  "mId" = int
-  "mContent" = String
-}
-
-- __Put__: Adds like or dislikes if already liked
-
-  \PUT /messages/#/3
-
-JSON Route:{
-  "mID" = int
-}
-
+- __Put__: Adds likes for message
+    - \PUT /messages/#/likes
+    - JSON Route:
+        - "mId" = int
+        -  "mLikes" = int
+      
+- __Put__: Adds dislikes for message
+    - \PUT /messages/#/dislikes
+    -  JSON Route:
+        - "mId" = int
+        - "mDislikes" = int
+      
+- __Put__: Update Comment
+    - \PUT /comments/#
+    - JSON Route: 
+         - "mId" = int
+         - "mComment" = String
+      
+- __Put__: Adds likes for comment
+    - \PUT /comments/#/likes
+    - JSON Route:
+        - "mCommentId" = int
+        - "mCommentLikes" = int
+  
+- __Put__: Adds dislikes for comment
+    - \PUT /comments/#/dislikes
+    - JSON Route:
+         - "mCommentId" = int
+         - "mCommentDislikes" = int
+  
 ## Javadoc documentation
 Read HTML file for App.java and Database.java [here](./backend\src\main\java\edu\lehigh\cse216\yap224\backend\JavadocHTMLFiles\index-all.html) 
 
@@ -96,13 +138,13 @@ Use Database.java to test the different methods in the Database.java class
 
 ## State Machine
 
-![State Machine](images/State Machine.png)
+![State Machine](images/StateMachine.png)
 
 ![State Machine](images/userStateMachine.png)
 
 ## System Diagram
 
-![System Diagram](images/System Diagram.png)
+![System Diagram](images/SystemDiagram.png)
 
 ## Desktop and Mobile Renders
 
