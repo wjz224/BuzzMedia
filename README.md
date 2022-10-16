@@ -41,79 +41,79 @@ U10: As an Authenticated user  I want to edit my own posts because I may have ty
 - __Get__: returns one entity from the table post
    - \GET /messages 
    - JSON Route: 
-       - "mId" = int
-       - "mTitle" = String
-       - "mContent" = String
-       - "mLikes" = int
-       - "mCreated" = timecreated
+         - "mId" = int
+         - "mTitle" = String
+         - "mContent" = String
+         - "mLikes" = int
+         - "mCreated" = timecreated
   
 - __Get__: returns one entity from the table comment
     - \GET /comments
     - JSON Route:
-      - "mId" = int
-      - "mCommentId" = int
-      - "mCommentLikes" = int
-      - "mCommentDislikes" = int
-      - "mComment" = String
+        - "mId" = int
+        - "mCommentId" = int
+        - "mCommentLikes" = int
+        - "mCommentDislikes" = int
+        - "mComment" = String
     
 
 - __Post__: adds a new message, title, messageId, and like counter to the current database table
     - \POST /messages
     - JSON Route: 
-       - "mTitle" = String
-       - "mContent" = String
+         - "mTitle" = String
+         - "mContent" = String
   
 - __Post__ : adds a new comment to the associated messageId
     - \POST /comments
     - JSON Route: 
-      - "mId" = int
-      - "mComment" = String
+        - "mId" = int
+        - "mComment" = String
   
 - __Delete__: removes an entity specified by an ID number from the table
     - \DELETE /messages/#
     - JSON Route: 
-      - "mId" = int
+        - "mId" = int
   
 - __Delete__: Removes a comment specified by the commentId
     - \DELETE /comments/#
     - JSON Route: 
-      - "mCommentId" =  int
+         - "mCommentId" =  int
    
 - __Put__: changes an existing entity in the table by specifying an ID number
     - \PUT /messages/#
     - JSON Route:
-      - "mId" = int
-      - "mContent" = String
+        - "mId" = int
+        - "mContent" = String
 
 - __Put__: Adds likes for message
     - \PUT /messages/#/likes
     - JSON Route:
-      - "mId" = int
-      -  "mLikes" = int
+        - "mId" = int
+        -  "mLikes" = int
       
 - __Put__: Adds dislikes for message
     - \PUT /messages/#/dislikes
     -  JSON Route:
-      - "mId" = int
-      - "mDislikes" = int
+        - "mId" = int
+        - "mDislikes" = int
       
 - __Put__: Update Comment
-   - \PUT /comments/#
-   - JSON Route: 
-      - "mId" = int
-      - "mComment" = String
+    - \PUT /comments/#
+    - JSON Route: 
+         - "mId" = int
+         - "mComment" = String
       
 - __Put__: Adds likes for comment
     - \PUT /comments/#/likes
     - JSON Route:
-      - "mCommentId" = int
-      - "mCommentLikes" = int
+        - "mCommentId" = int
+        - "mCommentLikes" = int
   
 - __Put__: Adds dislikes for comment
     - \PUT /comments/#/dislikes
     - JSON Route:
-       - "mCommentId" = int
-       - "mCommentDislikes" = int
+         - "mCommentId" = int
+         - "mCommentDislikes" = int
   
 ## Javadoc documentation
 Read HTML file for App.java and Database.java [here](./backend\src\main\java\edu\lehigh\cse216\yap224\backend\JavadocHTMLFiles\index-all.html) 
