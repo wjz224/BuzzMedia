@@ -187,9 +187,11 @@ Use Database.java to test the different methods in the Database.java class
 
 ## Desktop and Mobile Renders
 
-![Desktop 1](images/desktop 1.png)
+![Desktop 1](images/loginWeb.png)
 
-![Desktop 2](images/desktop 2.png)
+![Desktop 2](images/MainWeb.png)
+
+![Desktop 3](images/profileWeb.png)
 
 ## Mobile Page
 
