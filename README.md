@@ -14,6 +14,14 @@
 1. Go into the thebuzz folder and run "sh deploy.sh"
 2. Go into backend folder and run "mvn package; mvn heroku:deploy"
 
+## Current Backlog
+Web: Don't refresh after every change. Instead update the state
+
+Admin: Make column label print automatic instead of manually typing with the for loop function and make unit tests test all options.
+
+Backend: Fix the unit test bug in the backend where it references the 3rd row in the database
+
+Mobile: automatically update the view after something is liked, Store post data in objects not strings
 
 ## User Stories
 
