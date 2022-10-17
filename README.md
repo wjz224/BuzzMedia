@@ -141,7 +141,7 @@ Use Database.java to test the different methods in the Database.java class
 
 ## ERD
 
-![ERD Diagram for backend](images/ERD Diagram.png)
+![ERD Diagram for backend](images/ED_Diagram_phase2.png)
 
 ## State Machine
 
