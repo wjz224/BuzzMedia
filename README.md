@@ -161,13 +161,12 @@ Use Database.java to test the different methods in the Database.java class
 
 - __Web front-end__: Make sure buttons correctly display respective behavior, make sure user is able to add text to necessary fields, make sure messages are displayed correctly
 
-
 - __Mobile__: 
 
-1. Make sure like and dislike changes the appearance of the buttons 
-2. Use MobileTest to see if pages change with the appropriate click
-3. Make sure that the scroll feature for the main page and comment page work
-4. Make sure that buttons are connected to the right routes and the data changes on the webpage
+  1. Make sure like and dislike changes the appearance of the buttons 
+  2. Use MobileTest to see if pages change with the appropriate click
+  3. Make sure that the scroll feature for the main page and comment page work
+  4. Make sure that buttons are connected to the right routes and the data changes on the webpage
 
 
 
