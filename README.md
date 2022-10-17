@@ -161,13 +161,13 @@ Use Database.java to test the different methods in the Database.java class
 
 ## Mobile Page
 
-![Login Page](images/Login.png)
+![Login Page](images/Login.PNG)
 
-![Main Page](images/Main Page.png)
+![Main Page](images/Main Page.PNG)
 
-![User Profile Page](images/user profile Page.png)
+![User Profile Page](images/user profile Page.PNG)
 
-![Comment Page](images/comment page.png)
+![Comment Page](images/comment page.PNG)
 
 ## Invite Trello Link 
  https://trello.com/invite/b/ktZREaYO/6223f419fbe085536c4393c2cb3ff528/tutorial-board-1
