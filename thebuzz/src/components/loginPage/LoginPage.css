@@ -1,0 +1,22 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.hexContainer {
+    display: flex;
+    justify-content: center;   
+}
+
+.hex {
+}
+
+.enter {
+    margin-top: 8pc;
+    position: absolute;
+}
+
+.loginBtn {
+    position: absolute;
+    margin-top: 15pc;
+}

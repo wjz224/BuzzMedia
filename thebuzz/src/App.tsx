@@ -2,6 +2,7 @@ import HomePage from './components/homePage/HomePage';
 import AddMessage from './components/addMessage/AddMessage';
 import EditMsg from './components/editMessage/EditMsg';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import LoginPage from './components/loginPage/LoginPage';
 
 //MAIN FILE FOR FRONT END. 
 //This funtion calls all of the individual components for the app
@@ -16,8 +17,9 @@ function App() {
 						<Route exact path="/Demo" component={AddMessage} />
 					</Switch>
 				</Router> */}
-        <HomePage />
-        <AddMessage />
+        {/* <HomePage />
+        <AddMessage /> */}
+        <LoginPage/>
         {/* <EditMsg />*/}
       </div>
     );
