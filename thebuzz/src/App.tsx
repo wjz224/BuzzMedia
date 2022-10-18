@@ -24,19 +24,6 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </BrowserRouter>
-      // <div>
-        
-      //   {/* <Router>
-			// 		<Switch>
-			// 			<Route exact path="/homePage" component={HomePage} />
-			// 			<Route exact path="/Demo" component={AddMessage} />
-			// 		</Switch>
-			// 	</Router> */}
-      //   {/* <HomePage />
-      //   <AddMessage /> */}
-      //   <LoginPage/>
-      //   {/* <EditMsg />*/}
-      // </div>
     );
   }
 export default App;

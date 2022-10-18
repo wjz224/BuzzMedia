@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import HeaderBar from '../headerBar/HeaderBar';
 import './HomePage.css';
+import { Honeycomb, Hexagon } from 'react-honeycomb';
+
+
 
 /**
  * Component for displaying messages and message information, as well as liking and deleting messages.
@@ -104,3 +107,7 @@ function HomePage() {
 }
 
 export default HomePage
+
+function renderItem(item: string) {
+    throw new Error('Function not implemented.');
+}

@@ -4,19 +4,7 @@ body {
     padding: 0;
 }
 
-.header {
-    padding-left: 45%;
-}
 
-.headerContainer {
-    height: 4pc;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    display: flex;
-    align-items: center;
-    background-color: #ffa500;
-}
 
 .postsContainer {
     padding-top: 6pc;
