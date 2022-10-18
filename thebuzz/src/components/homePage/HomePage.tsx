@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import HeaderBar from '../headerBar/HeaderBar';
 import './HomePage.css';
 
 /**
@@ -82,10 +83,11 @@ function HomePage() {
     //Prints a title, and maps the messages json to a list format
     return (
         <div>
-            <div className='headerContainer'>
+            {/* <div className='headerContainer'>
                 <h1 className='header'>TheBuzz</h1>
                 <button className='addBtnNav'>Add Post</button>
-            </div>
+            </div> */}
+            <HeaderBar/>
             <div className='postsContainer'>
                 {Array.isArray(messages)
                     ? messages.map((item) => (

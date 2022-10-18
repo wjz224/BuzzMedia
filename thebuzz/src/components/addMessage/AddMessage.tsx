@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import { useNavigate } from 'react-router';
 
 /**
  * Component for adding messages.
@@ -7,6 +8,7 @@ import React, {useState} from 'react';
 
 function AddMessage(){
 
+    let navigate = useNavigate();
     //States for title and content
     const [title, setTitle] = useState("")
     const [content, setContent] = useState("")
@@ -43,8 +45,7 @@ function AddMessage(){
                 body: JSON.stringify(subData)
             })
 
-            //reloads page
-            window.location.reload()
+            navigate("/home"); 
     }
 
     //"Main" method. Whatever is in the div is run whenever the component is used in App.tsx
@@ -59,7 +60,7 @@ function AddMessage(){
                 </label>
             </form>
             New Message: {title} | {content}   
-            <button data-testid = 'addbtn' onClick={submit}> Add</button>
+            <button data-testid = 'addbtn' onClick={submit}>add</button>
         </div>
     )
     
