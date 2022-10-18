@@ -147,6 +147,10 @@ Mobile:
     - JSON Route:
          - "mCommentId" = int
          - "mCommentDislikes" = int
+- __Put__: Verifies the access token
+   - \PUT /verify
+   - JSON Route:
+     -  "access_token" = string
   
 ## Javadoc documentation
 Read HTML file for App.java and Database.java [here](./backend\src\main\java\edu\lehigh\cse216\yap224\backend\JavadocHTMLFiles\index-all.html) 
