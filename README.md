@@ -176,7 +176,7 @@ Use Database.java to test the different methods in the Database.java class
 
 ## ERD
 
-![ERD Diagram for backend](images/ED_Diagram_phase2.jpg)
+![ERD Diagram for backend](images/ED_Diagram_phase2.jpeg)
 
 ## State Machines (idea, user)
 
