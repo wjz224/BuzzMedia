@@ -52,9 +52,23 @@ public class Database {
     private PreparedStatement mCreateTable;
 
     /**
+     * A prepared statements for creating the tables in our database
+     */
+    private PreparedStatement mCreateTableUser;
+    private PreparedStatement mCreateTablePost;
+    private PreparedStatement mCreateTableComment;
+    private PreparedStatement mCreateTableLike;
+    private PreparedStatement mCreateTableDislike;
+
+    /**
      * A prepared statement for dropping the table in our database
      */
     private PreparedStatement mDropTable;
+    private PreparedStatement mDropTableUser;
+    private PreparedStatement mDropTablePost;
+    private PreparedStatement mDropTableComment;
+    private PreparedStatement mDropTableLike;
+    private PreparedStatement mDropTableDislike;
     /**
      * A prepared statement for getting the name of the columns in our database
      */
@@ -160,10 +174,40 @@ public class Database {
 
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
             // creation/deletion, so multiple executions will cause an exception
-            db.mCreateTable = db.mConnection.prepareStatement(
+
+            //For primary key: primary key (pkey)
+            //For foreign key (fkey1) references table1
+            //OR  foreign key (fkey1, fkey2) references table1, table2
+
+            /*db.mCreateTable = db.mConnection.prepareStatement(
                     "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) "
-                    + "NOT NULL, message VARCHAR(1024) NOT NULL, likes int NOT NULL)");
-            db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
+                    + "NOT NULL, message VARCHAR(1024) NOT NULL, likes int NOT NULL)");*/
+            
+            //Create USER table
+            db.mCreateTableUser = db.mConnection.prepareStatement(
+                "CREATE TABLE userTable (user_id SERIAL, username VARCHAR(50) NOT NULL, first_name VARCHAR(50) NOT NULL, last_name VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL, sex_orient VARCHAR(50) NOT NULL, phone_number int, gender VARCHAR(50), note VARCHAR(50), primary key (user_id))");
+
+            //Create POST table
+            db.mCreateTablePost = db.mConnection.prepareStatement(
+                "CREATE TABLE postTable (post_id SERIAL, user_id int NOT NULL, title VARCHAR(50) NOT NULL, text VARCHAR(500) NOT NULL, primary key (user_id), foreign key (user_id) references userTable)");
+
+            //Create COMMENT table
+            db.mCreateTableComment = db.mConnection.prepareStatement(
+                "CREATE TABLE commentTable (comment_id SERIAL, user_id int NOT NULL, post_id int NOT NULL, coment_val VARCHAR(500) NOT NULL, primary key (comment_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+
+            //Create LIKE table
+            db.mCreateTableLike = db.mConnection.prepareStatement(
+                "CREATE TABLE likeTable (user_id SERIAL, post_id int NOT NULL, primary key (user_id, post_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+
+            //Create DISLIKE table
+            db.mCreateTableDislike = db.mConnection.prepareStatement(
+                "CREATE TABLE dislikeTable (user_id SERIAL, post_id int NOT NULL, primary key (user_id, post_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+            
+            db.mDropTableUser = db.mConnection.prepareStatement("DROP TABLE userTable");
+            db.mDropTablePost = db.mConnection.prepareStatement("DROP TABLE postTable");
+            db.mDropTableComment = db.mConnection.prepareStatement("DROP TABLE commentTable");
+            db.mDropTableLike = db.mConnection.prepareStatement("DROP TABLE likeTable");
+            db.mDropTableDislike = db.mConnection.prepareStatement("DROP TABLE dislikeTable");
 
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
@@ -337,12 +381,27 @@ public class Database {
         return res;
     }
 
+    // /**
+    //  * Create tblData.  If it already exists, this will print an error
+    //  */
+    // void createTable() {
+    //     try {
+    //         mCreateTable.execute();
+    //     } catch (SQLException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
+
     /**
-     * Create tblData.  If it already exists, this will print an error
+     * Create all tables.  If it already exists, this will print an error
      */
     void createTable() {
         try {
-            mCreateTable.execute();
+            mCreateTableUser.execute();
+            mCreateTablePost.execute();
+            mCreateTableComment.execute();
+            mCreateTableLike.execute();
+            mCreateTableDislike.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -354,7 +413,11 @@ public class Database {
      */
     void dropTable() {
         try {
-            mDropTable.execute();
+            mDropTableUser.execute();
+            mDropTablePost.execute();
+            mDropTableComment.execute();
+            mDropTableLike.execute();
+            mDropTableDislike.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
