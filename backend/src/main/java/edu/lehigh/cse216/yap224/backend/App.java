@@ -4,19 +4,53 @@ package edu.lehigh.cse216.yap224.backend;
  * Importing Spark package
  */
 import spark.Spark;
-
+import spark.Request;
+import spark.Response;
+import spark.Route;
+import static spark.Spark.get;
+import static spark.Spark.post;
 /**
  * Importing google package
  */
 import com.google.gson.*;
-
+/***
+ * Import java map
+ */
 import java.io.Console;
 import java.util.Map;
+/**
+ * Import java error handling, scanner, and security
+ */
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.util.Scanner;
+import java.util.*;
+/***
+ * Importing google oauth2 package
+ */
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson.JacksonFactory;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+
 /**
  * For now, our app creates an HTTP server that can only get and add data.
  */
 public class App {
+    /***
+     * Inner session class for the session object.
+     */
+
+    static Map<Integer, String> users = new HashMap<>();
+
+
     public static void main(String[] args) {
+        
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
         String db_url = env.get("DATABASE_URL");
@@ -41,8 +75,28 @@ public class App {
         // immediately
         
         
-        
+                
+        /**
+        * Replace this with the client ID you got from the Google APIs console.
+        */
+        final String CLIENT_ID = "33869758256-rm63jguhi2icfvpv07ccs6m0dacnnuhj.apps.googleusercontent.com";
+        /**
+         * Replace this with the client secret you got from the Google APIs console.
+         */
+        final String CLIENT_SECRET = "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";
+        /**
+         * Optionally replace this with your application's name.
+         */
+        final String APPLICATION_NAME = "TheBuzz";
 
+        /**
+         * Default HTTP transport to use to make HTTP requests.
+         */
+         final HttpTransport transport = new NetHttpTransport();
+        /**
+         * Default JSON factory to use to deserialize JSON.
+         */
+        final JacksonFactory jsonFactory = new JacksonFactory();
         // gson provides us with a way to turn JSON into objects, and objects
         // into JSON.
         //
@@ -64,7 +118,7 @@ public class App {
         // with IDs starting over from 0.
         // final db db = new db();
         // Set up the location for serving static files
-        //Spark.staticFileLocation("/web");
+        // Spark.staticFileLocation("/web");
         // Set up the location for serving static files. If the STATIC_LOCATION
         // environment variable is set, we will serve from it. Otherwise, serve
         // from "/web"
@@ -85,13 +139,61 @@ public class App {
             enableCORS(acceptCrossOriginRequestsFrom, acceptedCrossOriginRoutes, supportedRequestHeaders);
         }
 
-
-
+        
         // Set up a route for serving the main page
         Spark.get("/", (req, res) -> {
             res.redirect("/index.html");
             return "";
         });
+        
+        // POST route that verifys the access token and returns a sessionid
+        Spark.post("/verify", (request,response) -> {
+            response.type("application/json");
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+                // Specify the CLIENT_ID of the app that accesses the backend:
+                .setAudience(Collections.singletonList(CLIENT_ID))
+                // Or, if multiple clients access the backend:
+                //.setAudience(Arrays.asList(CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3))
+                .build();
+
+            // (Receive idTokenString by HTTPS POST)
+            String idTokenString = request.params("idToken");
+            String gender = request.params("userGender");
+            String sexualOrientation = request.params("userSexualOrientation");
+            String note = request.params("note");
+
+            GoogleIdToken idToken = verifier.verify(idTokenString);
+            
+            if (idToken != null) {
+                Payload payload = idToken.getPayload();
+
+                // Get profile information from payload
+                String email = payload.getEmail();
+                String name = (String) payload.get("name");
+                String familyName = (String) payload.get("family_name");
+                // boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
+                // String pictureUrl = (String) payload.get("picture");
+                // String locale = (String) payload.get("locale");
+                // String givenName = (String) payload.get("given_name");
+               
+                // Use or store profile information in session object
+                User userSession = new User(email, name,gender, sexualOrientation ,familyName, note);
+                
+                // create sessionKey by hashing the user's email since each user email is unique.   
+                int sessionKey = (int) email.hashCode();
+
+                // if sessionKey doesn't already exist than add sessionKey and userId into local hashmap
+                if(!users.containsKey(sessionKey)){
+                    users.put(sessionKey, email);
+                }
+                
+                return gson.toJson(new StructuredResponse("ok"," valid token", sessionKey));
+            } else {
+                return gson.toJson(new StructuredResponse("error"," invalid token", null));
+            }
+        });
+
+
         // GET route that returns all message titles and Ids. All we do is get
         // the data, embed it in a StructuredResponse, turn it into JSON, and
         // return it. If there's no data, we return "[]", so there's no need
@@ -99,6 +201,7 @@ public class App {
 
         Spark.get("/messages", (request, response) -> {
             // ensure status 200 OK, with a MIME type of JSON
+            // check session key
             response.status(200);
             response.type("application/json");
             return gson.toJson(new StructuredResponse("ok", null, db.selectAll()));
@@ -112,6 +215,7 @@ public class App {
         // error is that it doesn't correspond to a row with data.
         Spark.get("/messages/:id", (request, response) -> {
             int idx = Integer.parseInt(request.params("id"));
+            // implement session key check, if it exists continue, if not return error.
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
@@ -125,7 +229,7 @@ public class App {
 
         Spark.get("/messages/:id/likes", (request, response) -> {
             int idx = Integer.parseInt(request.params("id"));
-            
+             // implement session key check, if it exists continue, if not return error.
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
@@ -145,6 +249,7 @@ public class App {
         // object, extract the title and message, insert them, and return the
         // ID of the newly created row.
         Spark.post("/messages", (request, response) -> {
+             // implement session key check, if it exists continue, if not return error.
             // NB: if gson.Json fails, Spark will reply with status 500 Internal
             // Server Error
             SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
@@ -165,6 +270,7 @@ public class App {
         // PUT route for updating a row in the db. This is almost
         // exactly the same as POST
         Spark.put("/messages/:id", (request, response) -> {
+             // implement session key check, if it exists continue, if not return error.
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500
             int idx = Integer.parseInt(request.params("id"));
@@ -181,6 +287,7 @@ public class App {
         });
 
         Spark.put("/messages/:id/likes", (request, response) -> {
+             // implement session key check, if it exists continue, if not return error.
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500
             int idx = Integer.parseInt(request.params("id"));
@@ -200,6 +307,7 @@ public class App {
 
 
         Spark.put("/messages/:id/dislikes", (request, response) -> {
+             // implement session key check, if it exists continue, if not return error.
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500
             int idx = Integer.parseInt(request.params("id"));
@@ -222,6 +330,7 @@ public class App {
 
         // DELETE route for removing a row from the db
         Spark.delete("/messages/:id", (request, response) -> {
+             // implement session key check, if it exists continue, if not return error.
             // If we can't get an ID, Spark will send a status 500
             int idx = Integer.parseInt(request.params("id"));
             // ensure status 200 OK, with a MIME type of JSON
