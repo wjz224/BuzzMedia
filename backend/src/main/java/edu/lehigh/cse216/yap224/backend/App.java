@@ -158,26 +158,22 @@ public class App {
 
             // (Receive idTokenString by HTTPS POST)
             String idTokenString = request.params("idToken");
+            String userName = request.params("userName");
             String gender = request.params("userGender");
             String sexualOrientation = request.params("userSexualOrientation");
-            String note = request.params("note");
+            String note = request.params("userNote");
 
             GoogleIdToken idToken = verifier.verify(idTokenString);
             
             if (idToken != null) {
-                Payload payload = idToken.getPayload();
-
                 // Get profile information from payload
+                Payload payload = idToken.getPayload();
                 String email = payload.getEmail();
-                String name = (String) payload.get("name");
-                String familyName = (String) payload.get("family_name");
-                // boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-                // String pictureUrl = (String) payload.get("picture");
-                // String locale = (String) payload.get("locale");
-                // String givenName = (String) payload.get("given_name");
-               
+                // id value that will be recieved from the database this is temporary for now 
+                int userId = 0;
+
                 // Use or store profile information in session object
-                User userSession = new User(email, name,gender, sexualOrientation ,familyName, note);
+                User userSession = new User(userId, email, userName, gender, sexualOrientation, note);
                 
                 // create sessionKey by hashing the user's email since each user email is unique.   
                 int sessionKey = (int) email.hashCode();
