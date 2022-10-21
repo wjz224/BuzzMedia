@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import HeaderBar from '../headerBar/HeaderBar';
+import '../headerBar/HeaderBar.css';
 import './HomePage.css';
 import {IconButton, List, ListItem, ListItemText } from '@mui/material';
 import CommentIcon from '@mui/icons-material/Comment';

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { useNavigate } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import '../headerBar/HeaderBar.css';
 import './AddMessage.css';
 
@@ -14,18 +15,21 @@ function AddMessage(){
     //States for title and content
     const [title, setTitle] = useState("")
     const [content, setContent] = useState("")
+    
+    const { state } = useLocation(); // Read values passed on state
+    const { email, familyName, givenName, googleId, imageUrl, name} = state;
 
     function goHome(){
-        navigate("/home"); 
+        navigate("/home", {  state: {email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}} ); 
        
     };
 
     function goPost(){ 
-        
+        console.log('already on post')
     };
 
     function goProfile(){
-        navigate("/profile"); 
+        navigate("/profile", {  state: {email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}} ); 
     };
 
     //Handler method for when the title state changes. Allows for "live typing"

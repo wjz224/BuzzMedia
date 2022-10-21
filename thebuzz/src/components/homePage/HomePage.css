@@ -28,37 +28,3 @@ body {
     padding-left: 20px;
 }
 
-.header {
-    padding-left: 2pc;
-    padding-top: 0;
-    margin-top: .5pc;
-    background-color: #f4eaa7;
-}
-
-.headerContainer {
-    height: 8pc;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    display: flex;
-}
-
-.btnContainer {
-    display: flex;
-    justify-content: right;
-    margin-left: 65pc;
-    
-}
-.btn {
-    padding-left: 1pc;
-    padding-right: 1pc;
-    font-size: medium;
-    background-color: #f4eaa7;
-    border: 0;
-    
-}
-
-.btn:hover {
-    background-color: #f8db71;
-    border: 1px;
-} 

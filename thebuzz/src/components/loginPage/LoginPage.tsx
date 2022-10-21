@@ -29,17 +29,6 @@ function LoginPage() {
         gapi.load('client:auth2', start);
     });
 
-    
-
-   
-
-    //!add this to first div to add background image
-    // style={{ backgroundImage: `url(${background})`,
-    // height:'100vh',
-    
-    // fontSize:'50px',
-    // backgroundSize: 'cover',
-    // backgroundRepeat: 'no-repeat',}}
     return (
         <div
             style={{ backgroundImage: `url(${background})`,

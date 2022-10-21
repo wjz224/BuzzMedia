@@ -1,3 +1,11 @@
 .infoContainer {
     padding-top: 5%;
 }
+
+.headerContainer {
+    height: 8pc;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    display: flex;
+}

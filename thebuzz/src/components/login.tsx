@@ -19,17 +19,8 @@ function Login() {
                 googleId: res.profileObj.googleId,
                 imageUrl: res.profileObj.imageUrl,
                 name: res.profileObj.name } 
-            });
-         navigate('/home', 
-            { state: {
-                email: res.profileObj.email,
-                familyName: res.profileObj.familyName,
-                givenName: res.profileObj.givenName,
-                googleId: res.profileObj.googleId,
-                imageUrl: res.profileObj.imageUrl,
-                name: res.profileObj.name } 
-            }
-        )
+            })
+
     }
 
     const onFailure = (res: any) => {
