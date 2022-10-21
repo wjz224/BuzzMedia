@@ -35,7 +35,11 @@ function ProfilePage() {
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',}}
         >
-            
+            <div>
+                <img alt='logo' className='hex' style={{ width: 500 }} src={String(orangeHex)} />
+            </div>
+             
+             
             <div className='headerContainer'>
             <div>
                 <h1 className='header'>TheBuzz</h1>
@@ -47,8 +51,10 @@ function ProfilePage() {
             </div>
                 
         </div>
-            <div className='infoContainer'>
-                <text>{name}</text>
+            <div className='hexContainer'>
+                <img className="profileImage" alt='profile' style={{width:40}} src={imageUrl} referrerPolicy="no-referrer"/>
+                <text className='name'>{name}</text>
+                <text className='email'>{email}</text>
                 <button><a href='/'>Logout</a></button>
                 {/* <Logout /> */}
             </div>

@@ -9,3 +9,14 @@
     top: 0;
     display: flex;
 }
+
+.hexContainer {
+    display: flex;
+    justify-content: center;  
+
+}
+
+.hex {
+    display: flex;
+    justify-content: center;
+}
