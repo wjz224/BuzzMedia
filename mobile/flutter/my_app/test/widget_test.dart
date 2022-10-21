@@ -11,7 +11,7 @@ import 'package:my_app/net/get_items_api.dart';
 import 'package:my_app/net/post_items_api.dart';
 import 'package:my_app/net/put_like_api.dart';
 import 'package:my_app/net/put_like_api.dart';
-import 'package:my_app/views/main.dart';
+import 'package:my_app/main.dart';
 import 'package:http/http.dart' as http;
 
 

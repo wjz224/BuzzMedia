@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_app/net/get_items_api.dart';
 import 'package:my_app/net/put_dislike_api.dart';
-import 'package:my_app/views/post_view.dart';
+import 'package:my_app/pages/PostPage.dart';
 import 'package:my_app/net/put_like_api.dart';
 
 
