@@ -9,11 +9,14 @@ import com.google.gson.*;
 
 import java.io.Console;
 import java.util.Map;
+
+
 /**
  * For now, our app creates an HTTP server that can only get and add data.
  */
 public class App {
     public static void main(String[] args) {
+        
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
         String db_url = env.get("DATABASE_URL");

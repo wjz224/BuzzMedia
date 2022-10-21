@@ -1,0 +1,21 @@
+.header {
+    padding-left: 1.5pc;
+    padding-top: .5pc;
+    
+}
+
+.headerContainer {
+    height: 4pc;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    display: flex;
+    background-color: #f4eaa7;
+}
+
+.btnContainer {
+    display: flex;
+    justify-content: right;
+    margin-left: 65pc;
+    
+}

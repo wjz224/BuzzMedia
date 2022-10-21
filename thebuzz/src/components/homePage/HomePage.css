@@ -1,5 +1,5 @@
 body {
-    background-color: white;
+    background-color: #fff9d0;
     margin: 0;
     padding: 0;
 }
@@ -7,12 +7,58 @@ body {
 
 
 .postsContainer {
-    padding-top: 6pc;
-    margin-left: 2pc;
-    margin-right: 2pc;
+    padding-top: 4pc;
+    margin-left: 15pc;
+    margin-right: 15pc;
+    
+    display: flex;
+    justify-content: center;
+    padding-bottom: 3pc;
+    background-color: #fff9d0;
 }
 
 .addBtnNav {
     margin-left: 36pc;
     padding: 5px;
 }
+
+
+
+.postText{
+    padding-left: 20px;
+}
+
+.header {
+    padding-left: 2pc;
+    padding-top: 0;
+    margin-top: .5pc;
+    background-color: #f4eaa7;
+}
+
+.headerContainer {
+    height: 8pc;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    display: flex;
+}
+
+.btnContainer {
+    display: flex;
+    justify-content: right;
+    margin-left: 65pc;
+    
+}
+.btn {
+    padding-left: 1pc;
+    padding-right: 1pc;
+    font-size: medium;
+    background-color: #f4eaa7;
+    border: 0;
+    
+}
+
+.btn:hover {
+    background-color: #f8db71;
+    border: 1px;
+} 

@@ -1,28 +1,33 @@
 .header {
     padding-left: 2pc;
+    padding-top: 0;
+    margin-top: .5pc;
 }
 
 .headerContainer {
-    height: 4pc;
+    height: 8pc;
     width: 100%;
     position: fixed;
     top: 0;
     display: flex;
-    background-color: #ffa500;
 }
 
 .btnContainer {
     display: flex;
     justify-content: right;
-    margin-left: 50pc;
+    margin-left: 65pc;
+    
+}
+.btn {
+    padding-left: 1pc;
+    padding-right: 1pc;
+    font-size: medium;
+    background-color: #f4eaa7;
+    border: 0;
     
 }
 
-.btn {
-    background-color: #ffa500;
-    border: 0;
-}
-.btn :hover {
-    background-color: #ffbc3f;
+.btn:hover {
+    background-color: #f8db71;
     border: 1px;
-}
+} 

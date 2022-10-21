@@ -1,16 +1,40 @@
 import { useState, useEffect } from 'react';
 import HeaderBar from '../headerBar/HeaderBar';
 import './HomePage.css';
-import { Honeycomb, Hexagon } from 'react-honeycomb';
-
-
+import {IconButton, List, ListItem, ListItemText } from '@mui/material';
+import CommentIcon from '@mui/icons-material/Comment';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import Divider from '@mui/material/Divider';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+const background = require('../loginPage/honeyCombBackground.webp');
 
 /**
  * Component for displaying messages and message information, as well as liking and deleting messages.
  * @component 
  */
 
+
 function HomePage() {
+
+    let navigate = useNavigate();
+
+    const { state } = useLocation(); // Read values passed on state
+    const { email, familyName, givenName, googleId, imageUrl, name} = state;
+    function goHome(){
+     console.log('already home')
+       
+    };
+
+    function goPost(){
+        navigate("/add", {  state: {email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}}); 
+        
+    };
+
+    function goProfile(){
+        navigate("/profile", {  state: {email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}}); 
+    };
+    
 
     //State for the list of messages
     const [messages, setMessages] = useState<any[]>([]);
@@ -31,6 +55,10 @@ function HomePage() {
 
     }, []
     );
+
+    function comment(id: number){
+        navigate('/comments')
+    }
 
     /**
      * Updates the number of likes. Called on button click.
@@ -85,13 +113,14 @@ function HomePage() {
     //This is like the main function. Whatever is in div gets run when the component is used in App.tsx
     //Prints a title, and maps the messages json to a list format
     return (
-        <div>
-            {/* <div className='headerContainer'>
-                <h1 className='header'>TheBuzz</h1>
-                <button className='addBtnNav'>Add Post</button>
-            </div> */}
-            <HeaderBar/>
-            <div className='postsContainer'>
+        <div   
+            style={{ backgroundImage: `url(${background})`,
+            height:'100vh',
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',}}
+        >
+            
+            {/* <div className='postsContainer'>
                 {Array.isArray(messages)
                     ? messages.map((item) => (
                         <li key={item['mId']}>
@@ -100,14 +129,58 @@ function HomePage() {
                     ))
                     : messages 
                 }
+            </div> */}
+        <div className='postsContainer'>
+            <List sx={{ width: '100%', maxWidth: 900, bgcolor: '#fff9d0' }}>
+            <div className='postTextContainer'>
+                {messages.map((value) => (
+                    <><ListItem
+                        key={value}
+                        disableGutters
+                        secondaryAction={<div>
+                            <IconButton aria-label="thumbsUp" data-testid='likebtn' onClick={() => LikeMsg(value['mId'])}>
+                                <ThumbUpIcon />
+                            </IconButton>
+                            <text>{value['mLikes']}</text>
+                            <IconButton aria-label="thumbsDown" data-testid='likebtn' onClick={() => UnLikeMsg(value['mId'])}>
+                                <ThumbDownIcon />
+                            </IconButton>
+                            <IconButton aria-label="comment" onClick={() => comment(value['mId'])}>
+                                <CommentIcon />
+                            </IconButton>
+                        </div>}
+                    >
+
+                        <ListItemText 
+                            primary={`${value['mTitle']}`}
+                            secondary={`${value['mContent']}`}
+                            className={'postText'}
+                        />
+                    </ListItem>
+                    <Divider  component="li" /></>
+                    
+                ))}
+                
+                </div>
+            </List>
+        </div>
+        <div className='headerContainer'>
+            <div>
+                <h1 className='header'>TheBuzz</h1>
             </div>
+            <div className='btnContainer'>           
+                <button className='btn' onClick={goHome}>Home</button>
+                <button className='btn' onClick={goPost}>Add post</button>
+                <button className='btn' onClick={goProfile}>Profile</button>
+            </div>
+                
+        </div>
             
         </div>
     )
 }
 
-export default HomePage
 
-function renderItem(item: string) {
-    throw new Error('Function not implemented.');
-}
+
+export default HomePage;
+

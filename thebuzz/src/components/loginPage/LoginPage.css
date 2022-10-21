@@ -14,7 +14,7 @@ body {
 
 .title {
     text-align: center;
-    color: #ffa500;
+    color: white;
     font-family:fantasy;
     margin-top: 5pc;
     font-size: 70px;
@@ -36,5 +36,6 @@ body {
 
 .loginBtn {
     position: absolute;
-    margin-top: 15pc;
+    margin-top: 17pc;
+
 }

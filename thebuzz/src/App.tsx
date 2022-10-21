@@ -9,12 +9,15 @@ import {
   Link
 } from "react-router-dom";
 import ProfilePage from './components/profilePage/ProfilePage';
+import CommentPage from './components/commentPage/CommentPage';
+
 
 //MAIN FILE FOR FRONT END. 
 //This funtion calls all of the individual components for the app
 //Homepage, AddMessage, EditMessage (probably more as project goes on)
 
 function App() {
+  
     return (
       <BrowserRouter>
         <Routes>
@@ -22,6 +25,7 @@ function App() {
           <Route path="/home" element={<HomePage />} />
           <Route path="/add" element={<AddMessage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/comments" element={<CommentPage />} />
         </Routes>
       </BrowserRouter>
     );

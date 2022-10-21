@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import { useNavigate } from 'react-router';
+import '../headerBar/HeaderBar.css';
+import './AddMessage.css';
 
 /**
  * Component for adding messages.
@@ -12,6 +14,19 @@ function AddMessage(){
     //States for title and content
     const [title, setTitle] = useState("")
     const [content, setContent] = useState("")
+
+    function goHome(){
+        navigate("/home"); 
+       
+    };
+
+    function goPost(){ 
+        
+    };
+
+    function goProfile(){
+        navigate("/profile"); 
+    };
 
     //Handler method for when the title state changes. Allows for "live typing"
     const handleChangeTitle = (e: { target: { value: React.SetStateAction<string>; }; }) => {
@@ -52,15 +67,29 @@ function AddMessage(){
     //Puts title, then a form. The form has two textbboxes, one for title and one for content. 
     return(
         <div>
-            <form>
-                <p>Add Message:</p>
-                <label>
-                    Title: <input type="text" value={title} onChange={handleChangeTitle}/>
-                    Content: <input type="text" value={content} onChange={handleChangeContent}/>
-                </label>
-            </form>
-            New Message: {title} | {content}   
-            <button data-testid = 'addbtn' onClick={submit}>add</button>
+            <div className='headerContainer'>
+                <div>
+                    <h1 className='header'>TheBuzz</h1>
+                </div>
+                <div className='btnContainer'>           
+                    <button className='btn' onClick={goHome}>Home</button>
+                    <button className='btn' onClick={goPost}>Add post</button>
+                    <button className='btn' onClick={goProfile}>Profile</button>
+                </div>
+                    
+            </div>
+            <div className='container'>
+                <form>
+                    <p>Add Message:</p>
+                    <label>
+                        Title: <input type="text" value={title} onChange={handleChangeTitle}/>
+                        Content: <input type="text" value={content} onChange={handleChangeContent}/>
+                    </label>
+                </form>
+                New Message: {title} | {content}   
+                <button data-testid = 'addbtn' onClick={submit}>add</button>
+            </div>
+            
         </div>
     )
     
