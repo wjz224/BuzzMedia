@@ -16,6 +16,19 @@ import java.util.ArrayList;
 
 public class Database {
     /**
+     * Prepared statements additonal database section
+     */
+    private PreparedStatement mOnePost;
+    private PreparedStatement mOneUser;
+
+    private PreparedStatement mDeleteUser;
+    private PreparedStatement mDeletePost;
+
+    private PreparedStatement mInsertUser;
+    private PreparedStatement mInsertPost;
+
+
+    /**
      * The connection to the database.  When there is no connection, it should
      * be null.  Otherwise, there is a valid open connection
      */
@@ -216,6 +229,21 @@ public class Database {
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET subject = ?, message = ?,  likes = ? WHERE id = ?");
             db.mGetColNames = db.mConnection.prepareStatement("SELECT * FROM tblData");
+
+            //Display one post
+            db.mOnePost = db.mConnection.prepareStatement("SELECT * from postTable WHERE post_id=?");
+            //Display one user
+            db.mOneUser = db.mConnection.prepareStatement("SELECT * from userTable WHERE user_id=?");
+            //Delete User Row
+            db.mDeleteUser = db.mConnection.prepareStatement("DELETE FROM userTable WHERE user_id = ?");
+            //Delete Post Row
+            db.mDeletePost = db.mConnection.prepareStatement("DELETE FROM postTable WHERE post_id=?");
+            //Insert User
+            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO userTable VALUES (default, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            //Insert Post
+            db.mInsertPost = db.mConnection.prepareStatement("INSERT INTO postTable VALUES (default, ?, ?, ?, ?)");
+
+
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -271,6 +299,39 @@ public class Database {
         return count;
     }
 
+    int insertUser(int user_id, String username, String first_name, String last_name, String email, String sex_orient, int phone_num, String gender, String note) {
+        int count = 0;
+        try {
+            mInsertUser.setInt(1, user_id);
+            mInsertUser.setString(2, username);
+            mInsertUser.setString(3, first_name);
+            mInsertUser.setString(4, last_name);
+            mInsertUser.setString(5, email);
+            mInsertUser.setString(6, sex_orient);
+            mInsertUser.setInt(7, phone_num);
+            mInsertUser.setString(8, gender);
+            mInsertUser.setString(9, note);
+            count += mInsertUser.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    int insertPost(int post_id, int user_id, String title, String text) {
+        int count = 0;
+        try {
+            mInsertPost.setInt(1, post_id);
+            mInsertPost.setInt(2, user_id);
+            mInsertPost.setString(3, title);
+            mInsertPost.setString(4, text);
+            count += mInsertPost.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
     /**
      * Query the database for a list of all subjects and their IDs
      * 
@@ -289,6 +350,48 @@ public class Database {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * Get all data for a specific row, by User_ID
+     * 
+     * @param user_id The id of the row being requested
+     * 
+     * @return The data for the requested row, or null if the ID was invalid
+     */
+    RowData selectmOneUser(int user_id) { 
+        RowData res = null;
+        try {
+            mOneUser.setInt(1, user_id);
+            ResultSet rs = mOneUser.executeQuery();
+            if (rs.next()) {
+                res = new RowData(rs.getInt("user_id"), rs.getString("username"), rs.getString("first_name"),rs.getString("last_name"),rs.getString("email"),rs.getString("gender"),rs.getString("note"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    /**
+     * Get all data for a specific row, by ID
+     * 
+     * @param post_id The id of the row being requested
+     * 
+     * @return The data for the requested row, or null if the ID was invalid
+     */
+    RowData selectmOnePost(int post_id) { 
+        RowData res = null;
+        try {
+            mOnePost.setInt(1, post_id);
+            ResultSet rs = mOnePost.executeQuery();
+            if (rs.next()) {
+                res = new RowData(rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("title"), rs.getString("text"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 
     /**
@@ -348,6 +451,42 @@ public class Database {
      * @return The number of rows that were deleted.  -1 indicates an error.
      */
     int deleteRow(int id) {
+        int res = -1;
+        try {
+            mDeleteOne.setInt(1, id);
+            res = mDeleteOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    /**
+     * Delete a User row by User ID
+     * 
+     * @param user_id The id of the row to delete
+     * 
+     * @return The number of rows that were deleted.  -1 indicates an error.
+     */
+    int deleteUser(int id) {
+        int res = -1;
+        try {
+            mDeleteOne.setInt(1, id);
+            res = mDeleteOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    /**
+     * Delete a Post row by Post ID
+     * 
+     * @param post_id The id of the row to delete
+     * 
+     * @return The number of rows that were deleted.  -1 indicates an error.
+     */
+    int deletePost(int id) {
         int res = -1;
         try {
             mDeleteOne.setInt(1, id);
