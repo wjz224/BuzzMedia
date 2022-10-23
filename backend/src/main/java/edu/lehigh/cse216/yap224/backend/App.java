@@ -173,14 +173,18 @@ public class App {
                 int userId = 0;
 
                 // Use or store profile information in session object
+                Database.UserRowData user = new Database.UserRowData(userId,email, userName, userName, sexualOrientation, gender, note); 
                 User userSession = new User(userId, email, userName, gender, sexualOrientation, note);
                 
                 // create sessionKey by hashing the user's email since each user email is unique.   
                 int sessionKey = (int) email.hashCode();
-
-                // if sessionKey doesn't already exist than add sessionKey and userId into local hashmap
+                
+                // if sessionKey doesn't already exist than add sessionKey and userId into local hashmap and user info into database
                 if(!users.containsKey(sessionKey)){
-                    users.put(sessionKey, email);
+                    // get user_id after inserting user into database
+                    int user_id = Database.mInsertUser(user);
+                    // put sesion key and user_id into hashtable
+                    users.put(sessionKey, user_id);
                 }
                 
                 return gson.toJson(new StructuredResponse("ok"," valid token", sessionKey));
@@ -189,6 +193,64 @@ public class App {
             }
         });
 
+        
+        // GET route that returns all posts
+        Spark.get("/posts", (request, response) -> {
+            // ensure status 200 OK, with a MIME type of JSON
+            // check session key
+            response.status(200);
+            response.type("application/json");
+            return gson.toJson(new StructuredResponse("ok", null, db.selectAllPost()));
+        });
+        
+        // GET route that returns everything for a single row in the db.
+        // The ":post_id" suffix in the first parameter to get() becomes
+        // request.params("post_id"), so that we can get the requested post_id. If
+        // ":post_id" isn't a number, Spark will reply with a status 500 Internal
+        // Server Error. Otherwise, we have an integer, and the only possible
+        // error is that it doesn't correspond to a row with data.
+        Spark.get("/posts/:id", (request, response) -> {
+            int idx = Integer.parseInt(request.params("id"));
+            // implement session key check, if it exists continue, if not return error.
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            Post data = db.mOnePost(idx);
+            if (data == null) {
+                return gson.toJson(new StructuredResponse("error", idx + " not found", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, data));
+            }
+        });
+        
+        // GET route that returns all users
+        Spark.get("/users", (request, response) -> {
+            // ensure status 200 OK, with a MIME type of JSON
+            // check session key
+            response.status(200);
+            response.type("application/json");
+            return gson.toJson(new StructuredResponse("ok", null, db.selectAllUser()));
+        });
+
+        // GET route that returns everything for a single row in the db.
+        // The ":user_id" suffix in the first parameter to get() becomes
+        // request.params("user_id"), so that we can get the requested user_ID. If
+        // ":user_id" isn't a number, Spark will reply with a status 500 Internal
+        // Server Error. Otherwise, we have an integer, and the only possible
+        // error is that it doesn't correspond to a row with data.
+        Spark.get("/users/:id", (request, response) -> {
+            int idx = Integer.parseInt(request.params("id"));
+            // implement session key check, if it exists continue, if not return error.
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            User data = db.mOneUser(idx);
+            if (data == null) {
+                return gson.toJson(new StructuredResponse("error", idx + " not found", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, data));
+            }
+        });
 
         // GET route that returns all message titles and Ids. All we do is get
         // the data, embed it in a StructuredResponse, turn it into JSON, and
@@ -231,8 +293,6 @@ public class App {
             response.type("application/json");
             DataRow data = db.selectOne(idx);
 
-            
-            
             if (data == null) {
                 return gson.toJson(new StructuredResponse("error", idx + " not found", null));
             } else {
