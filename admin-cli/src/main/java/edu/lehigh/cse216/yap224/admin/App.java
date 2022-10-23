@@ -19,17 +19,17 @@ public class App {
     static void menu() {
         System.out.println("Main Menu");
         System.out.println("  [T] Create all tables");
-        System.out.println("  [D] Drop tblData");
-        System.out.println("  [1] Query for a specific row");
+        System.out.println("  [D] Drop All Tables");
+        //System.out.println("  [1] Query for a specific row");
         System.out.println("  [A] Query for a specific post");
-        System.out.println("  [B] Query for a specific post");
-        System.out.println("  [*] Query for all rows");
-        System.out.println("  [C] Query for all post");
-        System.out.println("  [D] Query for all users");
-        System.out.println("  [-] Delete a row");
+        System.out.println("  [B] Query for a specific user");
+        //System.out.println("  [*] Query for all rows");
+        //System.out.println("  [C] Query for all post");
+        //System.out.println("  [D] Query for all users");
+        //System.out.println("  [-] Delete a row");
         System.out.println("  [E] Delete a user");
         System.out.println("  [F] Delete a post");
-        System.out.println("  [+] Insert a new row");
+        //System.out.println("  [+] Insert a new row");
         System.out.println("  [G] Insert a new post");
         System.out.println("  [H] Insert a new user");
         System.out.println("  [~] Update a row");
@@ -48,7 +48,7 @@ public class App {
         /**
          * The valid characters that the user can enter 
          */
-        String actions = "TD1AB*CD-EF+GH~q?";
+        String actions = "TDABEFGH~q?";
 
         /**
          *  While loop that continues until the user enters the q character.
@@ -161,25 +161,25 @@ public class App {
             
             //Find Specific Post
             else if (action == 'A') {
-                // int post_id = getInt(in, "Enter the post ID");
-                // if (post_id == -1)
-                //     continue;
-                // Database.PostRowData res = db.mOnePost(post_id);
-                // if (res != null) {
-                //     System.out.println(res.title + " " + res.test);
-                // }
+                int post_id = getInt(in, "Enter the post ID");
+                if (post_id == -1)
+                    continue;
+                Database.PostRowData res = db.selectmOnePost(post_id);
+                if (res != null) {
+                    System.out.println(res.mTitle + " " + res.mText);
+                }
             }
 
             //Find Specific User
             else if (action == 'B') {
-                // int user_id = getInt(in, "Enter the user ID");
-                // if (user_id == -1)
-                //     continue;
-                // Database.UserRowData res = db.mOneUser(user_id);
-                // if (res != null) {
-                //     System.out.println(res.username + " " + res.name + " " + res.email + " " + res.gender);
-                //     System.out.println("  --> " + res.note);
-                // }
+                int user_id = getInt(in, "Enter the user ID");
+                if (user_id == -1)
+                    continue;
+                Database.UserRowData res = db.selectmOneUser(user_id);
+                if (res != null) {
+                    System.out.println(res.mUsername + " " + res.mName + " " + res.mEmail + " " + res.mGender);
+                    System.out.println("  --> " + res.mNote);
+                }
             }
 
             // Print all rows from Database table

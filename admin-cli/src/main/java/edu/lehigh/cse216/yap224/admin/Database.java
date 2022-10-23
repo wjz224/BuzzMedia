@@ -401,7 +401,7 @@ public class Database {
             mOneUser.setInt(1, user_id);
             ResultSet rs = mOneUser.executeQuery();
             if (rs.next()) {
-                res = new UserRowData(rs.getInt("user_id"), rs.getString("username"), rs.getString("first_name"),rs.getString("last_name"),rs.getString("email"),rs.getString("gender"),rs.getString("note"));
+                res = new UserRowData(rs.getInt("user_id"), rs.getString("username"), rs.getString("name"),rs.getString("email"),rs.getString("sex_orient"),rs.getString("gender"),rs.getString("note"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -507,8 +507,8 @@ public class Database {
     int deleteUser(int id) {
         int res = -1;
         try {
-            mDeleteOne.setInt(1, id);
-            res = mDeleteOne.executeUpdate();
+            mDeleteUser.setInt(1, id);
+            res = mDeleteUser.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -525,8 +525,8 @@ public class Database {
     int deletePost(int id) {
         int res = -1;
         try {
-            mDeleteOne.setInt(1, id);
-            res = mDeleteOne.executeUpdate();
+            mDeletePost.setInt(1, id);
+            res = mDeletePost.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -588,11 +588,12 @@ public class Database {
      */
     void dropTable() {
         try {
-            mDropTableUser.execute();
-            mDropTablePost.execute();
             mDropTableComment.execute();
             mDropTableLike.execute();
             mDropTableDislike.execute();
+            mDropTablePost.execute();
+            mDropTableUser.execute();
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
