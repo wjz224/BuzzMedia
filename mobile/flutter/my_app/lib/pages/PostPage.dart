@@ -99,6 +99,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
     makePostRequest(title, message);
     //switches page back to home page
     Navigator.push(context, MaterialPageRoute(builder: (context) {
+      
       return const MyHomePage(title: 'The Buzz');
     }));
   }
@@ -106,6 +107,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
   void cancelPost(BuildContext context) {
     //Switch to screen homepage when cancel is pressed
     Navigator.push(context, MaterialPageRoute(builder: (context) {
+      
       return const MyHomePage(title: 'The Buzz');
     }));
   }

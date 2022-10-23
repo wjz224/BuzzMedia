@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "The Buzz",
-      theme: ThemeData.dark().copyWith(accentColor: Colors.orange),
+      theme: ThemeData.from (colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepOrange)),
       home: LoginPage(),
     ),
 		);

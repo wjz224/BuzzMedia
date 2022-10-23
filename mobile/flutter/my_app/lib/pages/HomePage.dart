@@ -8,6 +8,10 @@ import 'package:my_app/net/put_like_api.dart';
 import 'package:my_app/provider/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
+
+ 
+
+
 class MyHomePage extends StatefulWidget {
   /// This stateful widget is the home page of the application
 
@@ -24,7 +28,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+     
     return Scaffold(
+
+      
       // Set appBar title to "The Buzz"
       appBar: AppBar(
         title: Text(widget.title),
@@ -43,14 +50,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   '+',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
                 ),
-              )),
-          TextButton(
+              )
+              
+              ),
+              TextButton(
               child: Text('Logout'),
+              style: TextButton.styleFrom(backgroundColor: Colors.white),
               onPressed: () {
                 final provider =
                     Provider.of<GoogleSignInProvider>(context, listen: false);
                 provider.logout();
-              })
+              }),
+          
         ],
       ),
 
