@@ -84,6 +84,14 @@ public class Database {
     private PreparedStatement mDropTableComment;
     private PreparedStatement mDropTableLike;
     private PreparedStatement mDropTableDislike;
+    /***
+     *  Prepared statements for getting all rows from the post database
+     */
+    private PreparedStatement mSelectAllPost;
+    /**
+     * Prepared statements for getting all rows from the user database
+     */
+    private PreparedStatement mSelectAllUser;
     /**
      * A prepared statement for getting the name of the columns in our database
      */
@@ -279,9 +287,9 @@ public class Database {
             //Delete Post Row
             db.mDeletePost = db.mConnection.prepareStatement("DELETE FROM postTable WHERE post_id=?");
             //Insert User
-            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO userTable VALUES ( ?, ?, ?, ?, ?, ?, ?)");
+            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO userTable VALUES (default, ?, ?, ?, ?, ?, ?)");
             //Insert Post
-            db.mInsertPost = db.mConnection.prepareStatement("INSERT INTO postTable VALUES ( ?, ?, ?, ?)");
+            db.mInsertPost = db.mConnection.prepareStatement("INSERT INTO postTable VALUES (default, ?, ?, ?)");
 
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
@@ -338,16 +346,15 @@ public class Database {
         return count;
     }
 
-    int insertUser(int user_id, String username, String name, String email, String sex_orient, String gender, String note) {
+    int insertUser(String username, String name, String email, String sex_orient, String gender, String note) {
         int count = 0;
         try {
-            mInsertUser.setInt(1, user_id);
-            mInsertUser.setString(2, username);
-            mInsertUser.setString(3, name);
-            mInsertUser.setString(4, email);
-            mInsertUser.setString(5, sex_orient);
-            mInsertUser.setString(6, gender);
-            mInsertUser.setString(7, note);
+            mInsertUser.setString(1, username);
+            mInsertUser.setString(2, name);
+            mInsertUser.setString(3, email);
+            mInsertUser.setString(4, sex_orient);
+            mInsertUser.setString(5, gender);
+            mInsertUser.setString(6, note);
             count += mInsertUser.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -355,13 +362,12 @@ public class Database {
         return count;
     }
 
-    int insertPost(int post_id, int user_id, String title, String text) {
+    int insertPost(int user_id, String title, String text) {
         int count = 0;
         try {
-            mInsertPost.setInt(1, post_id);
-            mInsertPost.setInt(2, user_id);
-            mInsertPost.setString(3, title);
-            mInsertPost.setString(4, text);
+            mInsertPost.setInt(1, user_id);
+            mInsertPost.setString(2, title);
+            mInsertPost.setString(3, text);
             count += mInsertPost.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -372,12 +378,12 @@ public class Database {
      *  Query the database for a list of all the posts
      * @return ArrayList<Post> containing all the post objects
      */
-    ArrayList<Post> selectAllPost() {
-        ArrayList<Post> res = new ArrayList<Post>();
+    ArrayList<PostRowData> selectAllPost() {
+        ArrayList<PostRowData> res = new ArrayList<PostRowData>();
         try {
             ResultSet rs = mSelectAllPost.executeQuery();
             while (rs.next()) {
-                res.add(new Post(rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("title"),rs.getInt("text")));
+                res.add(new PostRowData(rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("title"),rs.getString("text")));
             }
             rs.close();
             return res;
@@ -390,12 +396,12 @@ public class Database {
      * Query the data for all the users
      * @return ArrayList<User> containing all the user objects
      */
-    ArrayList<User> selectAllUser() {
-        ArrayList<User> res = new ArrayList<User>();
+    ArrayList<UserRowData> selectAllUser() {
+        ArrayList<UserRowData> res = new ArrayList<UserRowData>();
         try {
             ResultSet rs = mSelectAllUser.executeQuery();
             while (rs.next()) {
-                res.add(new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("name"),rs.getString("email"), rs.getString("sex_orient"), rs.getString("gender"), rs.getString("note") ));
+                res.add(new UserRowData(rs.getInt("user_id"), rs.getString("username"), rs.getString("name"),rs.getString("email"), rs.getString("sex_orient"), rs.getString("gender"), rs.getString("note")));
             }
             rs.close();
             return res;

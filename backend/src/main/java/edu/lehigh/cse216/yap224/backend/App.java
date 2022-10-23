@@ -46,7 +46,7 @@ public class App {
      * Inner session class for the session object.
      */
 
-    static Map<Integer, String> users = new HashMap<>();
+    static Map<Integer, Integer> users = new HashMap<>();
 
 
     public static void main(String[] args) {
@@ -157,11 +157,11 @@ public class App {
                 .build();
 
             // (Receive idTokenString by HTTPS POST)
-            String idTokenString = request.params("idToken");
-            String userName = request.params("userName");
-            String gender = request.params("userGender");
-            String sexualOrientation = request.params("userSexualOrientation");
-            String note = request.params("userNote");
+            String idTokenString = request.params("id_token");
+            String userName = request.params("username");
+            String gender = request.params("gender");
+            String sexualOrientation = request.params("sex_orient");
+            String note = request.params("note");
 
             GoogleIdToken idToken = verifier.verify(idTokenString);
             
@@ -182,7 +182,7 @@ public class App {
                 // if sessionKey doesn't already exist than add sessionKey and userId into local hashmap and user info into database
                 if(!users.containsKey(sessionKey)){
                     // get user_id after inserting user into database
-                    int user_id = Database.mInsertUser(user);
+                    int user_id = db.insertUser(userName, userName, email, sexualOrientation, gender, note);
                     // put sesion key and user_id into hashtable
                     users.put(sessionKey, user_id);
                 }
@@ -204,9 +204,9 @@ public class App {
         });
         
         // GET route that returns everything for a single row in the db.
-        // The ":post_id" suffix in the first parameter to get() becomes
-        // request.params("post_id"), so that we can get the requested post_id. If
-        // ":post_id" isn't a number, Spark will reply with a status 500 Internal
+        // The ":id" suffix in the first parameter to get() becomes
+        // request.params("id"), so that we can get the requested id. If
+        // ":id" isn't a number, Spark will reply with a status 500 Internal
         // Server Error. Otherwise, we have an integer, and the only possible
         // error is that it doesn't correspond to a row with data.
         Spark.get("/posts/:id", (request, response) -> {
@@ -215,15 +215,18 @@ public class App {
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            Post data = db.mOnePost(idx);
+            Database.PostRowData data = db.selectmOnePost(idx);
             if (data == null) {
                 return gson.toJson(new StructuredResponse("error", idx + " not found", null));
             } else {
                 return gson.toJson(new StructuredResponse("ok", null, data));
             }
         });
-        
-        // GET route that returns all users
+
+        // GET route that returns all users All we do is get
+        // the data, embed it in a StructuredResponse, turn it into JSON, and
+        // return it. If there's no data, we return "[]", so there's no need
+        // for error handling.
         Spark.get("/users", (request, response) -> {
             // ensure status 200 OK, with a MIME type of JSON
             // check session key
@@ -232,7 +235,7 @@ public class App {
             return gson.toJson(new StructuredResponse("ok", null, db.selectAllUser()));
         });
 
-        // GET route that returns everything for a single row in the db.
+        // GET route that returns everything for a single row in the db from the user datatable.
         // The ":user_id" suffix in the first parameter to get() becomes
         // request.params("user_id"), so that we can get the requested user_ID. If
         // ":user_id" isn't a number, Spark will reply with a status 500 Internal
@@ -244,85 +247,92 @@ public class App {
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            User data = db.mOneUser(idx);
+            Database.UserRowData data = db.selectmOneUser(idx);
             if (data == null) {
                 return gson.toJson(new StructuredResponse("error", idx + " not found", null));
             } else {
                 return gson.toJson(new StructuredResponse("ok", null, data));
             }
         });
-
-        // GET route that returns all message titles and Ids. All we do is get
-        // the data, embed it in a StructuredResponse, turn it into JSON, and
-        // return it. If there's no data, we return "[]", so there's no need
-        // for error handling.
-
-        Spark.get("/messages", (request, response) -> {
-            // ensure status 200 OK, with a MIME type of JSON
-            // check session key
-            response.status(200);
-            response.type("application/json");
-            return gson.toJson(new StructuredResponse("ok", null, db.selectAll()));
-        });
-
-        // GET route that returns everything for a single row in the db.
-        // The ":id" suffix in the first parameter to get() becomes
-        // request.params("id"), so that we can get the requested row ID. If
-        // ":id" isn't a number, Spark will reply with a status 500 Internal
-        // Server Error. Otherwise, we have an integer, and the only possible
-        // error is that it doesn't correspond to a row with data.
-        Spark.get("/messages/:id", (request, response) -> {
-            int idx = Integer.parseInt(request.params("id"));
-            // implement session key check, if it exists continue, if not return error.
-            // ensure status 200 OK, with a MIME type of JSON
-            response.status(200);
-            response.type("application/json");
-            DataRow data = db.selectOne(idx);
-            if (data == null) {
-                return gson.toJson(new StructuredResponse("error", idx + " not found", null));
-            } else {
-                return gson.toJson(new StructuredResponse("ok", null, data));
-            }
-        });
-
-        Spark.get("/messages/:id/likes", (request, response) -> {
-            int idx = Integer.parseInt(request.params("id"));
-             // implement session key check, if it exists continue, if not return error.
-            // ensure status 200 OK, with a MIME type of JSON
-            response.status(200);
-            response.type("application/json");
-            DataRow data = db.selectOne(idx);
-
-            if (data == null) {
-                return gson.toJson(new StructuredResponse("error", idx + " not found", null));
-            } else {
-                return gson.toJson(new StructuredResponse("ok", null, data.mLikes));
-            }
-        });
-
-        // POST route for adding a new element to the db. This will read
+  
+        // POST route for adding a new post to the post table in the db. This will read 
+        // sessionKey from the body of the request and turn it into an int
         // JSON from the body of the request, turn it into a SimpleRequest
         // object, extract the title and message, insert them, and return the
         // ID of the newly created row.
-        Spark.post("/messages", (request, response) -> {
-             // implement session key check, if it exists continue, if not return error.
-            // NB: if gson.Json fails, Spark will reply with status 500 Internal
-            // Server Error
-            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+        Spark.post("/posts", (request, response) -> {
+           // get session key for the user making the post
+           int sessionKey = Integer.parseInt(request.params("sessionKey"));
+           // implement session key check, if it exists in the hashtable then continue, if not return error.
+           if (users.containsKey(sessionKey) == false) {
+                return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+           }
+           // NB: if gson.Json fails, Spark will reply with status 500 Internal
+           // Server Error
+           SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+           // ensure status 200 OK, with a MIME type of JSON
+           // NB: even on error, we return 200, but with a JSON object that
+           // describes the error.
+           response.status(200);
+           response.type("application/json");
+           int user_id = users.get(sessionKey);
+           // NB: createEntry checks for null title and message
+           int newId = db.insertPost(user_id,req.mTitle, req.mMessage);
+           if (newId <= 0) {
+               return gson.toJson(new StructuredResponse("error", "error adding post", null));
+           } else {
+               return gson.toJson(new StructuredResponse("ok", "" + newId, null));
+           }
+       });
+    
+        // DELETE route for removing a post from the db
+        Spark.delete("/posts/:id", (request, response) -> {
+            // get session key for the user making the post
+           int sessionKey = Integer.parseInt(request.params("sessionKey"));
+           // implement session key check, if it exists in the hashtable then continue, if not return error.
+           if (users.containsKey(sessionKey) == false) {
+                return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+           }
+            // If we can't get an ID, Spark will send a status 500
+            int idx = Integer.parseInt(request.params("id"));
             // ensure status 200 OK, with a MIME type of JSON
-            // NB: even on error, we return 200, but with a JSON object that
-            // describes the error.
             response.status(200);
             response.type("application/json");
-            // NB: createEntry checks for null title and message
-            int newId = db.insertRow(req.mTitle, req.mMessage);
-            if (newId <= 0) {
-                return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
+            // NB: we won't concern ourselves too much with the quality of the
+            // message sent on a successful delete
+            int result = db.deletePost(idx);
+            if (result <= 0) {
+                return gson.toJson(new StructuredResponse("error", "unable to delete row " + idx, null));
             } else {
-                return gson.toJson(new StructuredResponse("ok", "" + newId, null));
+                return gson.toJson(new StructuredResponse("ok", null, null));
             }
         });
 
+          // DELETE route for removing a user from the db
+          Spark.delete("/users/:id", (request, response) -> {
+            // get session key for the user making the post
+           int sessionKey = Integer.parseInt(request.params("sessionKey"));
+           // implement session key check, if it exists in the hashtable then continue, if not return error.
+           if (users.containsKey(sessionKey) == false) {
+                return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+           }
+           // If we can't get an ID, Spark will send a status 500
+           int idx = Integer.parseInt(request.params("id"));
+           // ensure status 200 OK, with a MIME type of JSON
+           response.status(200);
+           response.type("application/json");
+           // NB: we won't concern ourselves too much with the quality of the
+           // message sent on a successful delete
+           int result = db.deleteUser(idx);
+           if (result <= 0) {
+               return gson.toJson(new StructuredResponse("error", "unable to delete row " + idx, null));
+           } else {
+               return gson.toJson(new StructuredResponse("ok", null, null));
+           }
+       });
+
+
+       /** *
         // PUT route for updating a row in the db. This is almost
         // exactly the same as POST
         Spark.put("/messages/:id", (request, response) -> {
@@ -341,7 +351,8 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null, result));
             }
         });
-
+        **/
+        /** 
         Spark.put("/messages/:id/likes", (request, response) -> {
              // implement session key check, if it exists continue, if not return error.
             // If we can't get an ID or can't parse the JSON, Spark will send
@@ -360,8 +371,9 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null, result));
             }
         });
+        **/
 
-
+        /** 
         Spark.put("/messages/:id/dislikes", (request, response) -> {
              // implement session key check, if it exists continue, if not return error.
             // If we can't get an ID or can't parse the JSON, Spark will send
@@ -380,10 +392,11 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null, result));
             }
         });
-
+         
+        **/
         
         
-
+        /** 
         // DELETE route for removing a row from the db
         Spark.delete("/messages/:id", (request, response) -> {
              // implement session key check, if it exists continue, if not return error.
@@ -402,7 +415,8 @@ public class App {
             }
         });
     }
-
+        **/
+    }
     /**
      * Get an integer environment varible if it exists, and otherwise return the
      * default value.
