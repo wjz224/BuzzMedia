@@ -10,7 +10,7 @@ public class User {
      */
     public final int mUserId;
     /***
-     * The User's Email, private since first names should not change
+     * The User's Email, private since emails should not change
      */
     private String mEmail;
     /***

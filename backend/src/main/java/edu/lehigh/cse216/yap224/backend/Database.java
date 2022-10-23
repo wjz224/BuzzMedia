@@ -337,10 +337,7 @@ public class Database {
         }
         return res;
     }
-
-
-
-
+    
     /**
      * Create tblData. If it already exists, this will print an error
      */
