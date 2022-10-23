@@ -110,12 +110,15 @@ Mobile:
         
         
 - __Get__: returns all entities from the table comment
-    - \GET /comments
+    - \GET /posts
     - JSON Route:
-        - "mComment_id" = int
-        - "mPost_id" = int
-        - "mUser_Id" = int
-        - "mComment" = String
+        - "mUser_id" = int
+        - "mUsername" = String
+        - "mName" = String
+        - "mEmail" = String
+        - "mSex_orient" = String
+        - "mGender" = String
+        - "mNote" = String
 
 -  __Get__: returns one entity from the table comment
     - \GET /comments/#
@@ -124,16 +127,32 @@ Mobile:
         - "mPost_id" = int
         - "mUser_Id" = int
         - "mComment" = String    
-  
-- __Post__ : adds a new comment to the associated messageId
-    - \POST /comments
+        
+- __Post__: Verifies the access token and adds a new user to the associated user id
+   - \PUT /verify
+   - JSON Route:
+     -  "sessionKey" = int
+     - "mComment_id" = int
+     - "mPost_id" = int
+     - "mUser_id" = int
+     - "mComment" = String
+     
+- __Post__ : Adds a new post to the associated post_id and user_id
+    - \POST /posts
     - JSON Route: 
         - "mComment_id" = int
         - "mPost_id" = int
         - "mUser_id" = int
         - "mComment" = String
+- __Post__ : Adds a new comment to the associated comment_id and post_id and user_id
+    - \POST /comments
+    - JSON Route: 
+         - "mPost_id" = int
+         - "mUser_id" = int
+         - "mTitle" = String
+         - "mText" = String
   
-- __Delete__: removes a post specified by an ID number from the table post
+- __Delete__: Removes a post specified by an ID number from the table post
     - \DELETE /posts/#
     - JSON Route: 
         - "mPost_id" = int
@@ -147,14 +166,14 @@ Mobile:
     - \DELETE /users/#
         - "mUser_id" = int
         
-- __Put__: changes an existing post in the table by specifying an post id and the user id
+- __Put__: Updates an existing post in the table by specifying an post id and the user id
     - \PUT /posts/#
     - JSON Route:
         - "mPost_id" = int
         - "mUser_id" = int
         - "mTitle" = String
         - "mText" = String
-- __Put__: changes an existing comment  in the table by specifying an comment id, the post id, and the user id
+- __Put__: Updates an existing comment in the table by specifying an comment id, the post id, and the user id
     - \PUT /comments/#
     - JSON Route:
         - "mComment_id" = int
@@ -174,10 +193,6 @@ Mobile:
         - "mPost_id" = int
         - "mDislikes" = int
 
-- __Put__: Verifies the access token
-   - \PUT /verify
-   - JSON Route:
-     -  "sessionKey" = int
   
 ## Javadoc documentation
 Read HTML file for App.java and Database.java [here](./backend\src\main\java\edu\lehigh\cse216\yap224\backend\JavadocHTMLFiles\index-all.html) 
