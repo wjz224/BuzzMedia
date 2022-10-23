@@ -71,86 +71,113 @@ Mobile:
 
 
 ## Routes
-- __Get__: returns one entity from the table post
-   - \GET /messages 
+- __Get__: returns all entity from the table post
+   - \GET /posts
    - JSON Route: 
-         - "mId" = int
-         - "mTitle" = String
-         - "mContent" = String
-         - "mLikes" = int
-         - "mCreated" = timecreated
-  
-- __Get__: returns one entity from the table comment
+     - "mPost_id" = int
+     - "mUser_id" = int
+     - "mTitle" = String
+     - "mText" = String
+     
+- __Get__: returns one entity from the table post
+    - \GET /posts/#
+    - JSON Route:
+        - "mPost_id" = int
+        - "mUser_id" = String
+        - "mTitle" = String
+        - "mText" = String
+- __Get__: returns one entity from the table user
+    - \GET /users
+    - JSON Route:
+        - "mUser_id" = int
+        - "mUsername" = String
+        - "mName" = String
+        - "mEmail" = String
+        - "mSex_orient" = String
+        - "mGender" = String
+        - "mNote" = String
+        
+- __Get__: returns one entity from the table user
+    - \GET /users/#
+    - JSON Route:
+        - "mUser_id" = int
+        - "mUsername" = String
+        - "mName" = String
+        - "mEmail" = String
+        - "mSex_orient" = String
+        - "mGender" = String
+        - "mNote" = String
+        
+        
+- __Get__: returns all entities from the table comment
     - \GET /comments
     - JSON Route:
-        - "mId" = int
-        - "mCommentId" = int
-        - "mCommentLikes" = int
-        - "mCommentDislikes" = int
+        - "mComment_id" = int
+        - "mPost_id" = int
+        - "mUser_Id" = int
         - "mComment" = String
-    
 
-- __Post__: adds a new message, title, messageId, and like counter to the current database table
-    - \POST /messages
-    - JSON Route: 
-         - "mTitle" = String
-         - "mContent" = String
+-  __Get__: returns one entity from the table comment
+    - \GET /comments/#
+    - JSON Route:
+        - "mComment_id" = int
+        - "mPost_id" = int
+        - "mUser_Id" = int
+        - "mComment" = String    
   
 - __Post__ : adds a new comment to the associated messageId
     - \POST /comments
     - JSON Route: 
-        - "mId" = int
+        - "mComment_id" = int
+        - "mPost_id" = int
+        - "mUser_id" = int
         - "mComment" = String
   
-- __Delete__: removes an entity specified by an ID number from the table
-    - \DELETE /messages/#
+- __Delete__: removes a post specified by an ID number from the table post
+    - \DELETE /posts/#
     - JSON Route: 
-        - "mId" = int
+        - "mPost_id" = int
   
 - __Delete__: Removes a comment specified by the commentId
     - \DELETE /comments/#
     - JSON Route: 
-         - "mCommentId" =  int
-   
-- __Put__: changes an existing entity in the table by specifying an ID number
-    - \PUT /messages/#
+        - "mComment_id" =  int
+         
+- __Delete__: Delete a user specified by the userId
+    - \DELETE /users/#
+        - "mUser_id" = int
+        
+- __Put__: changes an existing post in the table by specifying an post id and the user id
+    - \PUT /posts/#
     - JSON Route:
-        - "mId" = int
-        - "mContent" = String
-
-- __Put__: Adds likes for message
-    - \PUT /messages/#/likes
-    - JSON Route:
-        - "mId" = int
-        -  "mLikes" = int
-      
-- __Put__: Adds dislikes for message
-    - \PUT /messages/#/dislikes
-    -  JSON Route:
-        - "mId" = int
-        - "mDislikes" = int
-      
-- __Put__: Update Comment
+        - "mPost_id" = int
+        - "mUser_id" = int
+        - "mTitle" = String
+        - "mText" = String
+- __Put__: changes an existing comment  in the table by specifying an comment id, the post id, and the user id
     - \PUT /comments/#
-    - JSON Route: 
-         - "mId" = int
-         - "mComment" = String
+    - JSON Route:
+        - "mComment_id" = int
+        - "mPost_id" = int
+        - "mUser_id" = int
+        - "mComment" = String
+        
+- __Put__: Dislike for post
+    - \PUT /posts/#/likes
+    - JSON Route:
+        - "mPost_id" = int
+        - "mLikes" = int
       
-- __Put__: Adds likes for comment
-    - \PUT /comments/#/likes
-    - JSON Route:
-        - "mCommentId" = int
-        - "mCommentLikes" = int
-  
-- __Put__: Adds dislikes for comment
-    - \PUT /comments/#/dislikes
-    - JSON Route:
-         - "mCommentId" = int
-         - "mCommentDislikes" = int
+- __Put__: Dislike for post
+    - \PUT /posts/#/dislikes
+    -  JSON Route:
+        - "mPost_id" = int
+        - "mDislikes" = int
+
 - __Put__: Verifies the access token
    - \PUT /verify
    - JSON Route:
-     -  "access_token" = string
+     -  "sessionKey" = int
   
 ## Javadoc documentation
 Read HTML file for App.java and Database.java [here](./backend\src\main\java\edu\lehigh\cse216\yap224\backend\JavadocHTMLFiles\index-all.html) 
