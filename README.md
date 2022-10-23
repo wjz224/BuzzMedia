@@ -132,10 +132,6 @@ Mobile:
    - \PUT /verify
    - JSON Route:
      -  "sessionKey" = int
-     - "mComment_id" = int
-     - "mPost_id" = int
-     - "mUser_id" = int
-     - "mComment" = String
      
 - __Post__ : Adds a new post to the associated post_id and user_id
     - \POST /posts
