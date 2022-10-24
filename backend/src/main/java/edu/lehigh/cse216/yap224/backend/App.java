@@ -150,6 +150,7 @@ public class App {
         
         // POST route that verifys the access token and returns a sessionid
         Spark.post("/verify/:id_token", (request,response) -> {
+            response.status(200);
             response.type("application/json");
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
                 // Specify the CLIENT_ID of the app that accesses the backend:
@@ -187,6 +188,7 @@ public class App {
             } else {
                 return gson.toJson(new StructuredResponse("error"," invalid token", null));
             }
+            
         });
 
         
