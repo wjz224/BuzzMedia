@@ -158,24 +158,18 @@ public class App {
 
             // (Receive idTokenString by HTTPS POST)
             String idTokenString = request.params("id_token");
-            String userName = request.params("username");
-            String gender = request.params("gender");
-            String sexualOrientation = request.params("sex_orient");
-            String note = request.params("note");
+            String gender = "N/A";
+            String sexualOrientation = "N/A";
+            String note = "N/A";
 
             GoogleIdToken idToken = verifier.verify(idTokenString);
             
             if (idToken != null) {
                 // Get profile information from payload
                 Payload payload = idToken.getPayload();
+                String userName = (String) payload.get("name");
                 String email = payload.getEmail();
-                // id value that will be recieved from the database this is temporary for now 
-                int userId = 0;
-
-                // Use or store profile information in session object
-                Database.UserRowData user = new Database.UserRowData(userId,email, userName, userName, sexualOrientation, gender, note); 
-                User userSession = new User(userId, email, userName, gender, sexualOrientation, note);
-                
+        
                 // create sessionKey by hashing the user's email since each user email is unique.   
                 int sessionKey = (int) email.hashCode();
                 
@@ -334,7 +328,7 @@ public class App {
 
        /** *
         // PUT route for updating a row in the db. This is almost
-        // exactly the same as POST
+        // exactly the same as POST 
         Spark.put("/messages/:id", (request, response) -> {
              // implement session key check, if it exists continue, if not return error.
             // If we can't get an ID or can't parse the JSON, Spark will send
