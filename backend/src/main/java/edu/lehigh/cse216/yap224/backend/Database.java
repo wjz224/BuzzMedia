@@ -142,16 +142,14 @@ public class Database {
     public static class UserRowData {
         int mUser_id;
         String mUsername;
-        String mName;
         String mEmail;
         String mSex_orient;
         String mGender;
         String mNote;
         
-        public UserRowData(int user_id, String username, String name, String email, String sex_orient, String gender, String note) {
+        public UserRowData(int user_id, String username, String email, String sex_orient, String gender, String note) {
             mUser_id = user_id;
-            mUsername = username;
-            mName = name;
+            mUsername = username;;
             mEmail = email;
             mSex_orient = sex_orient;
             mGender = gender;
@@ -287,7 +285,7 @@ public class Database {
             //Delete Post Row
             db.mDeletePost = db.mConnection.prepareStatement("DELETE FROM postTable WHERE post_id=?");
             //Insert User
-            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO userTable VALUES (default, ?, ?, ?, ?, ?, ?)");
+            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO userTable VALUES (default, ?, ?, ?, ?, ?)");
             //Insert Post
             db.mInsertPost = db.mConnection.prepareStatement("INSERT INTO postTable VALUES (default, ?, ?, ?)");
 
@@ -346,15 +344,14 @@ public class Database {
         return count;
     }
 
-    int insertUser(String username, String name, String email, String sex_orient, String gender, String note) {
+    int insertUser(String username, String email, String sex_orient, String gender, String note) {
         int count = 0;
         try {
             mInsertUser.setString(1, username);
-            mInsertUser.setString(2, name);
-            mInsertUser.setString(3, email);
-            mInsertUser.setString(4, sex_orient);
-            mInsertUser.setString(5, gender);
-            mInsertUser.setString(6, note);
+            mInsertUser.setString(2, email);
+            mInsertUser.setString(3, sex_orient);
+            mInsertUser.setString(4, gender);
+            mInsertUser.setString(5, note);
             count += mInsertUser.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -401,7 +398,7 @@ public class Database {
         try {
             ResultSet rs = mSelectAllUser.executeQuery();
             while (rs.next()) {
-                res.add(new UserRowData(rs.getInt("user_id"), rs.getString("username"), rs.getString("name"),rs.getString("email"), rs.getString("sex_orient"), rs.getString("gender"), rs.getString("note")));
+                res.add(new UserRowData(rs.getInt("user_id"), rs.getString("username"),rs.getString("email"), rs.getString("sex_orient"), rs.getString("gender"), rs.getString("note")));
             }
             rs.close();
             return res;
@@ -424,7 +421,7 @@ public class Database {
             mOneUser.setInt(1, user_id);
             ResultSet rs = mOneUser.executeQuery();
             if (rs.next()) {
-                res = new UserRowData(rs.getInt("user_id"), rs.getString("username"), rs.getString("name"),rs.getString("email"),rs.getString("sex_orient"),rs.getString("gender"),rs.getString("note"));
+                res = new UserRowData(rs.getInt("user_id"), rs.getString("username"), rs.getString("email"),rs.getString("sex_orient"),rs.getString("gender"),rs.getString("note"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

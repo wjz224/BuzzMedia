@@ -176,7 +176,7 @@ public class App {
                 // if sessionKey doesn't already exist than add sessionKey and userId into local hashmap and user info into database
                 if(!users.containsKey(sessionKey)){
                     // get user_id after inserting user into database
-                    int user_id = db.insertUser(userName, userName, email, sexualOrientation, gender, note);
+                    int user_id = db.insertUser(userName, email, sexualOrientation, gender, note);
                     // put sesion key and user_id into hashtable
                     users.put(sessionKey, user_id);
                 }
