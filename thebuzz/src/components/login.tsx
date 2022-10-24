@@ -5,12 +5,28 @@ const clientId = (process.env.REACT_APP_CLIENT_ID as string)
 
 function Login() {
 
-    console.log(clientId);
     
+
     let navigate = useNavigate();
 
     const onSuccess = (res: any) => {
          console.log("Login Success", res.profileObj)
+
+         var userData = 
+        {
+            id_tokey: res.profileObj.googleId,
+        };
+         
+         fetch("https://thebuzzomega.herokuapp.com/verify",
+            {
+                method: "POST",
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8'
+                },
+                mode: "cors",
+                body: JSON.stringify(userData)
+            })
+
          navigate('/profile', 
             { state: {
                 email: res.profileObj.email,

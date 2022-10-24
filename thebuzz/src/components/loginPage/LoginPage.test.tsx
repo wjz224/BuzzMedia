@@ -13,10 +13,10 @@ afterEach(() => {
 //1 test included in below description
 describe("Homepage Component" , () => {
 
-  test('Render HomePage', () => {
+  test('Render LoginPage', () => {
     render(<LoginPage />);
-    // const linkElement = screen.getByText('TheBuzz');
-    // expect(linkElement).toBeInTheDocument();
+    const linkElement = screen.getByText('TheBuzz');
+    expect(linkElement).toBeInTheDocument();
   }) 
   
 })

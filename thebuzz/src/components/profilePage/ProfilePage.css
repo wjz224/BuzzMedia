@@ -1,3 +1,4 @@
+/* 
 .infoContainer {
     padding-top: 5%;
 }
@@ -8,6 +9,8 @@
     position: fixed;
     top: 0;
     display: flex;
+    position: relative;
+    justify-content: center;
 }
 
 .hexContainer {
@@ -19,4 +22,79 @@
 .hex {
     display: flex;
     justify-content: center;
+} */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    /* background-color: hsl(196, 100%, 82%); */
+}
+
+.hexContainer {
+    display: flex;
+    justify-content: center;
+
+}
+
+.title {
+    text-align: center;
+    color: white;
+    font-family: fantasy;
+    margin-top: 5pc;
+    font-size: 70px;
+}
+
+.titleContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.profileImg {
+    margin-top: 11pc;
+    position: absolute;
+    text-align: center;
+    color: white;
+    font-family: fantasy;
+    font-size: 40px;
+}
+
+.name {
+    margin-top: 18pc;
+    position: absolute;
+    text-align: center;
+    color: white;
+    font-family: fantasy;
+    font-size: 40px;
+}
+
+.email {
+    margin-top: 20.5pc;
+    position: absolute;
+    text-align: center;
+    color: white;
+    font-family: fantasy;
+    font-size: 26px;
+}
+
+.logoutBtn {
+    position: absolute;
+    margin-top: 26pc;
+
+}
+
+.bio {
+    position: absolute;
+    margin-top: 23pc;
+}
+
+.gender {
+    position: absolute;
+    margin-top: 24pc;
+}
+
+.sex {
+    position: absolute;
+    margin-top: 25pc;
 }
