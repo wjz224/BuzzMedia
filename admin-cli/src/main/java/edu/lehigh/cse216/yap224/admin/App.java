@@ -166,7 +166,7 @@ public class App {
                     continue;
                 Database.PostRowData res = db.selectmOnePost(post_id);
                 if (res != null) {
-                    System.out.println(res.mTitle + " " + res.mText);
+                    System.out.println(res.mPost_id + " " + res.mUser_id + " " + res.mTitle + " " + res.mText);
                 }
             }
 
@@ -177,7 +177,7 @@ public class App {
                     continue;
                 Database.UserRowData res = db.selectmOneUser(user_id);
                 if (res != null) {
-                    System.out.println(res.mUsername + " " + res.mName + " " + res.mEmail + " " + res.mGender);
+                    System.out.println(res.mUser_id +  " " + res.mUsername +  " " + res.mEmail + " " + res.mGender);
                     System.out.println("  --> " + res.mNote);
                 }
             }
@@ -251,28 +251,25 @@ public class App {
 
             // Add a User row to Database by reading user input for each column 
             else if (action == 'H') {
-                int user_id = getInt(in, "Enter the User ID");
                 String username = getString(in, "Enter the username");
-                String name = getString(in, "Enter the name");
                 String email = getString(in, "Enter the email");
                 String sex_orient = getString(in, "Enter the sexual orientation");
                 String gender = getString(in, "Enter the gender");
                 String note = getString(in, "Enter the note");
                 // if (phone_num.equals("") || message.equals(""))
                 //     continue;
-                int res = db.insertUser(user_id, username, name, email, sex_orient, gender, note);
+                int res = db.insertUser(username, email, sex_orient, gender, note);
                 System.out.println(res + " rows added");
             } 
 
             // Add a Post row to Database by reading user input for each column 
             else if (action == 'G') {
-                int post_id = getInt(in, "Enter the post ID");
                 int user_id = getInt(in, "Enter the user ID");
                 String title = getString(in, "Enter the title");
                 String text = getString(in, "Enter the text");
                 // if (subject.equals("") || message.equals(""))
                 //     continue;
-                int res = db.insertPost(post_id, user_id, title, text);
+                int res = db.insertPost(user_id, title, text);
                 System.out.println(res + " rows added");
             } 
 

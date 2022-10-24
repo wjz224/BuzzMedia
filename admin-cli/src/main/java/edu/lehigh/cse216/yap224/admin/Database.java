@@ -137,16 +137,14 @@ public class Database {
     public static class UserRowData {
         int mUser_id;
         String mUsername;
-        String mName;
         String mEmail;
         String mSex_orient;
         String mGender;
         String mNote;
         
-        public UserRowData(int user_id, String username, String name, String email, String sex_orient, String gender, String note) {
+        public UserRowData(int user_id, String username, String email, String sex_orient, String gender, String note) {
             mUser_id = user_id;
             mUsername = username;
-            mName = name;
             mEmail = email;
             mSex_orient = sex_orient;
             mGender = gender;
@@ -236,7 +234,7 @@ public class Database {
             
             //Create USER table
             db.mCreateTableUser = db.mConnection.prepareStatement(
-                "CREATE TABLE userTable (user_id SERIAL, username VARCHAR(50) NOT NULL, name VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL, sex_orient VARCHAR(50) NOT NULL, gender VARCHAR(50), note VARCHAR(50), primary key (user_id))");
+                "CREATE TABLE userTable (user_id SERIAL, username VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL, sex_orient VARCHAR(50) NOT NULL, gender VARCHAR(50), note VARCHAR(50), primary key (user_id))");
 
             //Create POST table
             db.mCreateTablePost = db.mConnection.prepareStatement(
@@ -277,9 +275,9 @@ public class Database {
             //Delete Post Row
             db.mDeletePost = db.mConnection.prepareStatement("DELETE FROM postTable WHERE post_id=?");
             //Insert User
-            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO userTable VALUES ( ?, ?, ?, ?, ?, ?, ?)");
+            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO userTable VALUES (default, ?, ?, ?, ?, ?)");
             //Insert Post
-            db.mInsertPost = db.mConnection.prepareStatement("INSERT INTO postTable VALUES ( ?, ?, ?, ?)");
+            db.mInsertPost = db.mConnection.prepareStatement("INSERT INTO postTable VALUES (default, ?, ?, ?)");
 
 
         } catch (SQLException e) {
@@ -337,16 +335,14 @@ public class Database {
         return count;
     }
 
-    int insertUser(int user_id, String username, String name, String email, String sex_orient, String gender, String note) {
+    int insertUser(String username, String email, String sex_orient, String gender, String note) {
         int count = 0;
         try {
-            mInsertUser.setInt(1, user_id);
-            mInsertUser.setString(2, username);
-            mInsertUser.setString(3, name);
-            mInsertUser.setString(4, email);
-            mInsertUser.setString(5, sex_orient);
-            mInsertUser.setString(6, gender);
-            mInsertUser.setString(7, note);
+            mInsertUser.setString(1, username);
+            mInsertUser.setString(2, email);
+            mInsertUser.setString(3, sex_orient);
+            mInsertUser.setString(4, gender);
+            mInsertUser.setString(5, note);
             count += mInsertUser.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -354,13 +350,12 @@ public class Database {
         return count;
     }
 
-    int insertPost(int post_id, int user_id, String title, String text) {
+    int insertPost(int user_id, String title, String text) {
         int count = 0;
         try {
-            mInsertPost.setInt(1, post_id);
-            mInsertPost.setInt(2, user_id);
-            mInsertPost.setString(3, title);
-            mInsertPost.setString(4, text);
+            mInsertPost.setInt(1, user_id);
+            mInsertPost.setString(2, title);
+            mInsertPost.setString(3, text);
             count += mInsertPost.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -401,7 +396,7 @@ public class Database {
             mOneUser.setInt(1, user_id);
             ResultSet rs = mOneUser.executeQuery();
             if (rs.next()) {
-                res = new UserRowData(rs.getInt("user_id"), rs.getString("username"), rs.getString("name"),rs.getString("email"),rs.getString("sex_orient"),rs.getString("gender"),rs.getString("note"));
+                res = new UserRowData(rs.getInt("user_id"), rs.getString("username"),rs.getString("email"),rs.getString("sex_orient"),rs.getString("gender"),rs.getString("note"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
