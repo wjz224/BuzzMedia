@@ -147,7 +147,7 @@ public class App {
         });
         
         // POST route that verifys the access token and returns a sessionid
-        Spark.post("/verify", (request,response) -> {
+        Spark.post("/verify/:id_token", (request,response) -> {
             response.type("application/json");
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
                 // Specify the CLIENT_ID of the app that accesses the backend:
@@ -254,7 +254,7 @@ public class App {
         // JSON from the body of the request, turn it into a SimpleRequest
         // object, extract the title and message, insert them, and return the
         // ID of the newly created row.
-        Spark.post("/posts", (request, response) -> {
+        Spark.post("/posts/:sessionKey", (request, response) -> {
            // get session key for the user making the post
            int sessionKey = Integer.parseInt(request.params("sessionKey"));
            // implement session key check, if it exists in the hashtable then continue, if not return error.
@@ -280,7 +280,7 @@ public class App {
        });
     
         // DELETE route for removing a post from the db
-        Spark.delete("/posts/:id", (request, response) -> {
+        Spark.delete("/posts/:id/:sessionKey", (request, response) -> {
             // get session key for the user making the post
            int sessionKey = Integer.parseInt(request.params("sessionKey"));
            // implement session key check, if it exists in the hashtable then continue, if not return error.
@@ -303,7 +303,7 @@ public class App {
         });
 
           // DELETE route for removing a user from the db
-          Spark.delete("/users/:id", (request, response) -> {
+          Spark.delete("/users/:id/:sessionKey", (request, response) -> {
             // get session key for the user making the post
            int sessionKey = Integer.parseInt(request.params("sessionKey"));
            // implement session key check, if it exists in the hashtable then continue, if not return error.

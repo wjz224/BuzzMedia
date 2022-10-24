@@ -41,6 +41,25 @@ public class AppTest extends TestCase{
         RestAssured.baseURI = "https://thebuzzomega.herokuapp.com/";
         RequestSpecification request = RestAssured.given();
 
+        request.header("Content-Type", "application/json");
+        Response response = request.get("/posts");
+        assertEquals(response.getStatusCode(), 200);
+    }
+    
+    public void testPost(){
+        RestAssured.baseURI = "https://thebuzzomega.herokuapp.com/";
+        RequestSpecification request = RestAssured.given();
+
+        request.header("Content-Type", "application/json");
+        Response response = request.body("{\"mTitle\": \"unitTestPost\", \"mMessage\": \"unitTestPostMessage\" \"mMessage\": \"unitTestPostMessage\" }").post("/posts");
+        assertEquals(response.getStatusCode(), 200);
+    }
+    **/
+    /** 
+    public void testGet(){
+        RestAssured.baseURI = "https://thebuzzomega.herokuapp.com/";
+        RequestSpecification request = RestAssured.given();
+
         request.header("COntent-Type", "application/json");
         Response response = request.get("/posts");
         assertEquals(response.getStatusCode(), 200);
