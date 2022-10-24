@@ -15,13 +15,13 @@
 2. Go into backend folder and run "mvn package; mvn heroku:deploy"
 
 ## Current Backlog
-Web: Don't refresh after every change. Instead update the state
+Web: Cannot log out, more robust unit tests, fix verification error, fix deploy.sh
 
-Admin: Make column label print automatic instead of manually typing with the for loop function and make unit tests test all options.
+Admin: Unit tests, removing old unnecessary code
 
-Backend: Fix the unit test bug in the backend where it references the 3rd row in the database
+Backend: Improve unit tests, adding new routes for updating
 
-Mobile: automatically update the view after something is liked, Store post data in objects not strings
+Mobile: Adding unit tests, fixing verify route, refactoring different pages
 
 ## Unit Test Descriptions for Phase 2
 Web: 
