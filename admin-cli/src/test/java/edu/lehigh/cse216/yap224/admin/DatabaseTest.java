@@ -1,4 +1,4 @@
-package edu.lehigh.cse216.yap224.backend;
+package edu.lehigh.cse216.yap224.admin;
 
 
 import java.util.ArrayList;
@@ -33,31 +33,30 @@ public class DatabaseTest extends TestCase{
         assertTrue( db != null );
     }
 
-    public void testDatabaseGETRoute()
+    public void testDatabaseInsert()
     {
         ArrayList test = db.selectAll();
         assertTrue( test != null );
     }
 
-    public void testDatabaseDELETERoute()
+    public void testDatabaseSelectAll()
     {
         assertTrue( true );
     }
 
-    public void testDatabasePOSTRoute()
+    public void testDatabaseSelectOne()
     {
 
-        int testInt = db.insertRow("Test", "Testmessage");
-        assertTrue( testInt == 1 );
+        assertTrue(true);
         
     }
 
-    public void testDatabasePUTLikeRoute()
+    public void testDatabaseDelete()
     {
         assertTrue( true );
     }
 
-    public void testDatabasePUTMessageChangeRoute()
+    public void testDatabaseUpdate()
     {
         assertTrue( true );
     }

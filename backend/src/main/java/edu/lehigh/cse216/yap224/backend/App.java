@@ -1,10 +1,13 @@
 package edu.lehigh.cse216.yap224.backend;
 
-// Import the Spark package, so that we can make use of the "get" function to 
-// create an HTTP GET route
+/**
+ * Importing Spark package
+ */
 import spark.Spark;
 
-// Import Google's JSON library
+/**
+ * Importing google package
+ */
 import com.google.gson.*;
 
 import java.io.Console;
@@ -34,6 +37,7 @@ public class App {
             return;
         
         db.createTable();    
+        
         db_url.concat("?sslmode=require");
 
         // Get a fully-configured connection to the database, or exit
@@ -122,7 +126,7 @@ public class App {
             }
         });
 
-        Spark.get("/messages/:id/3", (request, response) -> {
+        Spark.get("/messages/:id/likes", (request, response) -> {
             int idx = Integer.parseInt(request.params("id"));
             
             // ensure status 200 OK, with a MIME type of JSON
@@ -179,17 +183,36 @@ public class App {
             }
         });
 
-        Spark.put("/messages/:id/3", (request, response) -> {
+        Spark.put("/messages/:id/likes", (request, response) -> {
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500
             int idx = Integer.parseInt(request.params("id"));
-            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+            //SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
             DataRow current = db.selectOne(idx);
             int numOfLikes = current.mLikes;
-            int result = db.updateLike(idx, numOfLikes);
+            int result = db.likes(idx, numOfLikes);
+            if (result <= 0) {
+                return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, result));
+            }
+        });
+
+
+        Spark.put("/messages/:id/dislikes", (request, response) -> {
+            // If we can't get an ID or can't parse the JSON, Spark will send
+            // a status 500
+            int idx = Integer.parseInt(request.params("id"));
+            //SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            DataRow current = db.selectOne(idx);
+            int numOfLikes = current.mLikes;
+            int result = db.dislikes(idx,numOfLikes);
             if (result <= 0) {
                 return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
             } else {

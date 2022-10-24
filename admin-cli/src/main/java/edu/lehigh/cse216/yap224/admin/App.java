@@ -109,14 +109,12 @@ public class App {
     public static void main(String[] argv) {
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
-        String ip = env.get("POSTGRES_IP");
-        String port = env.get("POSTGRES_PORT");
-        String user = env.get("POSTGRES_USER");
-        String pass = env.get("POSTGRES_PASS");
+        String db_url = env.get("DATABASE_URL");
+        
 
         // Get a fully-configured connection to the database, or exit 
         // immediately
-        Database db = Database.getDatabase(ip, port, user, pass);
+        Database db = Database.getDatabase(db_url);
         if (db == null)
             return;
 
@@ -145,16 +143,20 @@ public class App {
                     System.out.println("  [" + res.mId + "] " + res.mSubject);
                     System.out.println("  --> " + res.mMessage);
                 }
-            } else if (action == '*') {
+            }
+            // Print all rows from Database table
+            else if (action == '*') {
                 ArrayList<Database.RowData> res = db.selectAll();
                 if (res == null)
                     continue;
                 System.out.println("  Current Database Contents");
                 System.out.println("  -------------------------");
                 for (Database.RowData rd : res) {
-                    System.out.println("  [" + rd.mId + "] " + rd.mSubject);
+                    System.out.println("  [" + rd.mId + "] " + rd.mSubject + " " + rd.mMessage + " " + rd.mLikes);
                 }
-            } else if (action == '-') {
+            }
+            // Delete a row from Database  table
+            else if (action == '-') {
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
                     continue;
@@ -162,19 +164,27 @@ public class App {
                 if (res == -1)
                     continue;
                 System.out.println("  " + res + " rows deleted");
-            } else if (action == '+') {
+            }
+            // Add a row to Database by reading user input for each column 
+            else if (action == '+') {
                 String subject = getString(in, "Enter the subject");
                 String message = getString(in, "Enter the message");
+                int likes = getInt(in, "Enter the number of likes");
                 if (subject.equals("") || message.equals(""))
                     continue;
-                int res = db.insertRow(subject, message);
+                int res = db.insertRow(subject, message, likes);
                 System.out.println(res + " rows added");
-            } else if (action == '~') {
+            } 
+            // Update a row by reading in user input
+            else if (action == '~') {
                 int id = getInt(in, "Enter the row ID :> ");
                 if (id == -1)
                     continue;
+                // Neet to implement subject and likes update
+                //String newSubject = getString(in, "Enter the new subject");
                 String newMessage = getString(in, "Enter the new message");
-                int res = db.updateOne(id, newMessage);
+                //int newLikes = getInt(in, "Enter the new number of likes");
+                int res = db.updateOne(id,newMessage);
                 if (res == -1)
                     continue;
                 System.out.println("  " + res + " rows updated");

@@ -1,52 +1,105 @@
-**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
+## Project: The Buzz
 
-When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
+## Descrition:
+- The Buzz is a social media app where users can post, delete, like, and edit messages. 
 
-*We recommend that you open this README in another tab as you perform the tasks below. You can [watch our video](https://youtu.be/0ocf7u76WSo) for a full demo of all the steps in this tutorial. Open the video in a new tab to avoid leaving Bitbucket.*
-
----
-
-## Edit a file
-
-You’ll start by editing this README file to learn how to edit a file in Bitbucket.
-
-1. Click **Source** on the left side.
-2. Click the README.md link from the list of files.
-3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
-5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
-6. Go back to the **Source** page.
-
----
-
-## Create a file
-
-Next, you’ll add a new file to this repository.
-
-1. Click the **New file** button at the top of the **Source** page.
-2. Give the file a filename of **contributors.txt**.
-3. Enter your name in the empty file space.
-4. Click **Commit** and then **Commit** again in the dialog.
-5. Go back to the **Source** page.
-
-Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
-
----
-
-## Clone a repository
-
-Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
-
-1. You’ll see the clone button under the **Source** heading. Click that button.
-2. Now click **Check out in SourceTree**. You may need to create a SourceTree account or log in.
-3. When you see the **Clone New** dialog in SourceTree, update the destination path and name if you’d like to and then click **Clone**.
-4. Open the directory you just created to see your repository’s files.
-
-Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
 ## Contributors
-1. Yash Patel
+1. Yash Patel - yap224@lehigh.edu
+2. Sean Noto - scn224@lehigh.edu
+3. Tiana Aldroubi - tma224@lehigh.edu
+4. Aryan Tawde - art223@lrhigh.edu
+4. Wilson Zheng - wjz224@lehigh.edu
+
+## User Stories
+
+U1: As an Admin I want to edit the database directly because I need to update and maintain it. (Manual test)
+
+U2: As an Admin I want to add/drop tables for maintenance purposes
+
+U3: As a User I want to like and unlike posts so I can show support for the posts I like. (Automatic test)
+
+U4: As a User I want to post text so I can share my ideas to others. (Automatic test)
+
+
+## Routes
+- __Get__: returns one entity from the table
+  \GET /messages 
+  JSON Route: {
+    "mId" = int
+    "mTitle" = String
+    "mContent" = String
+    "mLikes" = int
+    "mCreated" = timecreated
+  }
+
+- __Post__: adds a new message, title, and like counter to the current database table
+  \POST /messages
+  JSON Route: {
+    "mTitle" = String
+    "mContent" = String
+  }
+
+- __Delete__: removes an entity specified by an ID number from the table
+  \DELETE /messages/#
+  JSON Route: {
+    "mId" = int
+  }
+
+- __Put__: changes an existing entity in the table by specifying an ID number
+  \PUT /messages/#
+JSON Route:{
+  "mId" = int
+  "mContent" = String
+}
+
+- __Put__: Adds like or dislikes if already liked
+  \PUT /messages/#/3
+JSON Route:{
+  "mID" = int
+}
+
+## Javadoc documentation
+Read HTML file for App.java and Database.java [here](./backend\src\main\java\edu\lehigh\cse216\yap224\backend\JavadocHTMLFiles\index-all.html.md) 
+
+  
+## Test Description
+- __Backend__: Use the AppTest.java file to create script that automatically runs the routes for get, post, put, and delete then makes sures then Make sure that posts added through the front end/mobile actually appear in database
+
+Use Database.java to test the different methods in the Database.java class
+
+- __Admin__: Check that tables can be edited and created/deleted
+
+- __Web front-end__: Make sure buttons correctly display respective behavior, make sure user is able to add text to necessary fields, make sure messages are displayed correctly
+
+
+- __Mobile__: Make sure buttons correctly display respective behavior, make sure user is able to add text to necessary fields, make sure messages are displayed correctly
+
+
+## ERD
+
+![ERD Diagram for backend](images/ERD Diagram.png)
+
+## State Machine
+
+![State Machine](images/State Machine.png)
+
+## System Diagram
+
+![System Diagram](images/System Diagram.png)
+
+## Desktop and Mobile Renders
+
+![Desktop 1](images/desktop 1.png)
+
+![Desktop 2](images/desktop 2.png)
+
+![Android Interaction](images/Android Large.png)
+
 ## Invite Trello Link 
  https://trello.com/invite/b/ktZREaYO/6223f419fbe085536c4393c2cb3ff528/tutorial-board-1
  
- ## Link for folder with project resources
- https://drive.google.com/drive/folders/1bG9Afm0etEM5-NCcldsnn2dRRtsRPe1x?usp=sharing
+## Link for folder with project resources
+https://drive.google.com/drive/folders/1bG9Afm0etEM5-NCcldsnn2dRRtsRPe1x?usp=sharing
+
+## Documentation for React branch:
+![React Documentatin](thebuzz/docs/index.html)
