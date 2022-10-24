@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:my_app/net/verify_api.dart';
 import 'package:my_app/pages/HomePage.dart';
 
 import 'LoginPage.dart';
@@ -54,6 +55,22 @@ class ProfilePage extends StatelessWidget {
                   'Email: ' + user.email!,
                   style: TextStyle(color: Colors.black, fontSize: 24),
                 ),
+                SizedBox(height: 8),
+                Text(
+                  'Bio: N/A',
+                  style: TextStyle(color: Colors.black, fontSize: 24),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Gender: N/A',
+                  style: TextStyle(color: Colors.black, fontSize: 24),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Sexual Orientation: N/A',
+                  style: TextStyle(color: Colors.black, fontSize: 24),
+                ),
+
                 TextButton(
                     child: Text('Go to Colony Center',
                         style: TextStyle(color: Colors.white, fontSize: 40)),

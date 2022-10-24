@@ -6,6 +6,7 @@ import 'package:my_app/pages/ProfilePage.dart';
 import 'package:my_app/widgets/LoginWidget.dart';
 import 'package:provider/provider.dart';
 import 'package:my_app/provider/google_sign_in.dart';
+import 'package:my_app/net/verify_api.dart';
 
 
 class LoginPage extends StatelessWidget {
@@ -17,6 +18,9 @@ class LoginPage extends StatelessWidget {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               } else if (snapshot.hasData) {
+                final user = FirebaseAuth.instance.currentUser!;
+                verify(user.getIdToken());
+
                 return ProfilePage();/*Center( child: 
                 TextButton(
                     child: Text('Logout'),

@@ -40,6 +40,7 @@ class LoginWidget extends StatelessWidget {
                 final provider =
                     Provider.of<GoogleSignInProvider>(context, listen: false);
                 provider.googleLogin();
+                
               },
               child: CustomPaint(
                 painter: HexagonPainter(Offset(100, 20),150),

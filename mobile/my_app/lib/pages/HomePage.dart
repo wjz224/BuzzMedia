@@ -96,11 +96,7 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
     _future_list_message = fetchMessage();
   }
 
-  void _retry() {
-    setState(() {
-      _future_list_message = fetchMessage();
-    });
-  }
+  
 
   @override
   Widget build(BuildContext context) {

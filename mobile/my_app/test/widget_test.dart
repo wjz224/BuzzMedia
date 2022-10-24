@@ -13,6 +13,7 @@ import 'package:my_app/net/put_like_api.dart';
 import 'package:my_app/net/put_like_api.dart';
 import 'package:my_app/main.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_app/net/verify_api.dart';
 
 
 Future<void> main() async {
@@ -32,6 +33,15 @@ Future<void> main() async {
           200,
         );
     });
-  }
+
+  test('testing the verify route', () async{
+    Future <String> test = "12345" as Future<String>;
+    expect(
+      (await verify(test)),
+      200,
+    );
+  });
+
+}
 
 //class _MyHttpOverrides extends HttpOverrides {}
