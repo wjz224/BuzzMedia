@@ -15,9 +15,9 @@ import 'package:provider/provider.dart';
 class MyHomePage extends StatefulWidget {
   /// This stateful widget is the home page of the application
 
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({super.key});
 
-  final String title;
+  final String title = "The Buzz";
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
               
               ),
               TextButton(
-              child: Text('Logout'),
+              child: Text('Abandon the Hive'),
               style: TextButton.styleFrom(backgroundColor: Colors.white),
               onPressed: () {
                 final provider =

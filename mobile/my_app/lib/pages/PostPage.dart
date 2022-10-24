@@ -100,7 +100,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
     //switches page back to home page
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       
-      return const MyHomePage(title: 'The Buzz');
+      return const MyHomePage();
     }));
   }
 
@@ -108,7 +108,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
     //Switch to screen homepage when cancel is pressed
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       
-      return const MyHomePage(title: 'The Buzz');
+      return const MyHomePage();
     }));
   }
 }
