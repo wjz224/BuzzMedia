@@ -12,19 +12,13 @@ function Login() {
     const onSuccess = (res: any) => {
          console.log("Login Success", res.profileObj)
 
-         var userData = 
-        {
-            id_tokey: res.profileObj.googleId,
-        };
-         
-         fetch("https://thebuzzomega.herokuapp.com/verify",
+         fetch(`https://thebuzzomega.herokuapp.com/verify/${res.profileObj.googleId}`,
             {
                 method: "POST",
                 headers: {
                     'Content-type': 'application/json; charset=UTF-8'
                 },
                 mode: "cors",
-                body: JSON.stringify(userData)
             })
 
          navigate('/profile', 
