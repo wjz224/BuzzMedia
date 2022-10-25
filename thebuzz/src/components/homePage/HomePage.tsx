@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import '../headerBar/HeaderBar.css';
 import './HomePage.css';
 import {IconButton, List, ListItem, ListItemText } from '@mui/material';
-import CommentIcon from '@mui/icons-material/Comment';
+// import CommentIcon from '@mui/icons-material/Comment';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import Divider from '@mui/material/Divider';
@@ -145,9 +145,9 @@ function HomePage() {
                             <IconButton aria-label="thumbsDown" data-testid='likebtn' onClick={() => UnLikeMsg(value['mId'])}>
                                 <ThumbDownIcon />
                             </IconButton>
-                            <IconButton aria-label="comment" onClick={() => comment(value['mId'])}>
+                            {/* <IconButton aria-label="comment" onClick={() => comment(value['mId'])}>
                                 <CommentIcon />
-                            </IconButton>
+                            </IconButton> */}
                         </div>}
                     >
 

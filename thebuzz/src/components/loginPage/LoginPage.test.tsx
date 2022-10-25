@@ -15,7 +15,7 @@ describe("Homepage Component" , () => {
 
   test('Render LoginPage', () => {
     render(<LoginPage />);
-    const linkElement = screen.getByText('TheBuzz');
+    const linkElement = screen.getByText('Buzz');
     expect(linkElement).toBeInTheDocument();
   }) 
   
