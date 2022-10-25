@@ -4,18 +4,35 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+// ResultSetMetaData is a new import that I added to create an object that can return ColumnNames. Refer to getColNames to see implementation.
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
-
+import java.nio.file.LinkPermission;
 import java.util.ArrayList;
 
 public class Database {
     /**
-     * The connection to the database. When there is no connection, it should
-     * be null. Otherwise, there is a valid open connection
+     * Prepared statements to find a particular row
+     */
+    private PreparedStatement mOnePost;
+    private PreparedStatement mOneUser;
+    /**
+     * Prepared statements do delete particular row
+     */
+    private PreparedStatement mDeleteUser;
+    private PreparedStatement mDeletePost;
+    /**
+     * Prepared statements to add additional row
+     */
+    private PreparedStatement mInsertUser;
+    private PreparedStatement mInsertPost;
+
+    /**
+     * The connection to the database.  When there is no connection, it should
+     * be null.  Otherwise, there is a valid open connection
      */
     private Connection mConnection;
 
@@ -50,44 +67,112 @@ public class Database {
     private PreparedStatement mCreateTable;
 
     /**
+     * A prepared statements for creating the tables in our database
+     */
+    private PreparedStatement mCreateTableUser;
+    private PreparedStatement mCreateTablePost;
+    private PreparedStatement mCreateTableComment;
+    private PreparedStatement mCreateTableLike;
+    private PreparedStatement mCreateTableDislike;
+
+    /**
      * A prepared statement for dropping the table in our database
      */
     private PreparedStatement mDropTable;
-
-    /**\
-     * A prepared statment for adding a like to out database
-     */
-    private PreparedStatement mUpdateLike;
-
+    private PreparedStatement mDropTableUser;
+    private PreparedStatement mDropTablePost;
+    private PreparedStatement mDropTableComment;
+    private PreparedStatement mDropTableLike;
+    private PreparedStatement mDropTableDislike;
     /***
-     * DataRow is like a struct in C: we use it to hold data, and we allow
-     * direct access to its fields. In the context of this Database, DataRow
-     * represents the data we'd see in a row.
-     * 
-     * We make DataRow a static class of Database because we don't really want
-     * to encourage users to think of DataRow as being anything other than an
-     * abstract representation of a row of the database. DataRow and the
-     * Database are tightly coupled: if one changes, the other should too.
-     * 
-     * public static class DataRow {
-     * 
-     * int mId;
-     * 
-     * String mSubject;
-     * 
-     * String mMessage;
-     * 
-     * 
-     * public DataRow(int id, String subject, String message) {
-     * mId = id;
-     * mSubject = subject;
-     * mMessage = message;
-     * }
-     * }
+     *  Prepared statements for getting all rows from the post database
      */
+    private PreparedStatement mSelectAllPost;
+    /**
+     * Prepared statements for getting all rows from the user database
+     */
+    private PreparedStatement mSelectAllUser;
+    /**
+     * A prepared statement for getting the name of the columns in our database
+     */
+    private PreparedStatement mGetColNames;
 
     /**
-     * The Database constructor is private: we only create Database objects
+     * RowData is like a struct in C: we use it to hold data, and we allow 
+     * direct access to its fields.  In the context of this Database, RowData 
+     * represents the data we'd see in a row.
+     * 
+     * We make RowData a static class of Database because we don't really want
+     * to encourage users to think of RowData as being anything other than an
+     * abstract representation of a row of the database.  RowData and the 
+     * Database are tightly coupled: if one changes, the other should too.
+     */
+    public static class RowData {
+        /**
+         * The ID of this row of the database
+         */
+        int mId;
+        /**
+         * The subject stored in this row
+         */
+        String mSubject;
+        /**
+         * The message stored in this row
+         */
+        String mMessage;
+        /**
+         * The likes stored in this row
+         */
+        int mLikes;
+        /**
+         * Construct a RowData object by providing values for its fields
+         * @param id represents the id 
+         * @param subject represents the subject
+         * @param message represents the message 
+         * @param likes  represents the number of likes
+         */
+        public RowData(int id, String subject, String message, int likes) {
+            mId = id;
+            mSubject = subject;
+            mMessage = message;
+            mLikes = likes;
+        }
+    }
+
+    public static class UserRowData {
+        int mUser_id;
+        String mUsername;
+        String mEmail;
+        String mSex_orient;
+        String mGender;
+        String mNote;
+        
+        public UserRowData(int user_id, String username, String email, String sex_orient, String gender, String note) {
+            mUser_id = user_id;
+            mUsername = username;;
+            mEmail = email;
+            mSex_orient = sex_orient;
+            mGender = gender;
+            mNote = note;
+        }
+    }
+
+    public static class PostRowData {
+        int mPost_id;
+        int mUser_id;
+        String mTitle;
+        String mText;
+
+        public PostRowData(int post_id, int user_id, String title, String text) {
+            mPost_id = post_id;
+            mUser_id = user_id;
+            mTitle = title;
+            mText = text;
+        }
+    }
+
+    /**
+     * The Database constructor is private: we only create Database objects 
      * through the getDatabase() method.
      */
     private Database() {
@@ -133,28 +218,77 @@ public class Database {
             return null;
         }
 
-        // Attempt to create all of our prepared statements. If any of these
+        // Attempt to create all of our prepared statements.  If any of these 
         // fail, the whole getDatabase() call should fail
         try {
             // NB: we can easily get ourselves in trouble here by typing the
-            // SQL incorrectly. We really should have things like "tblData"
-            // as constants, and then build the strings for the statements
-            // from those constants.
+            //     SQL incorrectly.  We really should have things like "tblData"
+            //     as constants, and then build the strings for the statements
+            //     from those constants.
 
-            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table
+            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
             // creation/deletion, so multiple executions will cause an exception
-            db.mCreateTable = db.mConnection.prepareStatement(
+
+            //For primary key: primary key (pkey)
+            //For foreign key (fkey1) references table1
+            //OR  foreign key (fkey1, fkey2) references table1, table2
+
+            /*db.mCreateTable = db.mConnection.prepareStatement(
                     "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) "
-                            + "NOT NULL, message VARCHAR(500) NOT NULL, likes int)");
-            db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
+                    + "NOT NULL, message VARCHAR(1024) NOT NULL, likes int NOT NULL)");*/
+            
+            //Create USER table
+            db.mCreateTableUser = db.mConnection.prepareStatement(
+                "CREATE TABLE userTable (user_id SERIAL, username VARCHAR(50) NOT NULL, name VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL, sex_orient VARCHAR(50) NOT NULL, gender VARCHAR(50), note VARCHAR(50), primary key (user_id))");
+
+            //Create POST table
+            db.mCreateTablePost = db.mConnection.prepareStatement(
+                "CREATE TABLE postTable (post_id SERIAL, user_id int NOT NULL, title VARCHAR(50) NOT NULL, text VARCHAR(500) NOT NULL, primary key (user_id), foreign key (user_id) references userTable)");
+
+            //Create COMMENT table
+            db.mCreateTableComment = db.mConnection.prepareStatement(
+                "CREATE TABLE commentTable (comment_id SERIAL, user_id int NOT NULL, post_id int NOT NULL, coment_val VARCHAR(500) NOT NULL, primary key (comment_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+
+            //Create LIKE table
+            db.mCreateTableLike = db.mConnection.prepareStatement(
+                "CREATE TABLE likeTable (user_id SERIAL, post_id int NOT NULL, primary key (user_id, post_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+
+            //Create DISLIKE table
+            db.mCreateTableDislike = db.mConnection.prepareStatement(
+                "CREATE TABLE dislikeTable (user_id SERIAL, post_id int NOT NULL, primary key (user_id, post_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+            
+            db.mDropTableUser = db.mConnection.prepareStatement("DROP TABLE userTable");
+            db.mDropTablePost = db.mConnection.prepareStatement("DROP TABLE postTable");
+            db.mDropTableComment = db.mConnection.prepareStatement("DROP TABLE commentTable");
+            db.mDropTableLike = db.mConnection.prepareStatement("DROP TABLE likeTable");
+            db.mDropTableDislike = db.mConnection.prepareStatement("DROP TABLE dislikeTable");
 
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
             db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, ?)");
             db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblData");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
-            db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET message = ? WHERE id = ?");
-            db.mUpdateLike = db.mConnection.prepareStatement("UPDATE tblData SET likes = ? where id = ?");
+            db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET subject = ?, message = ?,  likes = ? WHERE id = ?");
+            db.mGetColNames = db.mConnection.prepareStatement("SELECT * FROM tblData");
+            
+            //Display all post
+            db.mSelectAllPost = db.mConnection.prepareStatement("SELECT * FROM postTable");
+            //Display one post
+            db.mOnePost = db.mConnection.prepareStatement("SELECT * FROM postTable WHERE post_id=?");
+           
+            //Display all users
+            db.mSelectAllUser = db.mConnection.prepareStatement("SELECT * FROM userTable");
+            //Display one user
+            db.mOneUser = db.mConnection.prepareStatement("SELECT * FROM userTable WHERE user_id=?");
+            //Delete User Row
+            db.mDeleteUser = db.mConnection.prepareStatement("DELETE FROM userTable WHERE user_id = ?");
+            //Delete Post Row
+            db.mDeletePost = db.mConnection.prepareStatement("DELETE FROM postTable WHERE post_id=?");
+            //Insert User
+            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO userTable VALUES (default, ?, ?, ?, ?, ?)");
+            //Insert Post
+            db.mInsertPost = db.mConnection.prepareStatement("INSERT INTO postTable VALUES (default, ?, ?, ?)");
+
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -167,8 +301,8 @@ public class Database {
     /**
      * Close the current connection to the database, if one exists.
      * 
-     * NB: The connection will always be null after this call, even if an
-     * error occurred during the closing operation.
+     * NB: The connection will alw  ays be null after this call, even if an 
+     *     error occurred during the closing operation.
      * 
      * @return True if the connection was cleanly closed, false otherwise
      */
@@ -194,37 +328,77 @@ public class Database {
      * 
      * @param subject The subject for this new row
      * @param message The message body for this new row
-     * @param likes The number of likes this post has
-     * 
+     * @param likes The number of likes for this new row
      * @return The number of rows that were inserted
      */
-    int insertRow(String subject, String message) {
+    int insertRow(String subject, String message, int likes) {
         int count = 0;
         try {
             mInsertOne.setString(1, subject);
             mInsertOne.setString(2, message);
-            mInsertOne.setInt(3, 0);
+            mInsertOne.setInt(3, likes);
             count += mInsertOne.executeUpdate();
-            //count = 1;
         } catch (SQLException e) {
-        
             e.printStackTrace();
-            
         }
         return count;
     }
 
-    /**
-     * Query the database for a list of all subjects and their IDs
-     * 
-     * @return All rows, as an ArrayList
-     */
-    ArrayList<DataRow> selectAll() {
-        ArrayList<DataRow> res = new ArrayList<DataRow>();
+    int insertUser(String username, String email, String sex_orient, String gender, String note) {
+        int count = 0;
         try {
-            ResultSet rs = mSelectAll.executeQuery();
+            mInsertUser.setString(1, username);
+            mInsertUser.setString(2, email);
+            mInsertUser.setString(3, sex_orient);
+            mInsertUser.setString(4, gender);
+            mInsertUser.setString(5, note);
+            count += mInsertUser.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    int insertPost(int user_id, String title, String text) {
+        int count = 0;
+        try {
+            mInsertPost.setInt(1, user_id);
+            mInsertPost.setString(2, title);
+            mInsertPost.setString(3, text);
+            count += mInsertPost.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+    /***
+     *  Query the database for a list of all the posts
+     * @return ArrayList<Post> containing all the post objects
+     */
+    ArrayList<PostRowData> selectAllPost() {
+        ArrayList<PostRowData> res = new ArrayList<PostRowData>();
+        try {
+            ResultSet rs = mSelectAllPost.executeQuery();
             while (rs.next()) {
-                res.add(new DataRow(rs.getInt("id"), rs.getString("subject"), rs.getString("message"), rs.getInt("likes")));
+                res.add(new PostRowData(rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("title"),rs.getString("text")));
+            }
+            rs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    /** 
+     * Query the data for all the users
+     * @return ArrayList<User> containing all the user objects
+     */
+    ArrayList<UserRowData> selectAllUser() {
+        ArrayList<UserRowData> res = new ArrayList<UserRowData>();
+        try {
+            ResultSet rs = mSelectAllUser.executeQuery();
+            while (rs.next()) {
+                res.add(new UserRowData(rs.getInt("user_id"), rs.getString("username"),rs.getString("email"), rs.getString("sex_orient"), rs.getString("gender"), rs.getString("note")));
             }
             rs.close();
             return res;
@@ -235,19 +409,19 @@ public class Database {
     }
 
     /**
-     * Get all data for a specific row, by ID
+     * Get all data for a specific row, by User_ID
      * 
-     * @param id The id of the row being requested
+     * @param user_id The id of the row being requested
      * 
      * @return The data for the requested row, or null if the ID was invalid
      */
-    DataRow selectOne(int id) {
-        DataRow res = null;
+    UserRowData selectmOneUser(int user_id) { 
+        UserRowData res = null;
         try {
-            mSelectOne.setInt(1, id);
-            ResultSet rs = mSelectOne.executeQuery();
+            mOneUser.setInt(1, user_id);
+            ResultSet rs = mOneUser.executeQuery();
             if (rs.next()) {
-                res = new DataRow(rs.getInt("id"), rs.getString("subject"), rs.getString("message"), rs.getInt("likes"));
+                res = new UserRowData(rs.getInt("user_id"), rs.getString("username"), rs.getString("email"),rs.getString("sex_orient"),rs.getString("gender"),rs.getString("note"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -256,11 +430,80 @@ public class Database {
     }
 
     /**
+     * Get all data for a specific row, by ID
+     * 
+     * @param post_id The id of the row being requested
+     * 
+     * @return The data for the requested row, or null if the ID was invalid
+     */
+    PostRowData selectmOnePost(int post_id) { 
+        PostRowData res = null;
+        try {
+            mOnePost.setInt(1, post_id);
+            ResultSet rs = mOnePost.executeQuery();
+            if (rs.next()) {
+                res = new PostRowData(rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("title"), rs.getString("text"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+    /**
+     * Get all data for a specific row, by ID
+     * 
+     * @param id The id of the row being requested
+     * 
+     * @return The data for the requested row, or null if the ID was invalid
+     */
+    RowData selectOne(int id) { 
+        RowData res = null;
+        try {
+            mSelectOne.setInt(1, id);
+            ResultSet rs = mSelectOne.executeQuery();
+            if (rs.next()) {
+                res = new RowData(rs.getInt("id"), rs.getString("subject"), rs.getString("message"),rs.getInt("likes"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+    /***
+     * Get all column names from the table.
+     * 
+     * @param none
+     * 
+     * @return the column names as strings from the table.
+     */
+    ArrayList<String> getColNames(){
+        ArrayList<String> names = new ArrayList<String>();
+        try {
+            
+            ResultSet rs = mGetColNames.executeQuery();
+            // Create ResultSetMetaData object (rsmd) by calling getMetaData() function from the ResultSet object (rs).
+            ResultSetMetaData rsmd = rs.getMetaData();
+            // Get columnCount by using getColumnCount() method from rsmd.
+            int columnCount = rsmd.getColumnCount();
+            // Get column name by using getColumnName(index) method from rsmd. The index represents the ascending order in which columns appear (starting from 1 which is id)
+            // For loop adds all column names into the Arraylist<String> and after returns it.
+            for (int i = 1; i <= columnCount; i++ ) {
+                names.add(rsmd.getColumnName(i));
+              }
+            rs.close();
+            return names;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * Delete a row by ID
      * 
      * @param id The id of the row to delete
      * 
-     * @return The number of rows that were deleted. -1 indicates an error.
+     * @return The number of rows that were deleted.  -1 indicates an error.
      */
     int deleteRow(int id) {
         int res = -1;
@@ -274,18 +517,57 @@ public class Database {
     }
 
     /**
-     * Update the message for a row in the database
+     * Delete a User row by User ID
      * 
-     * @param id      The id of the row to update
-     * @param message The new message contents
+     * @param user_id The id of the row to delete
      * 
-     * @return The number of rows that were updated. -1 indicates an error.
+     * @return The number of rows that were deleted.  -1 indicates an error.
      */
-    int updateOne(int id, String message) {
+    int deleteUser(int id) {
         int res = -1;
         try {
-            mUpdateOne.setString(1, message);
-            mUpdateOne.setInt(2, id);
+            mDeleteUser.setInt(1, id);
+            res = mDeleteUser.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    /**
+     * Delete a Post row by Post ID
+     * 
+     * @param post_id The id of the row to delete
+     * 
+     * @return The number of rows that were deleted.  -1 indicates an error.
+     */
+    int deletePost(int id) {
+        int res = -1;
+        try {
+            mDeletePost.setInt(1, id);
+            res = mDeletePost.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    /**
+     * Update the message for a row in the database
+     * 
+     * @param id The id of the row to update
+     * @param message The new message contents
+     * @param subject The new subject contents
+     * @param likes The new number of likes
+     * @return The number of rows that were updated.  -1 indicates an error.
+     */
+    int updateOne(int id, String subject, String message, int likes) { 
+        int res = -1;
+        try {
+            mUpdateOne.setString(1, subject);
+            mUpdateOne.setString(2, message);
+            mUpdateOne.setInt(3, likes);
+            mUpdateOne.setInt(4, id);
             res = mUpdateOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -293,74 +575,47 @@ public class Database {
         return res;
     }
 
-    /**
-     * Update the message for a row in the database
-     * 
-     * @param id      The id of the row to update
-     * @param numOfLikes Inputs the number of Likes on the message
-     * 
-     * @return The number of rows that were updated. -1 indicates an error.
-     */
-    int likes(int id, int numOfLikes) {
-        int res = -1;
-        
-        try {
-            numOfLikes = numOfLikes + 1;
-            mUpdateLike.setInt(1, numOfLikes);
-            mUpdateLike.setInt(2, id);
-            
-            res = mUpdateLike.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
+    // /**
+    //  * Create tblData.  If it already exists, this will print an error
+    //  */
+    // void createTable() {
+    //     try {
+    //         mCreateTable.execute();
+    //     } catch (SQLException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
     /**
-     * Update the message for a row in the database
-     * 
-     * @param id      The id of the row to update
-     * @param numOfLikes inputs the current amount of likes
-     * 
-     * @return The number of rows that were updated. -1 indicates an error.
-     */
-    int dislikes(int id, int numOfLikes) {
-        int res = -1;
-        try {
-            numOfLikes = numOfLikes -  1;
-            mUpdateLike.setInt(1, numOfLikes);
-            mUpdateLike.setInt(2, id);
-            
-            res = mUpdateLike.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-
-
-
-    /**
-     * Create tblData. If it already exists, this will print an error
+     * Create all tables.  If it already exists, this will print an error
      */
     void createTable() {
         try {
-            mCreateTable.execute();
+            mCreateTableUser.execute();
+            mCreateTablePost.execute();
+            mCreateTableComment.execute();
+            mCreateTableLike.execute();
+            mCreateTableDislike.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Remove tblData from the database. If it does not exist, this will print
+     * Remove tblData from the database.  If it does not exist, this will print
      * an error.
      */
     void dropTable() {
         try {
-            mDropTable.execute();
+            mDropTableComment.execute();
+            mDropTableLike.execute();
+            mDropTableDislike.execute();
+            mDropTablePost.execute();
+            mDropTableUser.execute();
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 }
+
