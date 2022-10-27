@@ -150,7 +150,7 @@ public class App {
         
         // POST route that verifys the access token and returns a sessionid
         Spark.post("/verify/:id_token", (request,response) -> {
-            response.status(200);
+            
             response.type("application/json");
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
                 // Specify the CLIENT_ID of the app that accesses the backend:
@@ -168,6 +168,7 @@ public class App {
             GoogleIdToken idToken = verifier.verify(idTokenString);
             
             if (idToken != null) {
+                response.status(200);
                 // Get profile information from payload
                 Payload payload = idToken.getPayload();
                 String userName = (String) payload.get("name");
@@ -183,16 +184,17 @@ public class App {
                     // put sesion key and user_id into hashtable
                     users.put(sessionKey, user_id);
                 }
-                
+                response.redirect("/profile");
                 return gson.toJson(new StructuredResponse("ok"," valid token", sessionKey));
             } else {
+                response.status(500);
                 return gson.toJson(new StructuredResponse("error"," invalid token", null));
             }
             
         });
 
         
-        // GET route that returns all posts
+        // GET route that returns all posts 
         Spark.get("/posts", (request, response) -> {
             // ensure status 200 OK, with a MIME type of JSON
             // check session key
