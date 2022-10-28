@@ -19,17 +19,21 @@ public class Database {
      * Prepared statements to find a particular row
      */
     private PreparedStatement mOnePost;
+    private PreparedStatement mOneComment;
     private PreparedStatement mOneUser;
+    
     /**
      * Prepared statements do delete particular row
      */
     private PreparedStatement mDeleteUser;
     private PreparedStatement mDeletePost;
+    private PreparedStatement mDeleteComment;
     /**
      * Prepared statements to add additional row
      */
     private PreparedStatement mInsertUser;
     private PreparedStatement mInsertPost;
+    private PreparedStatement mInsertComment;
 
 
     /**
@@ -42,6 +46,9 @@ public class Database {
      * A prepared statement for getting all data in the database
      */
     private PreparedStatement mSelectAll;
+    private PreparedStatement mSelectAllUser;
+    private PreparedStatement mSelectAllPost;
+    private PreparedStatement mSelectAllComment;
 
     /**
      * A prepared statement for getting one row from the database
@@ -90,6 +97,21 @@ public class Database {
      * A prepared statement for getting the name of the columns in our database
      */
     private PreparedStatement mGetColNames;
+
+    /**
+     * A prepared statement edit functions
+     */
+    private PreparedStatement mEditUserUsername;
+    private PreparedStatement mEditUserName;
+    private PreparedStatement mEditUserEmail;
+    private PreparedStatement mEditUserGender;
+    private PreparedStatement mEditUserSexOrient;
+    private PreparedStatement mEditUserNote;
+
+    private PreparedStatement mEditPostUser;
+    private PreparedStatement mEditPostTitle;
+    private PreparedStatement mEditPostText;
+    
 
 
     /**
@@ -163,6 +185,20 @@ public class Database {
             mUser_id = user_id;
             mTitle = title;
             mText = text;
+        }
+    }
+
+    public static class CommentRowData {
+        int mComment_id;
+        int mPost_id;
+        int mUser_id;
+        String mComment;
+
+        public CommentRowData(int comment_id, int post_id, int user_id, String comment) {
+            mComment_id = comment_id;
+            mPost_id = post_id;
+            mUser_id = user_id;
+            mComment = comment;
         }
     }
 
@@ -242,7 +278,7 @@ public class Database {
 
             //Create COMMENT table
             db.mCreateTableComment = db.mConnection.prepareStatement(
-                "CREATE TABLE commentTable (comment_id SERIAL, user_id int NOT NULL, post_id int NOT NULL, coment_val VARCHAR(500) NOT NULL, primary key (comment_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+                "CREATE TABLE commentTable (comment_id SERIAL, user_id int NOT NULL, post_id int NOT NULL, comment_val VARCHAR(500) NOT NULL, primary key (comment_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
 
             //Create LIKE table
             db.mCreateTableLike = db.mConnection.prepareStatement(
@@ -266,19 +302,40 @@ public class Database {
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET subject = ?, message = ?,  likes = ? WHERE id = ?");
             db.mGetColNames = db.mConnection.prepareStatement("SELECT * FROM tblData");
 
+            db.mSelectAllUser = db.mConnection.prepareStatement("SELECT * FROM userTable");
+            db.mSelectAllPost = db.mConnection.prepareStatement("SELECT * FROM postTable");
+            db.mSelectAllComment = db.mConnection.prepareStatement("SELECT * FROM commentData");
+
             //Display one post
             db.mOnePost = db.mConnection.prepareStatement("SELECT * from postTable WHERE post_id=?");
             //Display one user
             db.mOneUser = db.mConnection.prepareStatement("SELECT * from userTable WHERE user_id=?");
+            //Display one comment
+            db.mOneComment = db.mConnection.prepareStatement("SELECT * from commentTable WHERE comment_id=?");
             //Delete User Row
             db.mDeleteUser = db.mConnection.prepareStatement("DELETE FROM userTable WHERE user_id = ?");
             //Delete Post Row
             db.mDeletePost = db.mConnection.prepareStatement("DELETE FROM postTable WHERE post_id=?");
+             //Delete Comment Row
+             db.mDeleteComment = db.mConnection.prepareStatement("DELETE FROM commentTable WHERE commment_id=?");
             //Insert User
             db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO userTable VALUES (default, ?, ?, ?, ?, ?)");
             //Insert Post
             db.mInsertPost = db.mConnection.prepareStatement("INSERT INTO postTable VALUES (default, ?, ?, ?)");
+            //Comment Post
+            db.mInsertComment = db.mConnection.prepareStatement("INSERT INTO commentTable VALUES (default, ?, ?, ?)");
 
+            //Edit functions
+            db.mEditUserUsername = db.mConnection.prepareStatement("UPDATE userTable SET username =? WHERE user_id =?");
+            //db.mEditUserName = db.mConnection.prepareStatement("UPDATE userTable SET name =? WHERE user_id =?");
+            db.mEditUserEmail = db.mConnection.prepareStatement("UPDATE userTable SET email =? WHERE user_id =?");
+            db.mEditUserGender = db.mConnection.prepareStatement("UPDATE userTable SET gender =? WHERE user_id =?");
+            db.mEditUserSexOrient = db.mConnection.prepareStatement("UPDATE userTable SET sex_orient =? WHERE user_id =?");
+            db.mEditUserNote = db.mConnection.prepareStatement("UPDATE userTable SET note =? WHERE user_id =?");
+
+            db.mEditPostUser = db.mConnection.prepareStatement("UPDATE postTable SET user_id =? WHERE post_id =?");
+            db.mEditPostTitle = db.mConnection.prepareStatement("UPDATE postTable SET title =? WHERE post_id =?");
+            db.mEditPostText = db.mConnection.prepareStatement("UPDATE postTable SET text =? WHERE post_id =?");
 
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
@@ -363,6 +420,19 @@ public class Database {
         return count;
     }
 
+    int insertComment(int user_id, int post_id, String comment_val) {
+        int count = 0;
+        try {
+            mInsertComment.setInt(1, user_id);
+            mInsertComment.setInt(2, post_id);
+            mInsertComment.setString(3, comment_val);
+            count += mInsertComment.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
     /**
      * Query the database for a list of all subjects and their IDs
      * 
@@ -374,6 +444,56 @@ public class Database {
             ResultSet rs = mSelectAll.executeQuery();
             while (rs.next()) {
                 res.add(new RowData(rs.getInt("id"), rs.getString("subject"), rs.getString("message"),rs.getInt("likes")));
+            }
+            rs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Query the database for a list of all subjects and their IDs
+     * 
+     * @return All rows, as an ArrayList
+     */
+    ArrayList<UserRowData> selectAllUser() {
+        ArrayList<UserRowData> res = new ArrayList<UserRowData>();
+        try {
+            ResultSet rs = mSelectAllUser.executeQuery();
+            while (rs.next()) {
+                res.add(new UserRowData(rs.getInt("user_id"), rs.getString("username"),rs.getString("email"),rs.getString("sex_orient"),rs.getString("gender"),rs.getString("note")));
+            }
+            rs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    ArrayList<PostRowData> selectAllPost() {
+        ArrayList<PostRowData> res = new ArrayList<PostRowData>();
+        try {
+            ResultSet rs = mSelectAllPost.executeQuery();
+            while (rs.next()) {
+                res.add(new PostRowData(rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("title"), rs.getString("text")));
+            }
+            rs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    ArrayList<CommentRowData> selectAllComment() {
+        ArrayList<CommentRowData> res = new ArrayList<CommentRowData>();
+        try {
+            ResultSet rs = mSelectAllPost.executeQuery();
+            while (rs.next()) {
+                res.add(new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("commment")));
             }
             rs.close();
             return res;
@@ -418,6 +538,27 @@ public class Database {
             ResultSet rs = mOnePost.executeQuery();
             if (rs.next()) {
                 res = new PostRowData(rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("title"), rs.getString("text"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    /**
+     * Get all data for a specific row, by ID
+     * 
+     * @param post_id The id of the row being requested
+     * 
+     * @return The data for the requested row, or null if the ID was invalid
+     */
+    CommentRowData selectmOneComment(int comment_id) { 
+        CommentRowData res = null;
+        try {
+            mOneComment.setInt(1, comment_id);
+            ResultSet rs = mOneComment.executeQuery();
+            if (rs.next()) {
+                res = new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("commment"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -528,6 +669,17 @@ public class Database {
         return res;
     }
 
+    int deleteComment(int id) {
+        int res = -1;
+        try {
+            mDeleteComment.setInt(1, id);
+            res = mDeleteComment.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
     /**
      * Update the message for a row in the database
      * 
@@ -592,5 +744,113 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    int editUserUsername(int user_id, String newUsername) { 
+        int res = -1;
+        try {
+            mEditUserUsername.setString(1, newUsername);
+            mEditUserUsername.setInt(2, user_id);
+            res = mEditUserUsername.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    // int editUserName(int user_id, String newName) { 
+    //     int res = -1;
+    //     try {
+    //         mEditUserName.setString(1, newName);
+    //         mEditUserName.setInt(2, user_id);
+    //         res = mEditUserName.executeUpdate();
+    //     } catch (SQLException e) {
+    //         e.printStackTrace();
+    //     }
+    //     return res;
+    // }
+
+    int editUserEmail(int user_id, String newEmail) { 
+        int res = -1;
+        try {
+            mEditUserEmail.setString(1, newEmail);
+            mEditUserEmail.setInt(2, user_id);
+            res = mEditUserEmail.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int editUserGender(int user_id, String newGender) { 
+        int res = -1;
+        try {
+            mEditUserGender.setString(1, newGender);
+            mEditUserGender.setInt(2, user_id);
+            res = mEditUserGender.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int editUserSexOrient(int user_id, String newSexOrient) { 
+        int res = -1;
+        try {
+            mEditUserSexOrient.setString(1, newSexOrient);
+            mEditUserSexOrient.setInt(2, user_id);
+            res = mEditUserSexOrient.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int editUserNote(int user_id, String newNote) { 
+        int res = -1;
+        try {
+            mEditUserNote.setString(1, newNote);
+            mEditUserNote.setInt(2, user_id);
+            res = mEditUserNote.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int editPostUser(int post_id, int newUser) { 
+        int res = -1;
+        try {
+            mEditPostUser.setInt(1, newUser);
+            mEditPostUser.setInt(2, post_id);
+            res = mEditPostUser.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int editPostTitle(int post_id, String newTitle) { 
+        int res = -1;
+        try {
+            mEditPostTitle.setString(1, newTitle);
+            mEditPostTitle.setInt(2, post_id);
+            res = mEditPostTitle.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int editPostText(int post_id, String newText) { 
+        int res = -1;
+        try {
+            mEditPostText.setString(1, newText);
+            mEditPostText.setInt(2, post_id);
+            res = mEditPostText.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 }
