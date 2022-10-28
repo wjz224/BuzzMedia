@@ -27,7 +27,7 @@ public class App {
         System.out.println("  [I] Query for a specific commment");      //Done
         //System.out.println("  [*] Query for all rows");
         System.out.println("  [C] Query for all post");
-        System.out.println("  [o] Query for all users");
+        System.out.println("  [O] Query for all users");
         System.out.println("  [L] Query for all comments");
         //System.out.println("  [-] Delete a row");
         System.out.println("  [E] Delete a user");                      //Done
@@ -63,7 +63,7 @@ public class App {
         /**
          * The valid characters that the user can enter 
          */
-        String actions = "TDABICDLEFKGHJabcdefghij~q?";
+        String actions = "TDABICDLEFKGHJOabcdefghij~q?";
 
         /**
          *  While loop that continues until the user enters the q character.
@@ -231,53 +231,77 @@ public class App {
                 }
             }
 
-            // // Print all users from usertable
-            // else if (action == 'D') {
-            //     ArrayList<Database.UserRowData> res = db.selectAllUser();
-            //     ArrayList<String> colNames = db.getColNames();
-            //     if (res == null)
-            //         continue;
-            //     System.out.println("  Current Database Contents");
-            //     System.out.println("  -------------------------");
-            //     // print all column names
-            //     for(String names : colNames){
-            //         if(names.equals("id")){
-            //             System.out.print(" [" + names + "] ");
-            //         }
-            //         else{
-            //             System.out.print(names + " ");
-            //         }
-            //     }
-            //     System.out.println();
-            //     for (Database.UserRowData rd : res) {
-            //         System.out.println(rd.mUser_id +  " " + rd.mUsername +  " " + rd.mEmail + " " + rd.mGender);
-            //         System.out.println("  --> " + rd.mNote);
-            //     }
-            // }
+            // Print all users from usertable
+            else if (action == 'O') {
+                ArrayList<Database.UserRowData> res = db.selectAllUser();
+                ArrayList<String> colNames = db.getColNames();
+                if (res == null)
+                    continue;
+                System.out.println("  Current Database Contents");
+                System.out.println("  -------------------------");
+                // print all column names
+                for(String names : colNames){
+                    if(names.equals("id")){
+                        System.out.print(" [" + names + "] ");
+                    }
+                    else{
+                        System.out.print(names + " ");
+                    }
+                }
+                System.out.println();
+                for (Database.UserRowData rd : res) {
+                    System.out.println(rd.mUser_id +  " " + rd.mUsername +  " " + rd.mEmail + " " + rd.mGender);
+                    System.out.println("  --> " + rd.mNote);
+                }
+            }
 
-            // // Print all post from posttable
-            // else if (action == 'C') {
-            //     ArrayList<Database.PostRowData> res = db.selectAllPost();
-            //     ArrayList<String> colNames = db.getColNames();
-            //     if (res == null)
-            //         continue;
-            //     System.out.println("  Current Database Contents");
-            //     System.out.println("  -------------------------");
-            //     // print all column names
-            //     for(String names : colNames){
-            //         if(names.equals("id")){
-            //             System.out.print(" [" + names + "] ");
-            //         }
-            //         else{
-            //             System.out.print(names + " ");
-            //         }
-            //     }
-            //     System.out.println();
-            //     for (Database.UserRowData rd : res) {
-            //         System.out.println(rd.mUser_id +  " " + rd.mUsername +  " " + rd.mEmail + " " + rd.mGender);
-            //         System.out.println("  --> " + rd.mNote);
-            //     }
-            // }
+            // Print all post from posttable
+            else if (action == 'C') {
+                ArrayList<Database.PostRowData> res = db.selectAllPost();
+                ArrayList<String> colNames = db.getColNames();
+                if (res == null)
+                    continue;
+                System.out.println("  Current Database Contents");
+                System.out.println("  -------------------------");
+                // print all column names
+                for(String names : colNames){
+                    if(names.equals("id")){
+                        System.out.print(" [" + names + "] ");
+                    }
+                    else{
+                        System.out.print(names + " ");
+                    }
+                }
+                System.out.println();
+                for (Database.PostRowData rd : res) {
+                    System.out.println(rd.mPost_id +  " " + rd.mUser_id +  " " + rd.mTitle + " " + rd.mText);
+                }
+            }
+
+            // Print all post from posttable help
+            else if (action == 'L') {
+                ArrayList<Database.CommentRowData> res = db.selectAllComment();
+                ArrayList<String> colNames = db.getColNames();
+
+                if (res == null){
+                    continue;}
+                System.out.println("  Current Database Contents");
+                System.out.println("  -------------------------");
+                // print all column names
+                for(String names : colNames){
+                    if(names.equals("id")){
+                        System.out.print(" [" + names + "] ");
+                    }
+                    else{
+                        System.out.print(names + " ");
+                    }
+                }
+
+                System.out.println();
+                for (Database.CommentRowData rd : res) {
+                    System.out.println(rd.mComment_id + " " + rd.mPost_id +  " " + rd.mUser_id +  " " + rd.mComment);
+                }
+            }
 
 
             // Delete a row from Database  table

@@ -304,7 +304,7 @@ public class Database {
 
             db.mSelectAllUser = db.mConnection.prepareStatement("SELECT * FROM userTable");
             db.mSelectAllPost = db.mConnection.prepareStatement("SELECT * FROM postTable");
-            db.mSelectAllComment = db.mConnection.prepareStatement("SELECT * FROM commentData");
+            db.mSelectAllComment = db.mConnection.prepareStatement("SELECT * FROM commentTable");
 
             //Display one post
             db.mOnePost = db.mConnection.prepareStatement("SELECT * from postTable WHERE post_id=?");
@@ -317,7 +317,7 @@ public class Database {
             //Delete Post Row
             db.mDeletePost = db.mConnection.prepareStatement("DELETE FROM postTable WHERE post_id=?");
              //Delete Comment Row
-             db.mDeleteComment = db.mConnection.prepareStatement("DELETE FROM commentTable WHERE commment_id=?");
+             db.mDeleteComment = db.mConnection.prepareStatement("DELETE FROM commentTable WHERE comment_id=?");
             //Insert User
             db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO userTable VALUES (default, ?, ?, ?, ?, ?)");
             //Insert Post
@@ -491,9 +491,9 @@ public class Database {
     ArrayList<CommentRowData> selectAllComment() {
         ArrayList<CommentRowData> res = new ArrayList<CommentRowData>();
         try {
-            ResultSet rs = mSelectAllPost.executeQuery();
+            ResultSet rs = mSelectAllComment.executeQuery();
             while (rs.next()) {
-                res.add(new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("commment")));
+                res.add(new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("comment_val")));
             }
             rs.close();
             return res;
@@ -558,7 +558,7 @@ public class Database {
             mOneComment.setInt(1, comment_id);
             ResultSet rs = mOneComment.executeQuery();
             if (rs.next()) {
-                res = new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("commment"));
+                res = new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("comment_val"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
