@@ -111,6 +111,7 @@ public class Database {
     private PreparedStatement mEditPostUser;
     private PreparedStatement mEditPostTitle;
     private PreparedStatement mEditPostText;
+    private PreparedStatement mEditCommentComment;
     
 
 
@@ -336,6 +337,7 @@ public class Database {
             db.mEditPostUser = db.mConnection.prepareStatement("UPDATE postTable SET user_id =? WHERE post_id =?");
             db.mEditPostTitle = db.mConnection.prepareStatement("UPDATE postTable SET title =? WHERE post_id =?");
             db.mEditPostText = db.mConnection.prepareStatement("UPDATE postTable SET text =? WHERE post_id =?");
+            db.mEditCommentComment = db.mConnection.prepareStatement("UPDATE commentTable SET comment_val =? WHERE comment_id =?");
 
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
@@ -848,6 +850,18 @@ public class Database {
             mEditPostText.setString(1, newText);
             mEditPostText.setInt(2, post_id);
             res = mEditPostText.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int editCommentComment(int comment_id, String newComment) { 
+        int res = -1;
+        try {
+            mEditCommentComment.setString(1, newComment);
+            mEditCommentComment.setInt(2, comment_id);
+            res = mEditCommentComment.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

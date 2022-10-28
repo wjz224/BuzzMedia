@@ -507,6 +507,17 @@ public class App {
 
                 int res = db.editPostText(post_id, newText);
             }
+            else if (action == 'i') {
+                int comment_id = getInt(in, "Enter the comment ID");
+                if (comment_id == -1)
+                    continue;
+
+                Scanner scn = new Scanner(System.in);
+                System.out.print("What would you like the new comment to be: ");
+                String newComment = scn.nextLine();
+
+                int res = db.editCommentComment(comment_id, newComment);
+            }
 
 
             // Update a row by reading in user input
