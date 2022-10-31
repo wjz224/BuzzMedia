@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 import ProfilePage from './components/profilePage/ProfilePage';
 import CommentPage from './components/commentPage/CommentPage';
+import EditProfile from './components/editProfilePage/EditProfile';
 
 
 //MAIN FILE FOR FRONT END. 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/home" element={<HomePage />} />
           <Route path="/add" element={<AddMessage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/editprofile" element={<EditProfile />} />
           <Route path="/comments" element={<CommentPage />} />
         </Routes>
       </BrowserRouter>

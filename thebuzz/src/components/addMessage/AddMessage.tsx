@@ -17,10 +17,10 @@ function AddMessage(){
     const [content, setContent] = useState("")
     
     const { state } = useLocation(); // Read values passed on state
-    const { email, familyName, givenName, googleId, imageUrl, name} = state;
+    const { sessionId, email, familyName, givenName, googleId, imageUrl, name} = state;
 
     function goHome(){
-        navigate("/home", {  state: {email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}} ); 
+        navigate("/home", {  state: {sessionId: sessionId, email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}} ); 
        
     };
 
@@ -29,7 +29,7 @@ function AddMessage(){
     };
 
     function goProfile(){
-        navigate("/profile", {  state: {email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}} ); 
+        navigate("/profile", {  state: {sessionId: sessionId, email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}} ); 
     };
 
     //Handler method for when the title state changes. Allows for "live typing"
@@ -54,7 +54,7 @@ function AddMessage(){
         }
         
         //POST request
-        fetch("https://thebuzzomega.herokuapp.com/messages",
+        fetch(`https://thebuzzomega.herokuapp.com/posts/${sessionId}`,
             {
                 method: "POST",
                 headers: {
@@ -64,7 +64,7 @@ function AddMessage(){
                 body: JSON.stringify(subData)
             })
 
-            navigate("/home"); 
+            navigate("/home", {state: {sessionId: sessionId, email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}}); 
     }
 
     //"Main" method. Whatever is in the div is run whenever the component is used in App.tsx

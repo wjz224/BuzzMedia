@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import '../headerBar/HeaderBar.css';
 import './HomePage.css';
 import {IconButton, List, ListItem, ListItemText } from '@mui/material';
-// import CommentIcon from '@mui/icons-material/Comment';
+import CommentIcon from '@mui/icons-material/Comment';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import Divider from '@mui/material/Divider';
@@ -20,19 +20,19 @@ function HomePage() {
     let navigate = useNavigate();
 
     const { state } = useLocation(); // Read values passed on state
-    const { email, familyName, givenName, googleId, imageUrl, name} = state;
+    const {sessionId, email, familyName, givenName, googleId, imageUrl, name} = state;
     function goHome(){
      console.log('already home')
        
     };
 
     function goPost(){
-        navigate("/add", {  state: {email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}}); 
+        navigate("/add", {  state: {sessionId:sessionId, email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}}); 
         
     };
 
     function goProfile(){
-        navigate("/profile", {  state: {email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}}); 
+        navigate("/profile", {  state: {sessionId: sessionId, email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}}); 
     };
     
 
@@ -42,11 +42,10 @@ function HomePage() {
     //useEffect runs inside code whenever the page is loaded
     useEffect(() => {
         //GET request. Gets messages from database
-        fetch("https://thebuzzomega.herokuapp.com/messages",
+        fetch("https://thebuzzomega.herokuapp.com/posts",
             {
                 method: "GET"
             })
-            //Load messages into a json file so we can display
             .then((response) => response.json())
             .then((data) => {
                 setMessages(data.mData)
@@ -57,7 +56,7 @@ function HomePage() {
     );
 
     function comment(id: number){
-        navigate('/comments')
+        navigate('/comments', {  state: {sessionId: sessionId, email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}})
     }
 
     /**
@@ -145,15 +144,15 @@ function HomePage() {
                             <IconButton aria-label="thumbsDown" data-testid='likebtn' onClick={() => UnLikeMsg(value['mId'])}>
                                 <ThumbDownIcon />
                             </IconButton>
-                            {/* <IconButton aria-label="comment" onClick={() => comment(value['mId'])}>
+                            <IconButton aria-label="comment" onClick={() => comment(value['mId'])}>
                                 <CommentIcon />
-                            </IconButton> */}
+                            </IconButton>
                         </div>}
                     >
 
                         <ListItemText 
-                            primary={`${value['mTitle']}`}
-                            secondary={`${value['mContent']}`}
+                            primary={`User ${value['mPost_id']}'s post: ${value['mTitle']}`}
+                            secondary={`${value['mText']}`}
                             className={'postText'}
                         />
                     </ListItem>
