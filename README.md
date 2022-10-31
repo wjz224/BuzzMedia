@@ -97,19 +97,16 @@ Mobile:
         - "mGender" = String
         - "mNote" = String  
         
-- __Get__: returns all entities from the table comment
-    - \GET #sessionKey/comments/
+- __Get__: returns all entities from the table comment associated to a post_id
+    - \GET #sessionKey/comments/#post_id
     - JSON Route:
-        - "mUser_id" = int
-        - "mUsername" = String
-        - "mName" = String
-        - "mEmail" = String
-        - "mSex_orient" = String
-        - "mGender" = String
-        - "mNote" = String
+        - "mComment_id" = int
+        - "mPost_id" = int
+        - "mUser_Id" = int
+        - "mComment" = String  
 
 -  __Get__: returns one entity from the table comment
-    - \GET /comments/#comment_id
+    - \GET #sessionKey/comments/#comment_id
     - JSON Route:
         - "mComment_id" = int
         - "mPost_id" = int
@@ -124,25 +121,25 @@ Mobile:
 - __Post__ : Adds a new post associated with the user.
     - \POST #sessionKey/posts
     - JSON Route: 
+        - "mPost_id" = int
+        - "mUser_id" = int
+        - "mTitle" = String
+        - "mText" = String
+- __Post__ : Adds a new comment associated with the user
+    - \POST #sessionKey/comments
+    - JSON Route: 
         - "mComment_id" = int
         - "mPost_id" = int
         - "mUser_id" = int
         - "mComment" = String
-- __Post__ : Adds a new comment associated with the user
-    - \POST #sessionKey/comments
-    - JSON Route: 
-         - "mPost_id" = int
-         - "mUser_id" = int
-         - "mTitle" = String
-         - "mText" = String
   
 - __Delete__: Removes a post specified by an ID number from the table post
-    - \DELETE #sessionKey/posts/#post_id
+    - \DELETE #sessionKey/posts/#email/#post_id
     - JSON Route: 
         - "mPost_id" = int
   
 - __Delete__: Removes a comment specified by the commentId
-    - \DELETE #sessionKey/comments/#comment_id
+    - \DELETE #sessionKey/comments/#email/#comment_id
     - JSON Route: 
         - "mComment_id" =  int
          
@@ -151,21 +148,21 @@ Mobile:
         - "mUser_id" = int
         
 - __Put__: Updates an existing post in the table by specifying an post id and the user id
-    - \PUT /posts/#post_id/#sessionKey
+    - \PUT #sessionKey/posts/#email/#post_id
     - JSON Route:
         - "mPost_id" = int
         - "mUser_id" = int
         - "mTitle" = String
         - "mText" = String
 - __Put__: Updates an existing comment in the table by specifying an comment id, the post id, and the user id
-    - \PUT /comments/#comment_id/#sessionKey
+    - \PUT #sessionKey/comments/#email/#comment_id
     - JSON Route:
         - "mComment_id" = int
         - "mPost_id" = int
         - "mUser_id" = int
         - "mComment" = String
         
-- __Put__: Dislike for post
+- __Put__: Like for post
     - \PUT #sessionKey/posts/#post_id/like
     - JSON Route:
         - "mPost_id" = int
