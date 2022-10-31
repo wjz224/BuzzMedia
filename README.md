@@ -72,7 +72,7 @@ Mobile:
 
 ## Routes
 - __Get__: returns all entity from the table post
-   - \GET /posts
+   - \GET #sessionKey/posts
    - JSON Route: 
      - "mPost_id" = int
      - "mUser_id" = int
@@ -80,14 +80,14 @@ Mobile:
      - "mText" = String
      
 - __Get__: returns one entity from the table post
-    - \GET /posts/#post_id
+    - \GET #sessionKey/posts/#post_id
     - JSON Route:
         - "mPost_id" = int
         - "mUser_id" = String
         - "mTitle" = String
         - "mText" = String
 - __Get__: returns one entity from the table user
-    - \GET /users
+    - \GET #sessionKey/users/#email
     - JSON Route:
         - "mUser_id" = int
         - "mUsername" = String
@@ -95,22 +95,10 @@ Mobile:
         - "mEmail" = String
         - "mSex_orient" = String
         - "mGender" = String
-        - "mNote" = String
-        
-- __Get__: returns one entity from the table user
-    - \GET /users/#user_id
-    - JSON Route:
-        - "mUser_id" = int
-        - "mUsername" = String
-        - "mName" = String
-        - "mEmail" = String
-        - "mSex_orient" = String
-        - "mGender" = String
-        - "mNote" = String
-        
+        - "mNote" = String  
         
 - __Get__: returns all entities from the table comment
-    - \GET /comments
+    - \GET #sessionKey/comments/
     - JSON Route:
         - "mUser_id" = int
         - "mUsername" = String
@@ -129,19 +117,19 @@ Mobile:
         - "mComment" = String    
         
 - __Post__: Verifies the access token and adds a new user to the associated user id
-   - \PUT /verify
+   - \POST /verify/#google_idtoken
    - JSON Route:
      -  "sessionKey" = int
      
-- __Post__ : Adds a new post to the associated post_id and user_id
-    - \POST /posts/#sessionKey
+- __Post__ : Adds a new post associated with the user.
+    - \POST #sessionKey/posts
     - JSON Route: 
         - "mComment_id" = int
         - "mPost_id" = int
         - "mUser_id" = int
         - "mComment" = String
-- __Post__ : Adds a new comment to the associated comment_id and post_id and user_id
-    - \POST /comments/#sessionKey
+- __Post__ : Adds a new comment associated with the user
+    - \POST #sessionKey/comments
     - JSON Route: 
          - "mPost_id" = int
          - "mUser_id" = int
@@ -149,17 +137,17 @@ Mobile:
          - "mText" = String
   
 - __Delete__: Removes a post specified by an ID number from the table post
-    - \DELETE /posts/#post_id/#sessionKey
+    - \DELETE #sessionKey/posts/#post_id
     - JSON Route: 
         - "mPost_id" = int
   
 - __Delete__: Removes a comment specified by the commentId
-    - \DELETE /comments/#comment_id/#sessionKey
+    - \DELETE #sessionKey/comments/#comment_id
     - JSON Route: 
         - "mComment_id" =  int
          
-- __Delete__: Delete a user specified by the userId
-    - \DELETE /users/#user_id
+- __Delete__: Delete a user specified by the email
+    - \DELETE #sessionKey/users/#email
         - "mUser_id" = int
         
 - __Put__: Updates an existing post in the table by specifying an post id and the user id
@@ -178,13 +166,13 @@ Mobile:
         - "mComment" = String
         
 - __Put__: Dislike for post
-    - \PUT /posts/#post_id/#sessionKey
+    - \PUT #sessionKey/posts/#post_id/like
     - JSON Route:
         - "mPost_id" = int
         - "mLikes" = int
       
 - __Put__: Dislike for post
-    - \PUT /posts/#post_id/#sessionKey
+    - \PUT #sessionKey/posts/#post_id/dislike
     -  JSON Route:
         - "mPost_id" = int
         - "mDislikes" = int
