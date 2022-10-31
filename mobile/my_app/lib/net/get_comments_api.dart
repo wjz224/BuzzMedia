@@ -6,11 +6,11 @@ import 'dart:convert';
 const urlPrefix = 'https://thebuzzomega.herokuapp.com';
 
 
-Future<List<String>> fetchMessage() async {
+Future<List<String>> fetchComments(id) async {
   /// Gets the posts from the database 
 
   // Get request to /messages route
-	final response = await http.get(Uri.parse('$urlPrefix/posts'));
+	final response = await http.get(Uri.parse('$urlPrefix/posts/$id'));
 
   // Variable to contain the data from the get request
 	var returnData;
@@ -41,7 +41,7 @@ Future<List<String>> fetchMessage() async {
 }
 
 /// Simple get request without response parsing for unit testing purposes
-Future<http.Response> makeGetRequest() {
+Future<http.Response> makeCommentRequest() {
 	
 	return http.get(Uri.parse('$urlPrefix/posts'));
 	

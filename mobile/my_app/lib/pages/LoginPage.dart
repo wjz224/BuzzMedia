@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/pages/HomePage.dart';
@@ -19,8 +20,10 @@ class LoginPage extends StatelessWidget {
                 return Center(child: CircularProgressIndicator());
               } else if (snapshot.hasData) {
                 final user = FirebaseAuth.instance.currentUser!;
-                verify(user.getIdToken());
+                verify(user.getIdToken(true));
+                 
 
+                
                 return ProfilePage();/*Center( child: 
                 TextButton(
                     child: Text('Logout'),

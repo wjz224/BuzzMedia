@@ -11,6 +11,8 @@ import 'package:my_app/net/get_items_api.dart';
 import 'package:my_app/net/post_items_api.dart';
 import 'package:my_app/net/put_like_api.dart';
 import 'package:my_app/net/put_like_api.dart';
+import 'package:my_app/net/get_comments_api.dart';
+import 'package:my_app/net/verify_api.dart';
 import 'package:my_app/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_app/net/verify_api.dart';
@@ -25,6 +27,15 @@ Future<void> main() async {
           200,
         );
     });
+
+    test('Login Page Appears',() async{
+      expect(
+          (await makeCommentRequest()).statusCode,
+          200,
+        );
+    });
+
+    
 
   //checks if the post request function works
   test('make a post request',() async{
@@ -41,6 +52,8 @@ Future<void> main() async {
       200,
     );
   });
+
+
 
 }
 

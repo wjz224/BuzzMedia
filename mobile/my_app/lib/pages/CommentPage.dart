@@ -1,30 +1,27 @@
 // ignore_for_file: prefer_const_constructors
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
-import 'package:like_button/like_button.dart';
+import 'package:my_app/net/get_comments_api.dart';
 import 'package:my_app/net/get_items_api.dart';
 import 'package:my_app/net/put_dislike_api.dart';
 import 'package:my_app/pages/IdeaPostPage.dart';
-import 'package:my_app/pages/CommentPage.dart';
-
 import 'package:my_app/net/put_like_api.dart';
-import 'package:my_app/net/put_dislike_api.dart';
 import 'package:my_app/provider/google_sign_in.dart';
 import 'package:provider/provider.dart';
+import 'package:my_app/pages/CommentPostPage.dart';
 
-class MyHomePage extends StatefulWidget {
+class CommentPage extends StatefulWidget {
   /// This stateful widget is the home page of the application
 
-  const MyHomePage({super.key});
+  const CommentPage({super.key, required this.title});
 
-  final String title = "The Buzz";
+  final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<CommentPage> createState() => _CommentPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _CommentPageState extends State<CommentPage> {
   /// This method is rerun every time setState is called
 
   @override
@@ -41,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onTap: () {
                   /// When the "+" button is clicked, navigate to the post page (post_view.dart)
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const PostPage(title: 'The Buzz');
+                    return const CommentPostPage(title: 'The Buzz');
                   }));
                 },
                 child: Text(
@@ -50,11 +47,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               )),
           TextButton(
-              child: Text('Abandon the Hive',style: TextStyle(color: Colors.white)),
+              child: Text('Go Back to Home',style: TextStyle(color: Colors.white) ),
+              
               onPressed: () {
-                final provider =
-                    Provider.of<GoogleSignInProvider>(context, listen: false);
-                provider.logout();
                 Navigator.of(context).pop();
               }),
         ],
@@ -79,19 +74,16 @@ class HttpReqPosts extends StatefulWidget {
 
 class _HttpReqPostsState extends State<HttpReqPosts> {
   /// Method for HttpReqPosts setState
-  final user = FirebaseAuth.instance.currentUser!;
 
   late Future<List<String>> _future_list_message;
 
   final _biggerFont = const TextStyle(fontSize: 18);
 
-  final sizeButton = 50.0;
-
   @override
   void initState() {
     super.initState();
-    print(fetchMessage().runtimeType);
-    _future_list_message = fetchMessage();
+    print(fetchComments(1).runtimeType);
+    _future_list_message = fetchComments(1);
   }
 
   List<bool> _selections = List.generate(2, (_) => false);
@@ -114,21 +106,22 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                 var dataStr = snapshot.data?[i];
                 // Split the components of dataString up
                 var dataArr = dataStr?.split(',');
-                var titleArr = dataArr?[1]?.split(':');
-                var messageArr = dataArr?[2]?.split(':');
-                var likesArr = dataArr?[3]?.split(':');
+                var postID = dataArr?[0]?.split(':');
+                var userID = dataArr?[1]?.split(':');
+                var titleID = dataArr?[2]?.split(':');
+                var textID = dataArr?[3]?.split(':');
                 //seperate out the title, message, id, and numLikes into their own variables
-                var title = titleArr?[1];
-                var message = messageArr?[1];
-                var likes = likesArr?[1];
-                var id = dataStr?[6];
+                var title = postID?[1];
+                var message = userID?[1];
+                var likes = titleID?[1];
+                var id = textID?[6];
 
                 return Column(
                   children: <Widget>[
                     // One item in the list
                     ListTile(
                       // Displays the text and message of a post
-                      leading: Image.network(user.photoURL!),
+                      //leading: Image.network(user.photoURL!),
                       title: RichText(
                         text: TextSpan(
                             text: ' $title ',
@@ -150,7 +143,7 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                       ),
 
                       subtitle:
-                          Text("by " + user.displayName! + "\n" + user.email!),
+                          Text("by " + "Some dude" + "\n" + "This email"),
                     ),
                     // Row widget puts the like count and buttons in one horizontal row together
                     Row(
@@ -166,13 +159,12 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                           onPressed: (int index) {
                             setState(() {
                               _selections[index] = !_selections[index];
-                              
+
                               //likeCode
                               if (index == 0 && _selections[index]) {
                                 addLike('$id');
                                 _selections[1] = false;
                               } else if (index == 0 && !_selections[index]) {
-
                                 dislike('$id');
                               }
 
@@ -189,15 +181,6 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                           fillColor: Colors.yellow,
                         ),
 
-
-
-
-
-
-
-
-
-
                         // Spacing between button and text
                         SizedBox(width: 20),
                         // Number of likes displayed
@@ -205,25 +188,15 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                           '10',
                           style: _biggerFont,
                         ),
-                        //Spacing between button and text
+                        //Edit button for comments
                         SizedBox(width: 20),
-
+                        IconButton(onPressed: (){
+                              editComment();
+                            }, icon: Icon(Icons.mode))
+                            ,
                         // The like button display and functionality
 
-                        ElevatedButton(
-                            child: Text('View Comments',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16)),
-                            style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(50))),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>  CommentPage(title: '$title')),
-                              );
-                            })
+                        
                       ],
                     ),
                     // Space between each post item
@@ -243,4 +216,6 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
 
     return fb;
   }
+  
+  void editComment() {}
 }
