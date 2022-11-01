@@ -112,6 +112,7 @@ public class Database {
     private PreparedStatement mEditUserGender;
     private PreparedStatement mEditUserSexOrient;
     private PreparedStatement mEditUserNote;
+    private PreparedStatement mUpdatePost;
 
     private PreparedStatement mEditPostUser;
     private PreparedStatement mEditPostTitle;
@@ -340,7 +341,7 @@ public class Database {
             db.mEditUserGender = db.mConnection.prepareStatement("UPDATE userTable SET gender =? WHERE user_id =?");
             db.mEditUserSexOrient = db.mConnection.prepareStatement("UPDATE userTable SET sex_orient =? WHERE user_id =?");
             db.mEditUserNote = db.mConnection.prepareStatement("UPDATE userTable SET note =? WHERE user_id =?");
-
+            db.mUpdatePost = db.mConnection.prepareStatement("Update postTable SET user_id =? , title =?, text=? WHERE post_id =?");
             db.mEditPostUser = db.mConnection.prepareStatement("UPDATE postTable SET user_id =? WHERE post_id =?");
             db.mEditPostTitle = db.mConnection.prepareStatement("UPDATE postTable SET title =? WHERE post_id =?");
             db.mEditPostText = db.mConnection.prepareStatement("UPDATE postTable SET text =? WHERE post_id =?");
@@ -899,6 +900,19 @@ public class Database {
             mEditCommentComment.setString(1, newComment);
             mEditCommentComment.setInt(2, comment_id);
             res = mEditCommentComment.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+    int updatePost(int user_id, String newTitle, String newText, int post_id) { 
+        int res = -1;
+        try {
+            mUpdatePost.setInt(1, user_id);
+            mUpdatePost.setString(2, newTitle);
+            mUpdatePost.setString(3, newText);
+            mUpdatePost.setInt(4, post_id);
+            res = mUpdatePost.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
