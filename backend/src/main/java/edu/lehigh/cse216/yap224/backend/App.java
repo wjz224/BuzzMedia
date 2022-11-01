@@ -13,6 +13,9 @@ import static spark.Spark.post;
  * Importing google package
  */
 import com.google.gson.*;
+
+import edu.lehigh.cse216.yap224.backend.Database.CommentRowData;
+
 /***
  * Import java map
  */
@@ -261,7 +264,18 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null, data));
             }
         });
-  
+        Spark.get(":sessionKey/comments/:post_id", (request, response) ->{
+            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+            int post_id = Integer.parseInt(request.params("post_id"));
+            // Ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+             // implement session key check, if it exists continue, if not return error.
+            if (users.containsKey(sessionKey) == false) {
+                return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+            }
+            return gson.toJson(new StructuredResponse("ok", null, db.selectAllCommentPost(post_id)));
+        });
         // POST route for adding a new post to the post table in the db. This will read 
         // sessionKey from the body of the request and turn it into an int
         // JSON from the body of the request, turn it into a SimpleRequest
@@ -292,23 +306,57 @@ public class App {
                return gson.toJson(new StructuredResponse("ok", "" + post_id, null));
            }
        });
+        Spark.post(":sessionKey/comments/:post_id", (request, response) -> {
+            // get session key for the user making the post
+            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+            int post_id = Integer.parseInt(request.params("post_id"));
+                // ensure status 200 OK, with a MIME type of JSON
+            // NB: even on error, we return 200, but with a JSON object that
+            // describes the error.
+            response.status(200);
+            response.type("application/json");
+
+            // implement session key check, if it exists in the hashtable then continue, if not return error.
+            if (users.containsKey(sessionKey) == false) {
+                    return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+            }
+            // NB: if gson.Json fails, Spark will reply with status 500 Internal
+            // Server Error
+            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+            // get user_id from hash table
+            int user_id = users.get(sessionKey);
+            // get comment_id from the sql execution.
+            int comment_id = db.insertComment(user_id,post_id, req.mMessage);
+            // NB: createEntry checks for null title and message
+            if (post_id <= 0) {
+                return gson.toJson(new StructuredResponse("error", "error adding comment", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", "" + comment_id, null));
+            }
+        });
     
         // DELETE route for removing a post from the db
-        Spark.delete(":sessionKey/posts/:post_id", (request, response) -> {
+        Spark.delete(":sessionKey/posts/:email/:post_id", (request, response) -> {
             // get session key for the user making the post
-           int sessionKey = Integer.parseInt(request.params("sessionKey"));
-           // ensure status 200 OK, with a MIME type of JSON
-           // NB: even on error, we return 200, but with a JSON object that
-           // describes the error.
-           response.status(200);
-           response.type("application/json");
+            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+            // ensure status 200 OK, with a MIME type of JSON
+            // NB: even on error, we return 200, but with a JSON object that
+            // describes the error.
+            response.status(200);
+            response.type("application/json");
 
-           // implement session key check, if it exists in the hashtable then continue, if not return error.
-           if (users.containsKey(sessionKey) == false) {
+            // implement session key check, if it exists in the hashtable then continue, if not return error.
+            if (users.containsKey(sessionKey) == false) {
                 return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
-           }
+            }
             // If we can't get an ID, Spark will send a status 500
-            int post_id = Integer.parseInt(request.params("post_id"));;
+            int post_id = Integer.parseInt(request.params("post_id"));
+            String email = (String) (request.params("email"));
+            int user_id = db.getUserId(email);
+            // check if user_id from the sessionKey matches with the user who made the post. If they match they have permissions to delete the post
+            if(user_id != users.get(sessionKey)){
+                return gson.toJson(new StructuredResponse("error", "invalid permissions, mismatching user id", null));
+            }
             // NB: we won't concern ourselves too much with the quality of the
             // message sent on a successful delete
             int result = db.deletePost(post_id);
@@ -320,28 +368,33 @@ public class App {
         });
 
           // DELETE route for removing a user from the db
-          Spark.delete(":sessionKey/users/:id", (request, response) -> {
+          Spark.delete(":sessionKey/users/:email", (request, response) -> {
             // get session key for the user making the post
-           int sessionKey = Integer.parseInt(request.params("sessionKey"));
-           // ensure status 200 OK, with a MIME type of JSON
-           // NB: even on error, we return 200, but with a JSON object that
-           // describes the error.
-           response.status(200);
-           response.type("application/json");
-           // implement session key check, if it exists in the hashtable then continue, if not return error.
-           if (users.containsKey(sessionKey) == false) {
-                return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
-           }
-           // If we can't get an ID, Spark will send a status 500
-           int idx = Integer.parseInt(request.params("id"));
-           // NB: we won't concern ourselves too much with the quality of the
-           // message sent on a successful delete
-           int result = db.deleteUser(idx);
-           if (result <= 0) {
-               return gson.toJson(new StructuredResponse("error", "unable to delete row " + idx, null));
-           } else {
-               return gson.toJson(new StructuredResponse("ok", null, null));
-           }
+            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+            // ensure status 200 OK, with a MIME type of JSON
+            // NB: even on error, we return 200, but with a JSON object that
+            // describes the error.
+            response.status(200);
+            response.type("application/json");
+            // implement session key check, if it exists in the hashtable then continue, if not return error.
+            if (users.containsKey(sessionKey) == false) {
+                    return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+            }
+            // If we can't get an ID, Spark will send a status 500
+            String email = (String) (request.params("email"));
+            int user_id = db.getUserId(email);
+            // check if user_id from the sessionKey matches with the user who made the post. If they match they have permissions to delete the post
+            if(user_id != users.get(sessionKey)){
+                return gson.toJson(new StructuredResponse("error", "invalid permissions, mismatching user id", null));
+            }
+            // NB: we won't concern ourselves too much with the quality of the
+            // message sent on a successful delete
+            int result = db.deleteUser(user_id);
+            if (result <= 0) {
+                return gson.toJson(new StructuredResponse("error", "unable to delete row " + user_id, null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, null));
+            }
        });
 
 

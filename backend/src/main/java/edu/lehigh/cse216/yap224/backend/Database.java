@@ -49,6 +49,7 @@ public class Database {
     private PreparedStatement mSelectAllUser;
     private PreparedStatement mSelectAllPost;
     private PreparedStatement mSelectAllComment;
+    private PreparedStatement mSelectAllCommentPost;
 
     /**
      * A prepared statement for getting one row from the database
@@ -310,7 +311,7 @@ public class Database {
             db.mSelectAllUser = db.mConnection.prepareStatement("SELECT * FROM userTable");
             db.mSelectAllPost = db.mConnection.prepareStatement("SELECT * FROM postTable");
             db.mSelectAllComment = db.mConnection.prepareStatement("SELECT * FROM commentTable");
-
+            db.mSelectAllCommentPost = db.mConnection.prepareStatement("SELECT * FROM commentTable WHERE post_id =?");
             // Get user_id from email
             db.mGetUserId = db.mConnection.prepareStatement("SELECT user_id from userTable WHERE email = ?");
             //Display one post
@@ -515,6 +516,21 @@ public class Database {
         ArrayList<CommentRowData> res = new ArrayList<CommentRowData>();
         try {
             ResultSet rs = mSelectAllComment.executeQuery();
+            while (rs.next()) {
+                res.add(new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("comment_val")));
+            }
+            rs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    ArrayList<CommentRowData> selectAllCommentPost(int post_id) {
+        ArrayList<CommentRowData> res = new ArrayList<CommentRowData>();
+        try {
+            mSelectAllCommentPost.setInt(1, post_id);
+            ResultSet rs = mSelectAllCommentPost.executeQuery();
             while (rs.next()) {
                 res.add(new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("comment_val")));
             }
