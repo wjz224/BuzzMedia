@@ -179,7 +179,7 @@ public class App {
                 if(!users.containsKey(sessionKey)){
                     // get user_id after inserting user into database
                     int user_id = db.insertUser(userName, email, sexualOrientation, gender, note);
-                    // put sesion key and user_id into hashtable
+                    // put session key and user_id into hashtable
                     users.put(sessionKey, user_id);
                 }
 
@@ -198,6 +198,7 @@ public class App {
             // check session key
             response.status(200);
             response.type("application/json");
+
             // implement session key check, if it exists continue, if not return error.
             if (users.containsKey(sessionKey) == false) {
                 return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
@@ -245,6 +246,7 @@ public class App {
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
+
             // implement session key check, if it exists continue, if not return error.
             if (users.containsKey(sessionKey) == false) {
                 return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
@@ -268,6 +270,12 @@ public class App {
         Spark.post(":sessionKey/posts", (request, response) -> {
            // get session key for the user making the post
            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+            // ensure status 200 OK, with a MIME type of JSON
+           // NB: even on error, we return 200, but with a JSON object that
+           // describes the error.
+           response.status(200);
+           response.type("application/json");
+
            // implement session key check, if it exists in the hashtable then continue, if not return error.
            if (users.containsKey(sessionKey) == false) {
                 return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
@@ -275,11 +283,6 @@ public class App {
            // NB: if gson.Json fails, Spark will reply with status 500 Internal
            // Server Error
            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
-           // ensure status 200 OK, with a MIME type of JSON
-           // NB: even on error, we return 200, but with a JSON object that
-           // describes the error.
-           response.status(200);
-           response.type("application/json");
            int user_id = users.get(sessionKey);
            // NB: createEntry checks for null title and message
            int post_id = db.insertPost(user_id, req.mTitle, req.mMessage);
@@ -294,15 +297,18 @@ public class App {
         Spark.delete(":sessionKey/posts/:post_id", (request, response) -> {
             // get session key for the user making the post
            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+           // ensure status 200 OK, with a MIME type of JSON
+           // NB: even on error, we return 200, but with a JSON object that
+           // describes the error.
+           response.status(200);
+           response.type("application/json");
+
            // implement session key check, if it exists in the hashtable then continue, if not return error.
            if (users.containsKey(sessionKey) == false) {
                 return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
            }
             // If we can't get an ID, Spark will send a status 500
-            int post_id = Integer.parseInt(request.params("post_id"));
-            // ensure status 200 OK, with a MIME type of JSON
-            response.status(200);
-            response.type("application/json");
+            int post_id = Integer.parseInt(request.params("post_id"));;
             // NB: we won't concern ourselves too much with the quality of the
             // message sent on a successful delete
             int result = db.deletePost(post_id);
@@ -317,15 +323,17 @@ public class App {
           Spark.delete(":sessionKey/users/:id", (request, response) -> {
             // get session key for the user making the post
            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+           // ensure status 200 OK, with a MIME type of JSON
+           // NB: even on error, we return 200, but with a JSON object that
+           // describes the error.
+           response.status(200);
+           response.type("application/json");
            // implement session key check, if it exists in the hashtable then continue, if not return error.
            if (users.containsKey(sessionKey) == false) {
                 return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
            }
            // If we can't get an ID, Spark will send a status 500
            int idx = Integer.parseInt(request.params("id"));
-           // ensure status 200 OK, with a MIME type of JSON
-           response.status(200);
-           response.type("application/json");
            // NB: we won't concern ourselves too much with the quality of the
            // message sent on a successful delete
            int result = db.deleteUser(idx);
