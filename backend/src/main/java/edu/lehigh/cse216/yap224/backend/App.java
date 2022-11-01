@@ -160,15 +160,13 @@ public class App {
                 .build();
 
             // (Receive idTokenString by HTTPS POST)
-            String idTokenString = request.params("id_token");
+            String idTokenString = (String) request.params("id_token");
             String gender = "N/A";
             String sexualOrientation = "N/A";
             String note = "N/A";
-
             GoogleIdToken idToken = verifier.verify(idTokenString);
-            
+            response.status(200);
             if (idToken != null) {
-                response.status(200);
                 // Get profile information from payload
                 Payload payload = idToken.getPayload();
                 String userName = (String) payload.get("name");
@@ -184,10 +182,9 @@ public class App {
                     // put sesion key and user_id into hashtable
                     users.put(sessionKey, user_id);
                 }
-                response.redirect("/profile");
+
                 return gson.toJson(new StructuredResponse("ok"," valid token", sessionKey));
             } else {
-                response.status(500);
                 return gson.toJson(new StructuredResponse("error"," invalid token", null));
             }
             
@@ -195,11 +192,16 @@ public class App {
 
         
         // GET route that returns all posts 
-        Spark.get("/posts", (request, response) -> {
+        Spark.get(":sessionKey/posts", (request, response) -> {
+            int sessionKey = Integer.parseInt(request.params("sessionKey"));
             // ensure status 200 OK, with a MIME type of JSON
             // check session key
             response.status(200);
             response.type("application/json");
+            // implement session key check, if it exists continue, if not return error.
+            if (users.containsKey(sessionKey) == false) {
+                return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+           }
             return gson.toJson(new StructuredResponse("ok", null, db.selectAllPost()));
         });
         
@@ -209,47 +211,50 @@ public class App {
         // ":id" isn't a number, Spark will reply with a status 500 Internal
         // Server Error. Otherwise, we have an integer, and the only possible
         // error is that it doesn't correspond to a row with data.
-        Spark.get("/posts/:id", (request, response) -> {
-            int idx = Integer.parseInt(request.params("id"));
+        Spark.get(":sessionKey/posts/:post_id", (request, response) -> {
+            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+            int post_id = Integer.parseInt(request.params("post_id"));
             // implement session key check, if it exists continue, if not return error.
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            Database.PostRowData data = db.selectmOnePost(idx);
+            // implement session key check, if it exists continue, if not return error.
+            if (users.containsKey(sessionKey) == false) {
+                return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+           }
+            // get post data
+            Database.PostRowData data = db.selectmOnePost(post_id);
+
             if (data == null) {
-                return gson.toJson(new StructuredResponse("error", idx + " not found", null));
+                return gson.toJson(new StructuredResponse("error", post_id + " not found", null));
             } else {
                 return gson.toJson(new StructuredResponse("ok", null, data));
             }
-        });
-
-        // GET route that returns all users All we do is get
-        // the data, embed it in a StructuredResponse, turn it into JSON, and
-        // return it. If there's no data, we return "[]", so there's no need
-        // for error handling.
-        Spark.get("/users", (request, response) -> {
-            // ensure status 200 OK, with a MIME type of JSON
-            // check session key
-            response.status(200);
-            response.type("application/json");
-            return gson.toJson(new StructuredResponse("ok", null, db.selectAllUser()));
-        });
-
+        }); 
+       
+        // finished get route, have to fix everything else
         // GET route that returns everything for a single row in the db from the user datatable.
         // The ":user_id" suffix in the first parameter to get() becomes
         // request.params("user_id"), so that we can get the requested user_ID. If
         // ":user_id" isn't a number, Spark will reply with a status 500 Internal
         // Server Error. Otherwise, we have an integer, and the only possible
         // error is that it doesn't correspond to a row with data.
-        Spark.get("/users/:id", (request, response) -> {
-            int idx = Integer.parseInt(request.params("id"));
-            // implement session key check, if it exists continue, if not return error.
+        Spark.get(":sessionKey/users/:email", (request, response) -> {
+            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+            String email = (String) request.params("email");
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            Database.UserRowData data = db.selectmOneUser(idx);
+            // implement session key check, if it exists continue, if not return error.
+            if (users.containsKey(sessionKey) == false) {
+                return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+           }
+           // get user_id of the profile we want to visit based on the email 
+            int user_id = db.getUserId(email);
+            // get the user profile data based on the user_id returned from the email
+            Database.UserRowData data = db.selectmOneUser(user_id);
             if (data == null) {
-                return gson.toJson(new StructuredResponse("error", idx + " not found", null));
+                return gson.toJson(new StructuredResponse("error", user_id + " not found", null));
             } else {
                 return gson.toJson(new StructuredResponse("ok", null, data));
             }
@@ -260,7 +265,7 @@ public class App {
         // JSON from the body of the request, turn it into a SimpleRequest
         // object, extract the title and message, insert them, and return the
         // ID of the newly created row.
-        Spark.post("/posts/:sessionKey", (request, response) -> {
+        Spark.post(":sessionKey/posts", (request, response) -> {
            // get session key for the user making the post
            int sessionKey = Integer.parseInt(request.params("sessionKey"));
            // implement session key check, if it exists in the hashtable then continue, if not return error.
@@ -277,16 +282,16 @@ public class App {
            response.type("application/json");
            int user_id = users.get(sessionKey);
            // NB: createEntry checks for null title and message
-           int newId = db.insertPost(user_id,req.mTitle, req.mMessage);
-           if (newId <= 0) {
+           int post_id = db.insertPost(user_id, req.mTitle, req.mMessage);
+           if (post_id <= 0) {
                return gson.toJson(new StructuredResponse("error", "error adding post", null));
            } else {
-               return gson.toJson(new StructuredResponse("ok", "" + newId, null));
+               return gson.toJson(new StructuredResponse("ok", "" + post_id, null));
            }
        });
     
         // DELETE route for removing a post from the db
-        Spark.delete("/posts/:id/:sessionKey", (request, response) -> {
+        Spark.delete(":sessionKey/posts/:post_id", (request, response) -> {
             // get session key for the user making the post
            int sessionKey = Integer.parseInt(request.params("sessionKey"));
            // implement session key check, if it exists in the hashtable then continue, if not return error.
@@ -294,22 +299,22 @@ public class App {
                 return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
            }
             // If we can't get an ID, Spark will send a status 500
-            int idx = Integer.parseInt(request.params("id"));
+            int post_id = Integer.parseInt(request.params("post_id"));
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
             // NB: we won't concern ourselves too much with the quality of the
             // message sent on a successful delete
-            int result = db.deletePost(idx);
+            int result = db.deletePost(post_id);
             if (result <= 0) {
-                return gson.toJson(new StructuredResponse("error", "unable to delete row " + idx, null));
+                return gson.toJson(new StructuredResponse("error", "unable to delete row " + post_id, null));
             } else {
                 return gson.toJson(new StructuredResponse("ok", null, null));
             }
         });
 
           // DELETE route for removing a user from the db
-          Spark.delete("/users/:id/:sessionKey", (request, response) -> {
+          Spark.delete(":sessionKey/users/:id", (request, response) -> {
             // get session key for the user making the post
            int sessionKey = Integer.parseInt(request.params("sessionKey"));
            // implement session key check, if it exists in the hashtable then continue, if not return error.
