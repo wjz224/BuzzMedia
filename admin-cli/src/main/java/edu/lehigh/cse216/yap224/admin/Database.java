@@ -238,7 +238,7 @@ public class Database {
 
             //Create POST table
             db.mCreateTablePost = db.mConnection.prepareStatement(
-                "CREATE TABLE postTable (post_id SERIAL, user_id int NOT NULL, title VARCHAR(50) NOT NULL, text VARCHAR(500) NOT NULL, primary key (user_id), foreign key (user_id) references userTable)");
+                "CREATE TABLE postTable (post_id SERIAL, user_id int NOT NULL, title VARCHAR(50) NOT NULL, text VARCHAR(500) NOT NULL, primary key (post_id), foreign key (user_id) references userTable)");
 
             //Create COMMENT table
             db.mCreateTableComment = db.mConnection.prepareStatement(
