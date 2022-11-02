@@ -214,7 +214,7 @@ public class App {
                 ArrayList<String> colNames = db.getColNames();
                 if (res == null)
                     continue;
-                System.out.println("  Current Database Contents");
+                System.out.println("  Current    Database Contents");
                 System.out.println("  -------------------------");
                 // print all column names
                 for(String names : colNames){
