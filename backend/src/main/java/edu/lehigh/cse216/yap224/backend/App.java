@@ -159,8 +159,7 @@ public class App {
         Spark.post("/verifymobile/:id_token", (request, response) -> {
             String idToken = (String) request.params("id_token");
             // fix decoded token
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-
+           
             String gender = "N/A";
             String sexualOrientation = "N/A";
             String note = "N/A";
