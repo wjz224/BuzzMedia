@@ -285,6 +285,7 @@ public class App {
         Spark.get(":sessionKey/users/:email", (request, response) -> {
             int sessionKey = Integer.parseInt(request.params("sessionKey"));
             String email = (String) request.params("email");
+           
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
@@ -294,7 +295,17 @@ public class App {
                 return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
            }
            // get user_id of the profile we want to visit based on the email 
-            int user_id = db.getUserId(email);
+           int user_id = -1;
+           // if input has .edu than it is an email
+            if(email.contains(".edu")){
+                user_id = db.getUserId(email);
+            }
+            // if input has no edu than it is a user_id
+            else{
+                user_id = Integer.parseInt(email);
+            }
+            System.out.println("email: " + email);
+            System.out.println("userid: " + user_id);
             // get the user profile data based on the user_id returned from the email
             Database.UserRowData data = db.selectmOneUser(user_id);
             if (data == null) {
