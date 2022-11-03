@@ -375,9 +375,10 @@ public class App {
                 String sex_orient = getString(in, "Enter the sexual orientation");
                 String gender = getString(in, "Enter the gender");
                 String note = getString(in, "Enter the note");
+                String profile = getString(in, "Enter the ProfileURL");
                 // if (phone_num.equals("") || message.equals(""))
                 //     continue;
-                int res = db.insertUser(username, email, sex_orient, gender, note);
+                int res = db.insertUser(username, email, sex_orient, gender, note, profile);
                 System.out.println(res + " rows added");
             } 
 
