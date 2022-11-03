@@ -63,8 +63,7 @@ public class App {
         
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
-        String db_url = env.get("DATABASE_URL");
-        users.put(1238987447, 1);
+        String db_url = env.get("DATABASE_URL");    
         /*String ip = env.get("POSTGRES_IP");
         String port = env.get("POSTGRES_PORT");
         String user = env.get("POSTGRES_USER");
@@ -476,6 +475,32 @@ public class App {
             } else {
                 return gson.toJson(new StructuredResponse("ok", null, result));
             }
+        });
+        Spark.put(":sessionKey/users/:email", (request,response) -> { 
+            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+            response.status(200);
+            response.type("application/json");
+            // implement session key check, if it exists in the hashtable then continue, if not return error.
+            if (users.containsKey(sessionKey) == false) {
+                return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+            }
+            String email = (String) request.params("email");
+            int post_id = Integer.parseInt(request.params("post_id"));
+            int user_id =  db.getUserId(email);
+            UserRequest req = gson.fromJson(request.body(), UserRequest.class);
+            // check if userid from sessionKey matches with the userid from the email
+            if(user_id != users.get(sessionKey)){
+                return gson.toJson(new StructuredResponse("error", "invalid permissions, mismatching user id", null));
+            }
+            int result = db.editUserSexOrient(user_id, req.mSex);
+            result = db.editUserGender(user_id, req.mGender);
+            result = db.editUserNote(user_id, req.mNote);
+            if (result <= 0) {
+                return gson.toJson(new StructuredResponse("error", "unable to update user " + user_id, null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, result));
+            }
+
         });
 
 
