@@ -37,6 +37,13 @@ public class App {
         System.out.println("  [G] Insert a new post");                  //Done
         System.out.println("  [H] Insert a new user");                  //Done
         System.out.println("  [J] Insert a new comment");               //Done
+        System.out.println("  [M] Like a post");               //Done
+        System.out.println("  [N] Un-like a post");               //Done
+        System.out.println("  [P] Dislike a post");               //Done
+        System.out.println("  [Q] Un-dislike a post");               //Done
+        System.out.println("  [R] Number of likes on post");               //
+        System.out.println("  [S] Number of dislikes on post");               //
+        System.out.println("  [T] Net likes/dislikes on post");               //
         System.out.println("  [a] Edit a user's Username");
         //System.out.println("  [b] Edit a user's Name");
         System.out.println("  [b] Edit a user's Email");
@@ -63,7 +70,7 @@ public class App {
         /**
          * The valid characters that the user can enter 
          */
-        String actions = "TDABICDLEFKGHJOabcdefghij~q?";
+        String actions = "TDABICDLEFKGHJOMNPQRSTabcdefghij~q?";
 
         /**
          *  While loop that continues until the user enters the q character.
@@ -214,7 +221,7 @@ public class App {
                 ArrayList<String> colNames = db.getColNames();
                 if (res == null)
                     continue;
-                System.out.println("  Current    Database Contents");
+                System.out.println("  Current Database Contents");
                 System.out.println("  -------------------------");
                 // print all column names
                 for(String names : colNames){
@@ -518,6 +525,55 @@ public class App {
 
                 int res = db.editCommentComment(comment_id, newComment);
             }
+
+
+
+            //Like a post
+            else if (action == 'M') {
+                int user_id = getInt(in, "Enter the user ID");
+                int post_id = getInt(in, "Enter the post ID");
+                
+                int res = db.insertLike(user_id, post_id);
+                System.out.println(res + " rows added");
+            } 
+            //Dislike a post
+            else if (action == 'P') {
+                int user_id = getInt(in, "Enter the user ID");
+                int post_id = getInt(in, "Enter the post ID");
+                
+                int res = db.insertDislike(user_id, post_id);
+                System.out.println(res + " rows added");
+            } 
+            //unLike post
+            else if (action == 'N') {
+                int user_id = getInt(in, "Enter the user ID");
+                int post_id = getInt(in, "Enter the post ID");
+                
+                int res = db.removeLike(user_id, post_id);
+                System.out.println(res + " row removed");
+            } 
+            //Un-Dislike a post
+            else if (action == 'Q') {
+                int user_id = getInt(in, "Enter the user ID");
+                int post_id = getInt(in, "Enter the post ID");
+                
+                int res = db.removeDislike(user_id, post_id);
+                System.out.println(res + " row removed");
+            } 
+            //Number likes
+            else if (action == 'R') {
+                int post_id = getInt(in, "Enter the post ID");
+                
+                int numLike = db.findLike(post_id);
+                System.out.println("Likes: " + numLike);
+            } 
+            //Number dislikes
+            else if (action == 'S') {
+                int post_id = getInt(in, "Enter the post ID");
+                
+                int numDislike = db.findDislike(post_id);
+                System.out.println("Dislikes: " + numDislike);
+            } 
 
 
             // Update a row by reading in user input
