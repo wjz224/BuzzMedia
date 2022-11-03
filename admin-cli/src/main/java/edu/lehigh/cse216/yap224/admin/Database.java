@@ -292,11 +292,11 @@ public class Database {
 
             //Create LIKE table
             db.mCreateTableLike = db.mConnection.prepareStatement(
-                "CREATE TABLE likeTable (user_id int NOT NULL, post_id int NOT NULL, primary key (user_id, post_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+                "CREATE TABLE likeTable (user_id int NOT NULL, post_id int NOT NULL, foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
 
             //Create DISLIKE table
             db.mCreateTableDislike = db.mConnection.prepareStatement(
-                "CREATE TABLE dislikeTable (user_id int NOT NULL, post_id int NOT NULL, primary key (user_id, post_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+                "CREATE TABLE dislikeTable (user_id int NOT NULL, post_id int NOT NULL, foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
             
             db.mDropTableUser = db.mConnection.prepareStatement("DROP TABLE userTable");
             db.mDropTablePost = db.mConnection.prepareStatement("DROP TABLE postTable");
@@ -357,9 +357,9 @@ public class Database {
             //Remove Dislike
             db.mRemoveDislike = db.mConnection.prepareStatement("DELETE FROM dislikeTable WHERE user_id = ? AND post_id = ?");
             //Find Like
-            db.mFindLike = db.mConnection.prepareStatement("SELECT COUNT (*) FROM likeTable WHERE post_id = ?");
+            db.mFindLike = db.mConnection.prepareStatement("SELECT COUNT(user_id) FROM likeTable WHERE post_id = ?");
             //Find Dislike
-            db.mFindDislike = db.mConnection.prepareStatement("SELECT COUNT (*) FROM dislikeTable WHERE post_id = ?");            
+            db.mFindDislike = db.mConnection.prepareStatement("SELECT COUNT(user_id) FROM likeTable WHERE post_id = 1");            
 
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
@@ -748,9 +748,9 @@ public class Database {
      */
     void dropTable() {
         try {
-            //mDropTableDislike.execute();
-            //mDropTableLike.execute();
-            mDropTableComment.execute();
+            mDropTableDislike.execute();
+            mDropTableLike.execute();
+            //mDropTableComment.execute();
             mDropTablePost.execute();
             mDropTableUser.execute();
             

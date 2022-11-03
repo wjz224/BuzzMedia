@@ -37,10 +37,10 @@ public class App {
         System.out.println("  [G] Insert a new post");                  //Done
         System.out.println("  [H] Insert a new user");                  //Done
         System.out.println("  [J] Insert a new comment");               //Done
-        System.out.println("  [M] Like a post");               //Done
-        System.out.println("  [N] Un-like a post");               //Done
-        System.out.println("  [P] Dislike a post");               //Done
-        System.out.println("  [Q] Un-dislike a post");               //Done
+        System.out.println("  [M] Like a post");                        //Done
+        System.out.println("  [N] Un-like a post");                     //Done
+        System.out.println("  [P] Dislike a post");                     //Done
+        System.out.println("  [Q] Un-dislike a post");                  //Done
         System.out.println("  [R] Number of likes on post");               //
         System.out.println("  [S] Number of dislikes on post");               //
         System.out.println("  [T] Net likes/dislikes on post");               //
@@ -573,6 +573,14 @@ public class App {
                 
                 int numDislike = db.findDislike(post_id);
                 System.out.println("Dislikes: " + numDislike);
+            } 
+            //Net Likes
+            else if (action == 'T') {
+                int post_id = getInt(in, "Enter the post ID");
+                int numLike = db.findLike(post_id);
+                int numDislike = db.findDislike(post_id);
+                int net = numLike - numDislike;
+                System.out.println("Net Likes: " + net);
             } 
 
 
