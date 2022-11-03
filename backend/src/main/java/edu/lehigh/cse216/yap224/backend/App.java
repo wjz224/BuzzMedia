@@ -158,7 +158,6 @@ public class App {
         Spark.post("/verifymobile/:id_token", (request, response) -> {
             String idToken = (String) request.params("id_token");
             // fix decoded token
-           
             String gender = "N/A";
             String sexualOrientation = "N/A";
             String note = "N/A";
@@ -191,7 +190,6 @@ public class App {
         
         // POST route that verifys the access token and returns a sessionid
         Spark.post("/verify/:id_token", (request,response) -> {
-            
             response.type("application/json");
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
                 // Specify the CLIENT_ID of the app that accesses the backend:
@@ -202,11 +200,12 @@ public class App {
 
             // (Receive idTokenString by HTTPS POST)
             String idTokenString = (String) request.params("id_token");
+            System.out.println("idtoken: " + idTokenString);
             String gender = "N/A";
             String sexualOrientation = "N/A";
             String note = "N/A";
-            GoogleIdToken idToken = verifier.verify(idTokenString);
             response.status(200);
+            GoogleIdToken idToken = verifier.verify(idTokenString);
             if (idToken != null) {
                 System.out.println("id token verified");
                 // Get profile information from payload
@@ -222,6 +221,7 @@ public class App {
                 if(!users.containsKey(sessionKey)){
                     // get user_id after inserting user into database
                     if(db.getUserId(email) <= 0){
+                        System.out.println("user id:" + db.getUserId(email));
                         int user_id = db.insertUser(userName, email, sexualOrientation, gender, note, profile);
                         // put session key and user_id into hashtable
                          users.put(sessionKey, user_id);
@@ -327,13 +327,26 @@ public class App {
             int post_id = Integer.parseInt(request.params("post_id"));
             // Ensure status 200 OK, with a MIME type of JSON
             response.status(200);
-            response.type("application/json");
+            response.type("application/json");  
              // implement session key check, if it exists continue, if not return error.
             if (users.containsKey(sessionKey) == false) {
                 return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
             }
             return gson.toJson(new StructuredResponse("ok", null, db.selectAllCommentPost(post_id)));
         });
+        Spark.get(":sessionKey/:post_id/likes", (request, response) ->{
+            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+            int post_id = Integer.parseInt(request.params("post_id"));
+            // Ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");  
+             // implement session key check, if it exists continue, if not return error.
+            if (users.containsKey(sessionKey) == false) {
+                return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+            }
+            return gson.toJson(new StructuredResponse("ok", null, db.findLike(post_id)));
+        });
+        
         // POST route for adding a new post to the post table in the db. This will read 
         // sessionKey from the body of the request and turn it into an int
         // JSON from the body of the request, turn it into a SimpleRequest
@@ -395,7 +408,6 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null , comment_id));
             }
         });
-        
         // DELETE route for removing a post from the db
         Spark.delete(":sessionKey/posts/:email/:post_id", (request, response) -> {
             // get session key for the user making the post
@@ -494,6 +506,7 @@ public class App {
             }
             String email = (String) request.params("email");
             int user_id =  db.getUserId(email);
+            String user_profile = db.getUserProfile(email);
             UserRequest req = gson.fromJson(request.body(), UserRequest.class);
             // check if userid from sessionKey matches with the userid from the email
             if(user_id != users.get(sessionKey)){
@@ -505,7 +518,7 @@ public class App {
             if (result <= 0) {
                 return gson.toJson(new StructuredResponse("error", "unable to update user " + user_id, null));
             } else {
-                return gson.toJson(new StructuredResponse("ok", null, result));
+                return gson.toJson(new StructuredResponse("ok", null, user_profile));
             }
 
         });

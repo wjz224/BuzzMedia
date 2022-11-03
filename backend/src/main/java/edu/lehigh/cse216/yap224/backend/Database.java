@@ -35,6 +35,15 @@ public class Database {
     private PreparedStatement mInsertPost;
     private PreparedStatement mInsertComment;
 
+    //Like and dislike prepared statements
+    private PreparedStatement mInsertLike;
+    private PreparedStatement mInsertDislike;
+    private PreparedStatement mRemoveLike;
+    private PreparedStatement mRemoveDislike;
+
+    //Count Likes and Dislikes
+    private PreparedStatement mFindLike;
+    private PreparedStatement mFindDislike;
 
     /**
      * The connection to the database.  When there is no connection, it should
@@ -50,7 +59,6 @@ public class Database {
     private PreparedStatement mSelectAllPost;
     private PreparedStatement mSelectAllComment;
     private PreparedStatement mSelectAllCommentPost;
-
     /**
      * A prepared statement for getting one row from the database
      */
@@ -98,11 +106,9 @@ public class Database {
      * A prepared statement for getting the name of the columns in our database
      */
     private PreparedStatement mGetColNames;
-
-    /**
-     * A prepared statement for the getting the user_id from the user table using the user email
-     */
     private PreparedStatement mGetUserId;
+    private PreparedStatement mGetUserProfile;
+
     /**
      * A prepared statement edit functions
      */
@@ -112,13 +118,12 @@ public class Database {
     private PreparedStatement mEditUserGender;
     private PreparedStatement mEditUserSexOrient;
     private PreparedStatement mEditUserNote;
-    private PreparedStatement mUpdatePost;
 
     private PreparedStatement mEditPostUser;
     private PreparedStatement mEditPostTitle;
     private PreparedStatement mEditPostText;
     private PreparedStatement mEditCommentComment;
-    
+    private PreparedStatement mUpdatePost;
 
 
     /**
@@ -171,7 +176,6 @@ public class Database {
         String mGender;
         String mNote;
         String mProfile;
-        
         public UserRowData(int user_id, String username, String email, String sex_orient, String gender, String note, String profile) {
             mUser_id = user_id;
             mUsername = username;
@@ -279,11 +283,11 @@ public class Database {
             
             //Create USER table
             db.mCreateTableUser = db.mConnection.prepareStatement(
-                "CREATE TABLE userTable (user_id SERIAL, username VARCHAR(50) NOT NULL, email UNIQUE VARCHAR(50) NOT NULL, sex_orient VARCHAR(50) NOT NULL, gender VARCHAR(50), note VARCHAR(50), profile VARCHAR(5000000), primary key (user_id))");
+                "CREATE TABLE userTable (user_id SERIAL, username VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL, sex_orient VARCHAR(50) NOT NULL, gender VARCHAR(50), note VARCHAR(50), profile VARCHAR(5000000), primary key (user_id))");
 
             //Create POST table
-            db.mCreateTablePost = db.mConnection.prepareStatement(  
-                "CREATE TABLE postTable (post_id SERIAL, user_id int NOT NULL, title VARCHAR(50) NOT NULL, text VARCHAR(500) NOT NULL, primary key (post_id), foreign key (user_id) references userTable)");
+            db.mCreateTablePost = db.mConnection.prepareStatement(
+                "CREATE TABLE postTable (post_id SERIAL, user_id int NOT NULL, title VARCHAR(50) NOT NULL, text VARCHAR(500) NOT NULL, primary key (user_id), foreign key (user_id) references userTable)");
 
             //Create COMMENT table
             db.mCreateTableComment = db.mConnection.prepareStatement(
@@ -291,11 +295,11 @@ public class Database {
 
             //Create LIKE table
             db.mCreateTableLike = db.mConnection.prepareStatement(
-                "CREATE TABLE likeTable (user_id SERIAL, post_id int NOT NULL, primary key (user_id, post_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+                "CREATE TABLE likeTable (user_id int NOT NULL, post_id int NOT NULL, foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
 
             //Create DISLIKE table
             db.mCreateTableDislike = db.mConnection.prepareStatement(
-                "CREATE TABLE dislikeTable (user_id SERIAL, post_id int NOT NULL, primary key (user_id, post_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+                "CREATE TABLE dislikeTable (user_id int NOT NULL, post_id int NOT NULL, foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
             
             db.mDropTableUser = db.mConnection.prepareStatement("DROP TABLE userTable");
             db.mDropTablePost = db.mConnection.prepareStatement("DROP TABLE postTable");
@@ -315,8 +319,6 @@ public class Database {
             db.mSelectAllPost = db.mConnection.prepareStatement("SELECT * FROM postTable");
             db.mSelectAllComment = db.mConnection.prepareStatement("SELECT * FROM commentTable");
             db.mSelectAllCommentPost = db.mConnection.prepareStatement("SELECT * FROM commentTable WHERE post_id =?");
-            // Get user_id from email
-            db.mGetUserId = db.mConnection.prepareStatement("SELECT user_id from userTable WHERE email = ?");
             //Display one post
             db.mOnePost = db.mConnection.prepareStatement("SELECT * from postTable WHERE post_id=?");
             //Display one user
@@ -330,12 +332,13 @@ public class Database {
              //Delete Comment Row
              db.mDeleteComment = db.mConnection.prepareStatement("DELETE FROM commentTable WHERE comment_id=?");
             //Insert User
-            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO userTable VALUES (default, ?, ?, ?, ?, ?)");
+            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO userTable VALUES (default, ?, ?, ?, ?, ?, ?)");
             //Insert Post
             db.mInsertPost = db.mConnection.prepareStatement("INSERT INTO postTable VALUES (default, ?, ?, ?)");
             //Comment Post
             db.mInsertComment = db.mConnection.prepareStatement("INSERT INTO commentTable VALUES (default, ?, ?, ?)");
-
+            db.mGetUserId = db.mConnection.prepareStatement("SELECT user_id from userTable WHERE email = ?");
+            db.mGetUserProfile= db.mConnection.prepareStatement("SELECT profile from userTable WHERE email = ?");
             //Edit functions
             db.mEditUserUsername = db.mConnection.prepareStatement("UPDATE userTable SET username =? WHERE user_id =?");
             //db.mEditUserName = db.mConnection.prepareStatement("UPDATE userTable SET name =? WHERE user_id =?");
@@ -348,6 +351,19 @@ public class Database {
             db.mEditPostTitle = db.mConnection.prepareStatement("UPDATE postTable SET title =? WHERE post_id =?");
             db.mEditPostText = db.mConnection.prepareStatement("UPDATE postTable SET text =? WHERE post_id =?");
             db.mEditCommentComment = db.mConnection.prepareStatement("UPDATE commentTable SET comment_val =? WHERE comment_id =?");
+
+            //Insert Like
+            db.mInsertLike = db.mConnection.prepareStatement("INSERT INTO likeTable VALUES ( ?, ? )");
+            //Insert Dislike
+            db.mInsertDislike = db.mConnection.prepareStatement("INSERT INTO dislikeTable VALUES ( ?, ? )");
+            //Remove Like
+            db.mRemoveLike = db.mConnection.prepareStatement("DELETE FROM likeTable WHERE user_id = ? AND post_id = ?");
+            //Remove Dislike
+            db.mRemoveDislike = db.mConnection.prepareStatement("DELETE FROM dislikeTable WHERE user_id = ? AND post_id = ?");
+            //Find Like
+            db.mFindLike = db.mConnection.prepareStatement("SELECT COUNT(user_id) as Likes FROM likeTable WHERE post_id = ?");
+            //Find Dislike
+            db.mFindDislike = db.mConnection.prepareStatement("SELECT COUNT(user_id) as Dislikes FROM dislikeTable WHERE post_id = ?");            
 
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
@@ -403,26 +419,7 @@ public class Database {
         }
         return count;
     }
-    
-    /** 
-     * Get user-id from userTable based on given email
-    */
-    int getUserId(String email){
-        int user_id = 0;
-        try{
-            mGetUserId.setString(1, email);
-            // user_id = mGetUserId.executeUpdate();
-            ResultSet rs = mGetUserId.executeQuery();
-            while(rs.next()){
-                user_id = rs.getInt("USER_ID");
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-        return user_id; 
-    }
 
-    
     int insertUser(String username, String email, String sex_orient, String gender, String note, String profile) {
         int count = 0;
         try {
@@ -431,7 +428,7 @@ public class Database {
             mInsertUser.setString(3, sex_orient);
             mInsertUser.setString(4, gender);
             mInsertUser.setString(5, note);
-            mInsertUser.setString(6, profile);
+            mInsertUser.setString(6,profile);
             count += mInsertUser.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -549,7 +546,6 @@ public class Database {
             return null;
         }
     }
-
     /**
      * Get all data for a specific row, by User_ID
      * 
@@ -661,6 +657,35 @@ public class Database {
             return null;
         }
     }
+    int getUserId(String email){
+        int user_id = 0;
+        try{
+            mGetUserId.setString(1, email);
+            // user_id = mGetUserId.executeUpdate();
+            ResultSet rs = mGetUserId.executeQuery();
+            while(rs.next()){
+                user_id = rs.getInt("USER_ID");
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return user_id; 
+    }
+
+    String getUserProfile(String email){
+        String profile = "";
+        try{
+            mGetUserProfile.setString(1, email);
+            // user_id = mGetUserId.executeUpdate();
+            ResultSet rs = mGetUserId.executeQuery();
+            while(rs.next()){
+                profile = rs.getString("profile");
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return profile;
+    }
 
     /**
      * Delete a row by ID
@@ -750,17 +775,6 @@ public class Database {
         return res;
     }
 
-    // /**
-    //  * Create tblData.  If it already exists, this will print an error
-    //  */
-    // void createTable() {
-    //     try {
-    //         mCreateTable.execute();
-    //     } catch (SQLException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
-
     /**
      * Create all tables.  If it already exists, this will print an error
      */
@@ -782,9 +796,9 @@ public class Database {
      */
     void dropTable() {
         try {
-            mDropTableComment.execute();
-            mDropTableLike.execute();
             mDropTableDislike.execute();
+            mDropTableLike.execute();
+            mDropTableComment.execute();
             mDropTablePost.execute();
             mDropTableUser.execute();
             
@@ -925,4 +939,75 @@ public class Database {
         }
         return res;
     }
+
+    int insertLike(int user_id, int post_id) {
+        int count = 0;
+        try {
+            mInsertLike.setInt(1, user_id);
+            mInsertLike.setInt(2, post_id);
+            count += mInsertLike.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    int insertDislike(int user_id, int post_id) {
+        int count = 0;
+        try {
+            mInsertDislike.setInt(1, user_id);
+            mInsertDislike.setInt(2, post_id);
+            count += mInsertDislike.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    int removeLike(int user_id, int post_id) {
+        int res = -1;
+        try {
+            mRemoveLike.setInt(1, user_id);
+            mRemoveLike.setInt(2, post_id);
+            res = mRemoveLike.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int removeDislike(int user_id, int post_id) {
+        int res = -1;
+        try {
+            mRemoveDislike.setInt(1, user_id);
+            mRemoveDislike.setInt(2, post_id);
+            res = mRemoveDislike.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    ResultSet findLike(int post_id) {
+        ResultSet res = null;
+        try {
+            mFindLike.setInt(1, post_id);
+            res = mFindLike.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    ResultSet findDislike(int post_id) {
+        ResultSet res = null;
+        try {
+            mFindDislike.setInt(1, post_id);
+            res = mFindDislike.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
 }
