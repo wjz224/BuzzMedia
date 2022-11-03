@@ -735,8 +735,9 @@ public class Database {
             mCreateTableUser.execute();
             mCreateTablePost.execute();
             mCreateTableComment.execute();
-            mCreateTableLike.execute();
             mCreateTableDislike.execute();
+            mCreateTableLike.execute();
+           
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -750,7 +751,7 @@ public class Database {
         try {
             mDropTableDislike.execute();
             mDropTableLike.execute();
-            //mDropTableComment.execute();
+            mDropTableComment.execute();
             mDropTablePost.execute();
             mDropTableUser.execute();
             
