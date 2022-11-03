@@ -3,6 +3,8 @@ package edu.lehigh.cse216.yap224.admin;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -43,7 +45,6 @@ public class App {
         System.out.println("  [Q] Un-dislike a post");                  //Done
         System.out.println("  [R] Number of likes on post");               //
         System.out.println("  [S] Number of dislikes on post");               //
-        System.out.println("  [T] Net likes/dislikes on post");               //
         System.out.println("  [a] Edit a user's Username");
         //System.out.println("  [b] Edit a user's Name");
         System.out.println("  [b] Edit a user's Email");
@@ -564,23 +565,27 @@ public class App {
             else if (action == 'R') {
                 int post_id = getInt(in, "Enter the post ID");
                 
-                int numLike = db.findLike(post_id);
-                System.out.println("Likes: " + numLike);
+                ResultSet numLike = db.findLike(post_id);
+                try{
+                    if(numLike.next())
+                        System.out.println(numLike.getInt("Likes"));
+                } catch (SQLException e) {
+                    System.err.println("Error: Connection.close() threw a SQLException");
+                    e.printStackTrace();
+                }
             } 
             //Number dislikes
             else if (action == 'S') {
                 int post_id = getInt(in, "Enter the post ID");
                 
-                int numDislike = db.findDislike(post_id);
-                System.out.println("Dislikes: " + numDislike);
-            } 
-            //Net Likes
-            else if (action == 'T') {
-                int post_id = getInt(in, "Enter the post ID");
-                int numLike = db.findLike(post_id);
-                int numDislike = db.findDislike(post_id);
-                int net = numLike - numDislike;
-                System.out.println("Net Likes: " + net);
+                ResultSet numDislike = db.findDislike(post_id);
+                try{
+                    if(numDislike.next())
+                        System.out.println(numDislike.getInt("Dislikes"));
+                } catch (SQLException e) {
+                    System.err.println("Error: Connection.close() threw a SQLException");
+                    e.printStackTrace();
+                }
             } 
 
 

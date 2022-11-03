@@ -357,9 +357,9 @@ public class Database {
             //Remove Dislike
             db.mRemoveDislike = db.mConnection.prepareStatement("DELETE FROM dislikeTable WHERE user_id = ? AND post_id = ?");
             //Find Like
-            db.mFindLike = db.mConnection.prepareStatement("SELECT COUNT(user_id) FROM likeTable WHERE post_id = ?");
+            db.mFindLike = db.mConnection.prepareStatement("SELECT COUNT(user_id) as Likes FROM likeTable WHERE post_id = ?");
             //Find Dislike
-            db.mFindDislike = db.mConnection.prepareStatement("SELECT COUNT(user_id) FROM likeTable WHERE post_id = 1");            
+            db.mFindDislike = db.mConnection.prepareStatement("SELECT COUNT(user_id) as Dislikes FROM dislikeTable WHERE post_id = ?");            
 
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
@@ -735,9 +735,8 @@ public class Database {
             mCreateTableUser.execute();
             mCreateTablePost.execute();
             mCreateTableComment.execute();
-            mCreateTableDislike.execute();
             mCreateTableLike.execute();
-           
+            mCreateTableDislike.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -929,22 +928,22 @@ public class Database {
         return res;
     }
 
-    int findLike(int post_id) {
-        int res = -1;
+    ResultSet findLike(int post_id) {
+        ResultSet res = null;
         try {
             mFindLike.setInt(1, post_id);
-            res = mFindLike.executeUpdate();
+            res = mFindLike.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return res;
     }
 
-    int findDislike(int post_id) {
-        int res = -1;
+    ResultSet findDislike(int post_id) {
+        ResultSet res = null;
         try {
             mFindDislike.setInt(1, post_id);
-            res = mFindDislike.executeUpdate();
+            res = mFindDislike.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
         }
