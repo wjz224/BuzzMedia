@@ -57,14 +57,14 @@ public class App {
      */
 
     static Map<Integer, Integer> users = new HashMap<>();
-
+   
 
     public static void main(String[] args) {
         
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
         String db_url = env.get("DATABASE_URL");
-        
+        users.put(1238987447, 1);
         /*String ip = env.get("POSTGRES_IP");
         String port = env.get("POSTGRES_PORT");
         String user = env.get("POSTGRES_USER");
@@ -285,6 +285,7 @@ public class App {
         Spark.get(":sessionKey/users/:email", (request, response) -> {
             int sessionKey = Integer.parseInt(request.params("sessionKey"));
             String email = (String) request.params("email");
+            System.out.println("sessionkey: " + sessionKey);
            
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
@@ -349,6 +350,9 @@ public class App {
            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
            int user_id = users.get(sessionKey);
            // NB: createEntry checks for null title and message
+           System.out.println("user_id: " + user_id);
+           System.out.println("req.mTitle : " + req.mTitle);
+           System.out.println("req.mMessage : " + req.mMessage);
            int post_id = db.insertPost(user_id, req.mTitle, req.mMessage);
            if (post_id <= 0) {
                return gson.toJson(new StructuredResponse("error", "error adding post", null));

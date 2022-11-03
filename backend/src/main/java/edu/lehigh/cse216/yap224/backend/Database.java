@@ -408,8 +408,12 @@ public class Database {
     int getUserId(String email){
         int user_id = 0;
         try{
-            mGetUserId.setInt(1, user_id);
-            user_id = mGetUserId.executeUpdate();
+            mGetUserId.setString(1, email);
+            // user_id = mGetUserId.executeUpdate();
+            ResultSet rs = mGetUserId.executeQuery();
+            while(rs.next()){
+                user_id = rs.getInt("USER_ID");
+            }
         } catch (SQLException e){
             e.printStackTrace();
         }
