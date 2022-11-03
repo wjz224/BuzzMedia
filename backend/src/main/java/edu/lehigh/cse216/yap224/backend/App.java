@@ -170,6 +170,7 @@ public class App {
                 //String userName = decodedToken.getName();
                 String email = "yap224@lehigh.edu";
                 String userName = "Yash";
+                String profile = "none";
         
                 // create sessionKey by hashing the user's email since each user email is unique.   
                 int sessionKey = (int) email.hashCode();
@@ -177,7 +178,7 @@ public class App {
                 // if sessionKey doesn't already exist than add sessionKey and userId into local hashmap and user info into database
                 if(!users.containsKey(sessionKey)){
                     // get user_id after inserting user into database
-                    int user_id = db.insertUser(userName, email, sexualOrientation, gender, note);
+                    int user_id = db.insertUser(userName, email, sexualOrientation, gender, note, profile);
                     // put session key and user_id into hashtable
                     users.put(sessionKey, user_id);
                 }
@@ -212,6 +213,7 @@ public class App {
                 Payload payload = idToken.getPayload();
                 String userName = (String) payload.get("name");
                 String email = payload.getEmail();
+                String profile = (String) payload.get("picture");
         
                 // create sessionKey by hashing the user's email since each user email is unique.   
                 int sessionKey = (int) email.hashCode();
@@ -219,9 +221,15 @@ public class App {
                 // if sessionKey doesn't already exist than add sessionKey and userId into local hashmap and user info into database
                 if(!users.containsKey(sessionKey)){
                     // get user_id after inserting user into database
-                    int user_id = db.insertUser(userName, email, sexualOrientation, gender, note);
-                    // put session key and user_id into hashtable
-                    users.put(sessionKey, user_id);
+                    if(db.getUserId(email) <= 0){
+                        int user_id = db.insertUser(userName, email, sexualOrientation, gender, note, profile);
+                        // put session key and user_id into hashtable
+                         users.put(sessionKey, user_id);
+                    }
+                    else{
+                        // put session key and user_id into hashtable
+                         users.put(sessionKey, db.getUserId(email));
+                    }
                 }
                 
                 return gson.toJson(new StructuredResponse("ok"," valid token", sessionKey));
@@ -371,7 +379,7 @@ public class App {
 
             // implement session key check, if it exists in the hashtable then continue, if not return error.
             if (users.containsKey(sessionKey) == false) {
-                    return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+                return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
             }
             // NB: if gson.Json fails, Spark will reply with status 500 Internal
             // Server Error
@@ -485,7 +493,6 @@ public class App {
                 return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
             }
             String email = (String) request.params("email");
-            int post_id = Integer.parseInt(request.params("post_id"));
             int user_id =  db.getUserId(email);
             UserRequest req = gson.fromJson(request.body(), UserRequest.class);
             // check if userid from sessionKey matches with the userid from the email
