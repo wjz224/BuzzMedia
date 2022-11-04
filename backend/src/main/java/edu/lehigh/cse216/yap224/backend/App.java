@@ -51,11 +51,13 @@ import com.google.firebase.auth.FirebaseToken;
 /**
  * For now, our app creates an HTTP server that can only get and add data.
  */
+
+
 public class App {
     /***
      * Inner session class for the session object.
      */
-
+   
     static Map<Integer, Integer> users = new HashMap<>();
    
 
@@ -63,7 +65,9 @@ public class App {
         
         // get the Postgres configuration from the environment
         Map<String, String> env = System.getenv();
-        String db_url = env.get("DATABASE_URL");    
+        String db_url = env.get("DATABASE_URL");
+        users.put("yap224@lehigh.edu".hashCode(),1);
+        users.put("wjz224@lehigh.edu".hashCode(),2);    
         /*String ip = env.get("POSTGRES_IP");
         String port = env.get("POSTGRES_PORT");
         String user = env.get("POSTGRES_USER");
@@ -252,7 +256,7 @@ public class App {
             if (users.containsKey(sessionKey) == false) {
                 return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
            }
-            return gson.toJson(new StructuredResponse("ok", null, db.selectAllPost()));
+            return gson.toJson(new StructuredResponse("ok", null, db.selectAllPostLikes()));
         });
         
         // GET route that returns everything for a single row in the db.
@@ -319,7 +323,7 @@ public class App {
             if (data == null) {
                 return gson.toJson(new StructuredResponse("error", user_id + " not found", null));
             } else {
-                return gson.toJson(new StructuredResponse("ok", null, data));
+                return gson.toJson(data);
             }
         }); 
         Spark.get(":sessionKey/comments/:post_id", (request, response) ->{
@@ -408,6 +412,61 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null , comment_id));
             }
         });
+        Spark.put(":sessionKey/:post_id/likes", (request, response) -> {
+            // get session key for the user making the post
+            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+             // ensure status 200 OK, with a MIME type of JSON
+            // NB: even on error, we return 200, but with a JSON object that
+            // describes the error.
+            response.status(200);
+            response.type("application/json");
+ 
+            // implement session key check, if it exists in the hashtable then continue, if not return error.
+            if (users.containsKey(sessionKey) == false) {
+                 return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+            }
+            // NB: if gson.Json fails, Spark will reply with status 500 Internal
+            // Server Error
+            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+            int user_id = users.get(sessionKey);
+            int post_id = Integer.parseInt(request.params("post_id"));
+            // NB: createEntry checks for null title and message
+            int result = db.insertLike(user_id,post_id);
+            db.removeDislike(user_id,post_id);
+            if (result <= 0) {
+                return gson.toJson(new StructuredResponse("error", "error adding post", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, post_id));
+            }
+        });
+        Spark.put(":sessionKey/:post_id/:dislikes", (request, response) -> {
+            // get session key for the user making the post
+            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+             // ensure status 200 OK, with a MIME type of JSON
+            // NB: even on error, we return 200, but with a JSON object that
+            // describes the error.
+            response.status(200);
+            response.type("application/json");
+ 
+            // implement session key check, if it exists in the hashtable then continue, if not return error.
+            if (users.containsKey(sessionKey) == false) {
+                 return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+            }
+            // NB: if gson.Json fails, Spark will reply with status 500 Internal
+            // Server Error
+            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+            int user_id = users.get(sessionKey);
+            int post_id = Integer.parseInt(request.params("post_id"));
+            // NB: createEntry checks for null title and message
+            int result = db.insertDislike(user_id,post_id);
+            db.removeLike(user_id,post_id);
+            if (result <= 0) {
+                return gson.toJson(new StructuredResponse("error", "error adding post", null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, post_id));
+            }
+        });
+        
         // DELETE route for removing a post from the db
         Spark.delete(":sessionKey/posts/:email/:post_id", (request, response) -> {
             // get session key for the user making the post
@@ -468,7 +527,7 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null, null));
             }
        });
-        Spark.put(":sessionKey/posts/:email/:post_id", (request, response) -> {
+        Spark.put(":sessionKey/comments/:email/:comment_id", (request, response) -> {
             int sessionKey = Integer.parseInt(request.params("sessionKey"));
             // ensure status 200 OK, with a MIME type of JSON
             // NB: even on error, we return 200, but with a JSON object that
@@ -482,20 +541,21 @@ public class App {
             }
 
             String email = (String) request.params("email");
-            int post_id = Integer.parseInt(request.params("post_id"));
+            int comment_id = Integer.parseInt(request.params("comment_id"));
             int user_id =  db.getUserId(email);
-            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+            ComRequest req = gson.fromJson(request.body(), ComRequest.class);
             // check if userid from sessionKey matches with the userid from the email
             if(user_id != users.get(sessionKey)){
                 return gson.toJson(new StructuredResponse("error", "invalid permissions, mismatching user id", null));
             }
-            int result = db.updatePost(user_id, req.mTitle, req.mMessage, post_id);
+            int result = db.updateComment(comment_id, req.mComment);
             if (result <= 0) {
-                return gson.toJson(new StructuredResponse("error", "unable to update row " + post_id, null));
+                return gson.toJson(new StructuredResponse("error", "unable to update row " + comment_id, null));
             } else {
                 return gson.toJson(new StructuredResponse("ok", null, result));
             }
         });
+        
         Spark.put(":sessionKey/users/:email", (request,response) -> { 
             int sessionKey = Integer.parseInt(request.params("sessionKey"));
             response.status(200);
@@ -518,7 +578,7 @@ public class App {
             if (result <= 0) {
                 return gson.toJson(new StructuredResponse("error", "unable to update user " + user_id, null));
             } else {
-                return gson.toJson(new StructuredResponse("ok", null, user_profile));
+                return gson.toJson(new StructuredResponse("ok", null, result));
             }
 
         });

@@ -124,6 +124,7 @@ public class Database {
     private PreparedStatement mEditPostText;
     private PreparedStatement mEditCommentComment;
     private PreparedStatement mUpdatePost;
+    private PreparedStatement mUpdateComment;
 
 
     /**
@@ -214,6 +215,24 @@ public class Database {
             mComment = comment;
         }
     }
+    public static class PostLikesData {
+        int mPost_id;
+        int mUser_id;
+        String mTitle;
+        String mText;
+        int mLikes;
+        int mDislikes;
+
+        public PostLikesData(int post_id, int user_id, String title, String text, int likes, int dislikes) {
+            mPost_id = post_id;
+            mUser_id = user_id;
+            mTitle = title;
+            mText = text;
+            mLikes = likes;
+            mDislikes = dislikes;
+        }
+    }
+
 
     /**
      * The Database constructor is private: we only create Database objects 
@@ -283,7 +302,7 @@ public class Database {
             
             //Create USER table
             db.mCreateTableUser = db.mConnection.prepareStatement(
-                "CREATE TABLE userTable (user_id SERIAL, username VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL, sex_orient VARCHAR(50) NOT NULL, gender VARCHAR(50), note VARCHAR(50), profile VARCHAR(5000000), primary key (user_id))");
+                "CREATE TABLE userTable (user_id SERIAL, username VARCHAR(50) NOT NULL, email VARCHAR(50) UNIQUE, sex_orient VARCHAR(50) NOT NULL, gender VARCHAR(50), note VARCHAR(50), profile VARCHAR(5000000), primary key (user_id))");
 
             //Create POST table
             db.mCreateTablePost = db.mConnection.prepareStatement(
@@ -295,11 +314,11 @@ public class Database {
 
             //Create LIKE table
             db.mCreateTableLike = db.mConnection.prepareStatement(
-                "CREATE TABLE likeTable (user_id int NOT NULL, post_id int NOT NULL, foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+                "CREATE TABLE likeTable (user_id int NOT NULL, post_id int NOT NULL, foreign key (user_id) references userTable, foreign key (post_id) references postTable, CONSTRAINT user_like UNIQUE(user_id,post_id))");
 
             //Create DISLIKE table
             db.mCreateTableDislike = db.mConnection.prepareStatement(
-                "CREATE TABLE dislikeTable (user_id int NOT NULL, post_id int NOT NULL, foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+                "CREATE TABLE dislikeTable (user_id int NOT NULL, post_id int NOT NULL, foreign key (user_id) references userTable, foreign key (post_id) references postTable, CONSTRAINT user_dislike UNIQUE(user_id,post_id))");
             
             db.mDropTableUser = db.mConnection.prepareStatement("DROP TABLE userTable");
             db.mDropTablePost = db.mConnection.prepareStatement("DROP TABLE postTable");
@@ -347,6 +366,7 @@ public class Database {
             db.mEditUserSexOrient = db.mConnection.prepareStatement("UPDATE userTable SET sex_orient =? WHERE user_id =?");
             db.mEditUserNote = db.mConnection.prepareStatement("UPDATE userTable SET note =? WHERE user_id =?");
             db.mUpdatePost = db.mConnection.prepareStatement("Update postTable SET user_id =? , title =?, text=? WHERE post_id =?");
+            db.mUpdateComment = db.mConnection.prepareStatement("Update commentTable SET comment_val=? WHERE comment_id =?");
             db.mEditPostUser = db.mConnection.prepareStatement("UPDATE postTable SET user_id =? WHERE post_id =?");
             db.mEditPostTitle = db.mConnection.prepareStatement("UPDATE postTable SET title =? WHERE post_id =?");
             db.mEditPostText = db.mConnection.prepareStatement("UPDATE postTable SET text =? WHERE post_id =?");
@@ -501,7 +521,31 @@ public class Database {
             return null;
         }
     }
-
+    ArrayList<PostLikesData> selectAllPostLikes(){
+        ArrayList<PostRowData> res = selectAllPost();
+        ArrayList<PostLikesData> PostLikes = new ArrayList<>();
+        try{
+            for(int i = 0; i < res.size(); i++){
+                PostRowData cur = res.get(i);
+                ResultSet likes = findLike(cur.mPost_id);
+                ResultSet dislikes = findDislike(cur.mPost_id);
+                int numLikes = 0;
+                int numDislikes = 0;
+                while(likes.next()){
+                    numLikes = likes.getInt("Likes");
+                }
+                while(dislikes.next()){
+                    numDislikes = dislikes.getInt("Dislikes");
+                }
+                PostLikesData newData = new PostLikesData(cur.mPost_id,cur.mUser_id,cur.mTitle,cur.mText, numLikes, numDislikes);
+                PostLikes.add(newData);
+            }
+         }catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return PostLikes;
+    }
     ArrayList<PostRowData> selectAllPost() {
         ArrayList<PostRowData> res = new ArrayList<PostRowData>();
         try {
@@ -934,6 +978,17 @@ public class Database {
             mUpdatePost.setString(3, newText);
             mUpdatePost.setInt(4, post_id);
             res = mUpdatePost.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+    int updateComment(int comment_id, String comment_val) { 
+        int res = -1;
+        try {
+            mUpdateComment.setString(1, comment_val);
+            mUpdateComment.setInt(2, comment_id);
+            res = mUpdateComment.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
