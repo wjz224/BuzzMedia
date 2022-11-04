@@ -336,7 +336,7 @@ public class App {
             if (users.containsKey(sessionKey) == false) {
                 return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
             }
-            return gson.toJson(new StructuredResponse("ok", null, db.selectAllCommentPost(post_id)));
+            return gson.toJson(db.selectAllCommentPost(post_id));
         });
         Spark.get(":sessionKey/:post_id/likes", (request, response) ->{
             int sessionKey = Integer.parseInt(request.params("sessionKey"));
@@ -428,18 +428,26 @@ public class App {
             // NB: if gson.Json fails, Spark will reply with status 500 Internal
             // Server Error
             SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+
             int user_id = users.get(sessionKey);
             int post_id = Integer.parseInt(request.params("post_id"));
-            // NB: createEntry checks for null title and message
-            int result = db.insertLike(user_id,post_id);
             db.removeDislike(user_id,post_id);
+            int checkLike = db.checkLike(user_id, post_id);
+            int result = 1;
+
+            if(checkLike > 0){
+                db.removeLike(user_id,post_id);
+            }
+            else{
+                result = db.insertLike(user_id,post_id);
+            }
             if (result <= 0) {
                 return gson.toJson(new StructuredResponse("error", "error adding post", null));
             } else {
-                return gson.toJson(new StructuredResponse("ok", null, post_id));
+                return gson.toJson(new StructuredResponse("ok", null, result));
             }
         });
-        Spark.put(":sessionKey/:post_id/:dislikes", (request, response) -> {
+        Spark.put(":sessionKey/:post_id/dislikes", (request, response) -> {
             // get session key for the user making the post
             int sessionKey = Integer.parseInt(request.params("sessionKey"));
              // ensure status 200 OK, with a MIME type of JSON
@@ -457,9 +465,17 @@ public class App {
             SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
             int user_id = users.get(sessionKey);
             int post_id = Integer.parseInt(request.params("post_id"));
-            // NB: createEntry checks for null title and message
-            int result = db.insertDislike(user_id,post_id);
             db.removeLike(user_id,post_id);
+            int checkDislike = db.checkDislike(user_id,post_id);
+            int result = 1;
+            
+            if(checkDislike > 0){
+                db.removeDislike(user_id,post_id);
+            }
+            else{
+                result = db.insertDislike(user_id,post_id);
+            }
+
             if (result <= 0) {
                 return gson.toJson(new StructuredResponse("error", "error adding post", null));
             } else {
@@ -528,6 +544,7 @@ public class App {
             }
        });
         Spark.put(":sessionKey/comments/:email/:comment_id", (request, response) -> {
+            System.out.println("in weird put route");
             int sessionKey = Integer.parseInt(request.params("sessionKey"));
             // ensure status 200 OK, with a MIME type of JSON
             // NB: even on error, we return 200, but with a JSON object that
@@ -566,7 +583,6 @@ public class App {
             }
             String email = (String) request.params("email");
             int user_id =  db.getUserId(email);
-            String user_profile = db.getUserProfile(email);
             UserRequest req = gson.fromJson(request.body(), UserRequest.class);
             // check if userid from sessionKey matches with the userid from the email
             if(user_id != users.get(sessionKey)){

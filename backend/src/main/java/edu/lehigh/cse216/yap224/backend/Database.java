@@ -92,7 +92,8 @@ public class Database {
     private PreparedStatement mCreateTableComment;
     private PreparedStatement mCreateTableLike;
     private PreparedStatement mCreateTableDislike;
-
+    private PreparedStatement mCheckLike;
+    private PreparedStatement mCheckDislike;
     /**
      * A prepared statement for dropping the table in our database
      */
@@ -325,7 +326,7 @@ public class Database {
             db.mDropTableComment = db.mConnection.prepareStatement("DROP TABLE commentTable");
             db.mDropTableLike = db.mConnection.prepareStatement("DROP TABLE likeTable");
             db.mDropTableDislike = db.mConnection.prepareStatement("DROP TABLE dislikeTable");
-
+            
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
             db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, ?)");
@@ -372,6 +373,10 @@ public class Database {
             db.mEditPostText = db.mConnection.prepareStatement("UPDATE postTable SET text =? WHERE post_id =?");
             db.mEditCommentComment = db.mConnection.prepareStatement("UPDATE commentTable SET comment_val =? WHERE comment_id =?");
 
+            // check if user already liked
+            db.mCheckLike = db.mConnection.prepareStatement("SELECT COUNT(*) as checkLikes FROM likeTable WHERE post_id = ? AND user_id = ?");
+            // check if user already disliked
+            db.mCheckDislike = db.mConnection.prepareStatement("SELECT COUNT(*) as checkDislikes FROM dislikeTable WHERE post_Id = ? AND user_id = ?");
             //Insert Like
             db.mInsertLike = db.mConnection.prepareStatement("INSERT INTO likeTable VALUES ( ?, ? )");
             //Insert Dislike
@@ -1042,7 +1047,35 @@ public class Database {
         }
         return res;
     }
-
+    
+    int checkLike(int user_id, int post_id){
+        int res = -1;
+        try{
+            mCheckLike.setInt(1, post_id);
+            mCheckLike.setInt(2, user_id);
+            ResultSet result = mCheckLike.executeQuery();
+            while(result.next()){
+                res = result.getInt("checkLikes");
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+    int checkDislike(int user_id, int post_id){
+        int res = -1;
+        try{
+            mCheckDislike.setInt(1, post_id);
+            mCheckDislike.setInt(2, user_id);
+            ResultSet result = mCheckDislike.executeQuery();
+            while(result.next()){
+                res = result.getInt("checkDislikes");
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
     ResultSet findLike(int post_id) {
         ResultSet res = null;
         try {
