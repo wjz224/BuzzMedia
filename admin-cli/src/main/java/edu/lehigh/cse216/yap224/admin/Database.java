@@ -294,11 +294,11 @@ public class Database {
 
             //Create LIKE table
             db.mCreateTableLike = db.mConnection.prepareStatement(
-                "CREATE TABLE likeTable (user_id int NOT NULL, post_id int NOT NULL, foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+                "CREATE TABLE likeTable (user_id int NOT NULL, post_id int NOT NULL , foreign key (user_id) references userTable, foreign key (post_id) references postTable, CONSTRAINT user_like UNIQUE(user_id,post_id))");
 
             //Create DISLIKE table
             db.mCreateTableDislike = db.mConnection.prepareStatement(
-                "CREATE TABLE dislikeTable (user_id int NOT NULL, post_id int NOT NULL, foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+                "CREATE TABLE dislikeTable (user_id int NOT NULL, post_id int NOT NULL, foreign key (user_id) references userTable, foreign key (post_id) references postTable, CONSTRAINT user_dislike UNIQUE(user_id,post_id))");
             
             db.mDropTableUser = db.mConnection.prepareStatement("DROP TABLE userTable");
             db.mDropTablePost = db.mConnection.prepareStatement("DROP TABLE postTable");
