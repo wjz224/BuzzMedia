@@ -1,5 +1,4 @@
 import { Logout } from '@mui/icons-material';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../headerBar/HeaderBar.css';
@@ -13,51 +12,70 @@ function ProfilePage(this: any) {
     let navigate = useNavigate();
 
     const { state } = useLocation(); // Read values passed on state
-    const { sessionId, email, familyName, givenName, googleId, imageUrl, name} = state;
-
-    // const [name, setName] = useState('name');
-    // const [email, setEmail] = useState('email');
-    // const [imageUrl, setImageUrl] = useState('emptyString');
-    const [gender, setGender] = useState('N/A')
-    const [sexuality, setSexuality] = useState('N/A');
-    const [bio, setBio] = useState('N/A');
-    
+    const { sessionId, email, familyName, givenName, googleId, imageUrl, name } = state;
 
 
-    //TODO call to the database and get the profile based on session ID
-    // fetch(`https://thebuzzomega.herokuapp.com/users/${sessionId}`,
-    //     {
-    //         method: "GET",
-    //         headers: {
-    //             'Content-type': 'application/json; charset=UTF-8'
-    //         },
-    //         mode: "cors",
-    //     })
-    //     .then((response) => response.json())
-    //     .then((data) => {
-    //         // setMessages(data.mData)
-    //         console.log(data)
-    //         setName(data.mName)
-    //     });
+    const [profile, setProfile] = useState({
+        mEmail: "email",
+        mGender: "gender",
+        mNote: "note",
+        mProfile: "url",
+        mSex_orient: "note",
+        mUser_id: 0,
+        mUsername: "username"
+    })
+
+    if(profile == undefined){
+        setProfile({mEmail: "email",
+        mGender: "gender",
+        mNote: "note",
+        mProfile: "url",
+        mSex_orient: "note",
+        mUser_id: 0,
+        mUsername: "username"})
+    }
+
+
+
+    //get the user profile using session id and email
+    fetch(`https://thebuzzomega.herokuapp.com/${sessionId}/users/${email}`,
+        {
+            method: "GET",
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8'
+            },
+            mode: "cors",
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            setProfile(data)
+        });
 
     function goHome() {
-        navigate("/home", { state: { sessionId: sessionId ,email: email,
-            familyName: familyName,
-            givenName: givenName,
-            googleId: googleId,
-            imageUrl: imageUrl,
-            name: name
-        }});
+        navigate("/home", {
+            state: {
+                sessionId: sessionId, email: email,
+                familyName: familyName,
+                givenName: givenName,
+                googleId: googleId,
+                imageUrl: imageUrl,
+                name: name
+            }
+        });
 
     };
 
     function goPost() {
-        navigate("/add", { state: { sessionId: sessionId ,email: email,
-            familyName: familyName,
-            givenName: givenName,
-            googleId: googleId,
-            imageUrl: imageUrl,
-            name: name } });
+        navigate("/add", {
+            state: {
+                sessionId: sessionId, email: email,
+                familyName: familyName,
+                givenName: givenName,
+                googleId: googleId,
+                imageUrl: imageUrl,
+                name: name
+            }
+        });
 
     };
 
@@ -72,17 +90,18 @@ function ProfilePage(this: any) {
         //     googleId: googleId,
         //     imageUrl: imageUrl,
         //     name: name } })
-        navigate("/editprofile", { state: { sessionId: sessionId ,email: email,
-            bio: bio,
-            gender: gender,
-            sexuality: sexuality,
-            googleId: googleId,
-            imageUrl: imageUrl,
-            name: name } })
+        navigate("/editprofile", {
+            state: {
+                sessionId: sessionId, email: email,
+                googleId: googleId,
+                imageUrl: imageUrl,
+                name: name
+            }
+        })
     }
 
     const handleBioChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-        setBio(e.target.value)
+
     }
 
     return (
@@ -109,7 +128,7 @@ function ProfilePage(this: any) {
             <div className='hexContainer'>
                 <div className='loginBtn'>
                 </div>
-                <img className="profileImg" alt='profile' style={{ width: 100 }} src={imageUrl} referrerPolicy="no-referrer" />
+                <img className="profileImg" alt='profile' style={{ width: 100 }} src={profile.mProfile} referrerPolicy="no-referrer" />
                 {/* <input
                     type="text"
                     value={bio}
@@ -117,68 +136,24 @@ function ProfilePage(this: any) {
                 /> */}
 
                 <text className='bioTitle'>bio:</text>
-                <textarea className='bio' onChange={handleBioChange}>
-                    {bio}
-                </textarea>
-                <div className='gender'>
-                    <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Gender</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        // value={age}
-                        label="gender"
-                        // onChange={}
-                    >
-                        <MenuItem value={10}>Male</MenuItem>
-                        <MenuItem value={20}>Female</MenuItem>
-                        <MenuItem value={30}>Transgender man/trans man</MenuItem>
-                        <MenuItem value={40}>Transgender woman/trans woman</MenuItem>
-                        <MenuItem value={50}>Genderqueer/gender nonconforming neither exclusively male nor female</MenuItem>
-                        <MenuItem value={60}>Decline to answer</MenuItem>
-                        <MenuItem value={70}>Other</MenuItem>
-                    </Select>
-                    </FormControl>
-                </div>
-                <div className='sex'>
-                    <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Sexual Orientation</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        // value={age}
-                        label="gender"
-                        // onChange={}
-                    >
-                        <MenuItem value={10}>Straight or heterosexual</MenuItem>
-                        <MenuItem value={20}>Lesbian or gay</MenuItem>
-                        <MenuItem value={30}>Bisexual</MenuItem>
-                        <MenuItem value={40}>Queer, pansexual, and/or questioning</MenuItem>
-                        <MenuItem value={50}>Don’t know</MenuItem>
-                        <MenuItem value={60}>Decline to answer</MenuItem>
-                        <MenuItem value={70}>Other</MenuItem>
-                    </Select>
-                    </FormControl>
-                </div>
-                
+
+
                 {/* <text className='genTitle'>gender:</text>
                 <textarea className='gender' onChange={handleBioChange}>
                     {gender}
                 </textarea>
                 <text className='sexTitle'>sexuality:</text> */}
-                
-                <text className='name'>{name}</text>
-                <text className='email'>{email}</text>
-                {/* <text className="bio">Bio:  N/A</text> */}
-                {/* <text className="gender">Gender:  N/A</text>    
-                <text className="sex">Sexual orientation:  N/A</text> */}
+
+                <text className='name'>{profile.mUsername}</text>
+                <text className='email'>{profile.mEmail}</text>
+                <text className="bio">{profile.mNote}</text>
+                <text className="gender">Gender:  {profile.mGender}</text>
+                <text className="sex">Sexual orientation: {profile.mSex_orient}</text>
                 <div className='logoutBtn'>
                     <button><a href='/home'>Logout</a></button>
                     <Logout />
-                    {/* <button onClick={edit}>edit Profile</button> */}
+                    <button onClick={edit}>edit Profile</button>
                 </div>
-
-
 
                 <div>
 

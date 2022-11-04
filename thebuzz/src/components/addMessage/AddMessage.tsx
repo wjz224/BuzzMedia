@@ -52,9 +52,9 @@ function AddMessage(){
             mTitle: title,
             mMessage: content
         }
-        
+        console.log(sessionId);
         //POST request
-        fetch(`https://thebuzzomega.herokuapp.com/posts/${sessionId}`,
+        fetch(`https://thebuzzomega.herokuapp.com/${sessionId}/posts`,
             {
                 method: "POST",
                 headers: {
@@ -63,6 +63,10 @@ function AddMessage(){
                 mode: "cors",
                 body: JSON.stringify(subData)
             })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data)
+            });
 
             navigate("/home", {state: {sessionId: sessionId, email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}}); 
     }
