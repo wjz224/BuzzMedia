@@ -188,9 +188,16 @@ Use Database.java to test the different methods in the Database.java class
 
 ![Desktop 1](images/loginWeb.png)
 
-![Desktop 2](images/MainWeb.png)
+![Desktop 2](images/ProfileWeb.png)
 
-![Desktop 3](images/profileWeb.png)
+![Desktop 3](images/EditProfileWeb.png)
+
+![Desktop 4](images/homeWeb.png)
+
+![Desktop 5](images/otherProfileWeb.png)
+
+![Desktop 6](images/postWeb.png)
+
 
 ## Mobile Page
 
