@@ -13,6 +13,7 @@ import ProfilePage from './components/profilePage/ProfilePage';
 import CommentPage from './components/commentPage/CommentPage';
 import EditProfile from './components/editProfilePage/EditProfile';
 import OtherProfile from './components/OtherProfile/OtherProfile';
+import EditComment from './components/editComment/EditComment';
 
 
 //MAIN FILE FOR FRONT END. 
@@ -31,6 +32,7 @@ function App() {
           <Route path="/editprofile" element={<EditProfile />} />
           <Route path="/comments/:postId" element={<CommentPage />} />
           <Route path="/users/:username" element={<OtherProfile />} />
+          <Route path="/edit/:id" element={<EditComment />} />
         </Routes>
       </BrowserRouter>
     );

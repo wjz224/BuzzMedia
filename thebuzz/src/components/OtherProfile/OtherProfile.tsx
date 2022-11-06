@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-// import './LoginPage.css';
+import './OtherProfile.css';
 
 
 
@@ -56,7 +56,7 @@ function OtherProfile() {
             style={{
                 backgroundImage: `url(${background})`,
                 height: '100vh',
-
+                justifyContent: 'center',
                 fontSize: '50px',
                 backgroundSize: 'cover',
                 backgroundRepeat: 'no-repeat',
@@ -64,12 +64,21 @@ function OtherProfile() {
             className='container'
         >
             <div className='profileContainer'>
-                <img src={user.mProfile}></img>
-                <text>{user.mUsername}</text>
-                <text>{user.mEmail}</text>
+                <div>
+                    <img src={user.mProfile}></img>
+                </div>
+                <div>
+                    <text>{user.mUsername}</text>
+                </div>
+                <div>
+                    <text>{user.mEmail}</text>
+                </div>
+                
+
+                <button onClick={goHome}>back</button>
             </div>
-            <text>{user.mEmail}</text>
-            <button onClick={goHome}>back</button>
+            
+            
 
 
         </div>

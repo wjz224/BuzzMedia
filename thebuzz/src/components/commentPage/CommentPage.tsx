@@ -6,7 +6,11 @@ import { IconButton, ListItem, ListItemAvatar, ListItemText } from '@mui/materia
 import Divider from '@mui/material/Divider';
 import { green } from '@mui/material/colors';
 import { useLocation, useParams } from 'react-router-dom';
+import EditIcon from '@mui/icons-material/Edit';
+
+
 const background = require('../loginPage/honeyCombBackground.webp');
+
 // import CommentIcon from '@mui/icons-material/Comment;
 
 function CommentPage() {
@@ -53,6 +57,10 @@ function CommentPage() {
         navigate('/home', { state: { sessionId: sessionId, email: email, imageUrl: imageUrl } });
     };
 
+    function editComment(id: any) {
+        navigate(`/edit/${id}`, { state: { sessionId: sessionId, email: email, imageUrl: imageUrl } });
+    };
+
     function comment(id: any) {
         getUserId();
         var subData =
@@ -74,7 +82,7 @@ function CommentPage() {
             })
             .then((response) => response.json())
             .then((data) => {
-                 console.log(data)
+                console.log(data)
             });
     }
 
@@ -91,16 +99,18 @@ function CommentPage() {
             .then((response) => response.json())
             .then((data) => {
                 setComments(data)
-                
+                console.log()
+                console.log(data)
                 //!! store user Id and info in local storage: if userId matches on comment set com.editable=true
-                comments.forEach((com) =>{
-                    if(com.mUser_id == userId){
-                        com.editable=true;
+                comments.forEach((com) => {
+                    if (com.mUser_id == userId) {
+                        com.editable = true;
                         //console.log(com)
                     }
-                    else{
+                    else {
                         com.editable = false;
                         //console.log(com);
+                        
                     }
                 })
 
@@ -132,32 +142,65 @@ function CommentPage() {
                 </div>
             </div>
             <div className='commentContainer'>
-                {comments.map((value) => (
-                    <><ListItem
-                        key={value}
-                        disableGutters
-                        secondaryAction={<div>
+                {comments.map((value) => {
+                    
+                    if (value.mUser_id == userId) {
+                        //console.log('editable == true')
+                        return (
+                            <><ListItem
+                                key={value}
+                                disableGutters
+                                secondaryAction={<div>
 
-                            <IconButton aria-label="comment" onClick={() => comment(value['mPost_id'])}>
+                                    <IconButton aria-label="comment" onClick={() => editComment(value['mComment_id'])}>
+                                        <EditIcon/>
+                                    </IconButton>
+
+                                </div>}
+                            >
+
+                                <ListItemText
+                                    primary={`${value['mComment']}`}
+                                    // secondary={`${value['mText']}`}
+                                    className={'postText'}
+                                />
+                            </ListItem>
+                                <Divider component="li" /></>
+                        )
+                    }
+                    else {
+                        //console.log(value)
+                        return (
+                            <><ListItem
+                                key={value}
+                                disableGutters
+                                secondaryAction={<div>
+
+                                    {/* <IconButton aria-label="comment" onClick={() => comment(value['mPost_id'])}>
                                 <text> + </text>
-                            </IconButton>
+                            </IconButton> */}
 
-                        </div>}
-                    >
+                                </div>}
+                            >
 
-                        <ListItemText
-                            primary={`${value['mComment']}`}
-                            // secondary={`${value['mText']}`}
-                            className={'postText'}
-                        />
-                    </ListItem>
-                        <Divider component="li" /></>
+                                <ListItemText
+                                    primary={`${value['mComment']}`}
+                                    // secondary={`${value['mText']}`}
+                                    className={'postText'}
+                                />
+                            </ListItem>
+                                <Divider component="li" /></>
+                        )
+                    }
 
-                ))}
+
+
+
+                })}
             </div>
             <div className="inputContainer">
-                <input className="input"  placeholder="Add a comment..."  onChange={handleChange}></input>
-                
+                <input className="input" placeholder="Add a comment..." onChange={handleChange}></input>
+
             </div>
             <button onClick={() => comment(params.postId)}>submit</button>
 
