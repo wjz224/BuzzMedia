@@ -15,13 +15,13 @@
 2. Go into backend folder and run "mvn package; mvn heroku:deploy"
 
 ## Current Backlog
-Web: Don't refresh after every change. Instead update the state
+Web: Cannot log out, more robust unit tests, fix verification error, fix deploy.sh
 
-Admin: Make column label print automatic instead of manually typing with the for loop function and make unit tests test all options.
+Admin: Unit tests, removing old unnecessary code
 
-Backend: Fix the unit test bug in the backend where it references the 3rd row in the database
+Backend: Improve unit tests, adding new routes for updating
 
-Mobile: automatically update the view after something is liked, Store post data in objects not strings
+Mobile: Adding unit tests, fixing verify route, refactoring different pages
 
 ## Unit Test Descriptions for Phase 2
 Web: 
@@ -71,82 +71,109 @@ Mobile:
 
 
 ## Routes
-- __Get__: returns one entity from the table post
-   - \GET /messages 
+- __Get__: returns all entity from the table post
+   - \GET #sessionKey/posts
    - JSON Route: 
-         - "mId" = int
-         - "mTitle" = String
-         - "mContent" = String
-         - "mLikes" = int
-         - "mCreated" = timecreated
-  
-- __Get__: returns one entity from the table comment
-    - \GET /comments
+     - "mPost_id" = int
+     - "mUser_id" = int
+     - "mTitle" = String
+     - "mText" = String
+     
+- __Get__: returns one entity from the table post
+    - \GET #sessionKey/posts/#post_id
     - JSON Route:
-        - "mId" = int
-        - "mCommentId" = int
-        - "mCommentLikes" = int
-        - "mCommentDislikes" = int
-        - "mComment" = String
-    
+        - "mPost_id" = int
+        - "mUser_id" = String
+        - "mTitle" = String
+        - "mText" = String
+- __Get__: returns one entity from the table user
+    - \GET #sessionKey/users/#email
+    - JSON Route:
+        - "mUser_id" = int
+        - "mUsername" = String
+        - "mName" = String
+        - "mEmail" = String
+        - "mSex_orient" = String
+        - "mGender" = String
+        - "mNote" = String  
+        
+- __Get__: returns all entities from the table comment associated to a post_id
+    - \GET #sessionKey/comments/#post_id
+    - JSON Route:
+        - "mComment_id" = int
+        - "mPost_id" = int
+        - "mUser_Id" = int
+        - "mComment" = String  
 
-- __Post__: adds a new message, title, messageId, and like counter to the current database table
-    - \POST /messages
+-  __Get__: returns one entity from the table comment
+    - \GET #sessionKey/comments/#comment_id
+    - JSON Route:
+        - "mComment_id" = int
+        - "mPost_id" = int
+        - "mUser_Id" = int
+        - "mComment" = String    
+        
+- __Post__: Verifies the access token and adds a new user to the associated user id
+   - \POST /verify/#google_idtoken
+   - JSON Route:
+     -  "sessionKey" = int
+     
+- __Post__ : Adds a new post associated with the user.
+    - \POST #sessionKey/posts
     - JSON Route: 
-         - "mTitle" = String
-         - "mContent" = String
-  
-- __Post__ : adds a new comment to the associated messageId
-    - \POST /comments
+        - "mPost_id" = int
+        - "mUser_id" = int
+        - "mTitle" = String
+        - "mText" = String
+- __Post__ : Adds a new comment associated with the user
+    - \POST #sessionKey/comments
     - JSON Route: 
-        - "mId" = int
+        - "mComment_id" = int
+        - "mPost_id" = int
+        - "mUser_id" = int
         - "mComment" = String
   
-- __Delete__: removes an entity specified by an ID number from the table
-    - \DELETE /messages/#
+- __Delete__: Removes a post specified by an ID number from the table post
+    - \DELETE #sessionKey/posts/#email/#post_id
     - JSON Route: 
-        - "mId" = int
+        - "mPost_id" = int
   
 - __Delete__: Removes a comment specified by the commentId
-    - \DELETE /comments/#
+    - \DELETE #sessionKey/comments/#email/#comment_id
     - JSON Route: 
-         - "mCommentId" =  int
-   
-- __Put__: changes an existing entity in the table by specifying an ID number
-    - \PUT /messages/#
+        - "mComment_id" =  int
+         
+- __Delete__: Delete a user specified by the email
+    - \DELETE #sessionKey/users/#email
+        - "mUser_id" = int
+        
+- __Put__: Updates an existing post in the table by specifying an post id and the user id
+    - \PUT #sessionKey/posts/#email/#post_id
     - JSON Route:
-        - "mId" = int
-        - "mContent" = String
-
-- __Put__: Adds likes for message
-    - \PUT /messages/#/likes
+        - "mPost_id" = int
+        - "mUser_id" = int
+        - "mTitle" = String
+        - "mText" = String
+- __Put__: Updates an existing comment in the table by specifying an comment id, the post id, and the user id
+    - \PUT #sessionKey/comments/#email/#comment_id
     - JSON Route:
-        - "mId" = int
-        -  "mLikes" = int
+        - "mComment_id" = int
+        - "mPost_id" = int
+        - "mUser_id" = int
+        - "mComment" = String
+        
+- __Put__: Like for post
+    - \PUT #sessionKey/posts/#post_id/like
+    - JSON Route:
+        - "mPost_id" = int
+        - "mLikes" = int
       
-- __Put__: Adds dislikes for message
-    - \PUT /messages/#/dislikes
+- __Put__: Dislike for post
+    - \PUT #sessionKey/posts/#post_id/dislike
     -  JSON Route:
-        - "mId" = int
+        - "mPost_id" = int
         - "mDislikes" = int
-      
-- __Put__: Update Comment
-    - \PUT /comments/#
-    - JSON Route: 
-         - "mId" = int
-         - "mComment" = String
-      
-- __Put__: Adds likes for comment
-    - \PUT /comments/#/likes
-    - JSON Route:
-        - "mCommentId" = int
-        - "mCommentLikes" = int
-  
-- __Put__: Adds dislikes for comment
-    - \PUT /comments/#/dislikes
-    - JSON Route:
-         - "mCommentId" = int
-         - "mCommentDislikes" = int
+
   
 ## Javadoc documentation
 Read HTML file for App.java and Database.java [here](./backend\src\main\java\edu\lehigh\cse216\yap224\backend\JavadocHTMLFiles\index-all.html) 
@@ -172,7 +199,7 @@ Use Database.java to test the different methods in the Database.java class
 
 ## ERD
 
-![ERD Diagram for backend](images/ED_Diagram_phase2.jpg)
+![ERD Diagram for backend](images/ED_Diagram_phase2.jpeg)
 
 ## State Machines (idea, user)
 

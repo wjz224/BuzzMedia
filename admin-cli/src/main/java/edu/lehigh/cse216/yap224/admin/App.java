@@ -18,12 +18,20 @@ public class App {
      */
     static void menu() {
         System.out.println("Main Menu");
-        System.out.println("  [T] Create tblData");
+        System.out.println("  [T] Create all tables");
         System.out.println("  [D] Drop tblData");
         System.out.println("  [1] Query for a specific row");
+        System.out.println("  [A] Query for a specific post");
+        System.out.println("  [B] Query for a specific post");
         System.out.println("  [*] Query for all rows");
+        System.out.println("  [C] Query for all post");
+        System.out.println("  [D] Query for all users");
         System.out.println("  [-] Delete a row");
+        System.out.println("  [E] Delete a user");
+        System.out.println("  [F] Delete a post");
         System.out.println("  [+] Insert a new row");
+        System.out.println("  [G] Insert a new post");
+        System.out.println("  [H] Insert a new user");
         System.out.println("  [~] Update a row");
         System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
@@ -40,7 +48,7 @@ public class App {
         /**
          * The valid characters that the user can enter 
          */
-        String actions = "TD1*-+~q?";
+        String actions = "TD1AB*CD-EF+GH~q?";
 
         /**
          *  While loop that continues until the user enters the q character.
@@ -150,6 +158,30 @@ public class App {
                     System.out.println("  --> " + res.mMessage);
                 }
             }
+            
+            //Find Specific Post
+            else if (action == 'A') {
+                int post_id = getInt(in, "Enter the post ID");
+                if (post_id == -1)
+                    continue;
+                Database.RowData res = db.mOnePost(post_id);
+                if (res != null) {
+                    System.out.println(res.title + " " + res.test);
+                }
+            }
+
+            //Find Specific User
+            else if (action == 'B') {
+                int user_id = getInt(in, "Enter the user ID");
+                if (user_id == -1)
+                    continue;
+                Database.RowData res = db.mOneUser(user_id);
+                if (res != null) {
+                    System.out.println(res.username + " " + res.first_name + " " + res.last_name + " " + res.email + " " + res.gender);
+                    System.out.println("  --> " + res.note);
+                }
+            }
+
             // Print all rows from Database table
             else if (action == '*') {
                 ArrayList<Database.RowData> res = db.selectAll();
@@ -182,6 +214,30 @@ public class App {
                     continue;
                 System.out.println("  " + res + " rows deleted");
             }
+
+            // Delete a row from User table
+            else if (action == 'E') {
+                int user_id = getInt(in, "Enter the User ID");
+                if (user_id == -1)
+                    continue;
+                int res = db.deleteUser(user_id);
+                if (res == -1)
+                    continue;
+                System.out.println("  " + res + " rows deleted");
+            }
+
+            // Delete a row from Post table
+            else if (action == 'F') {
+                int post_id = getInt(in, "Enter the Post ID");
+                if (post_id == -1)
+                    continue;
+                int res = db.deletePost(post_id);
+                if (res == -1)
+                    continue;
+                System.out.println("  " + res + " rows deleted");
+            }
+
+
             // Add a row to Database by reading user input for each column 
             else if (action == '+') {
                 String subject = getString(in, "Enter the subject");
@@ -192,6 +248,37 @@ public class App {
                 int res = db.insertRow(subject, message, likes);
                 System.out.println(res + " rows added");
             } 
+
+            // Add a User row to Database by reading user input for each column 
+            else if (action == 'H') {
+                int user_id = getInt(in, "Enter the User ID");
+                String username = getString(in, "Enter the username");
+                String first_name = getString(in, "Enter the first name");
+                String last_name = getString(in, "Enter the last name");
+                String email = getString(in, "Enter the email");
+                String sex_orient = getString(in, "Enter the sexual orientation");
+                int phone_num = getInt(in, "Enter the phone number");
+                String gender = getString(in, "Enter the gender");
+                String note = getString(in, "Enter the note");
+                int likes = getInt(in, "Enter the number of likes");
+                // if (phone_num.equals("") || message.equals(""))
+                //     continue;
+                int res = db.insertUser(user_id, username, first_name, last_name, email, sex_orient, phone_num, gender, note);
+                System.out.println(res + " rows added");
+            } 
+
+            // Add a Post row to Database by reading user input for each column 
+            else if (action == 'G') {
+                int post_id = getInt(in, "Enter the post ID");
+                int user_id = getInt(in, "Enter the user ID");
+                String title = getString(in, "Enter the title");
+                String text = getString(in, "Enter the text");
+                // if (subject.equals("") || message.equals(""))
+                //     continue;
+                int res = db.insertPost(post_id, user_id, title, text);
+                System.out.println(res + " rows added");
+            } 
+
             // Update a row by reading in user input
             else if (action == '~') {
                 int id = getInt(in, "Enter the row ID :> ");
