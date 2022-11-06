@@ -215,9 +215,9 @@ Use Database.java to test the different methods in the Database.java class
 
 ![Desktop 1](images/loginWeb.png)
 
-![Desktop 2](images/ProfileWeb.png)
+![Desktop 2](images/profileWeb.png)
 
-![Desktop 3](images/EditProfileWeb.png)
+![Desktop 3](images/editProfileWeb.png)
 
 ![Desktop 4](images/homeWeb.png)
 
