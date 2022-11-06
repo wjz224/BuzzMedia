@@ -205,7 +205,7 @@ Use Database.java to test the different methods in the Database.java class
 
 ![State Machine](images/StateMachine.png)
 
-![State Machine](images/userStateMachine.png)
+![State Machine](images/userStateMachineUpdate.png)
 
 ## System Diagram
 
