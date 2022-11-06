@@ -30,6 +30,9 @@ function EditProfile(this: any) {
     const handleChangeSex = (e: { target: { value: React.SetStateAction<string>; }; }) => {
         setSex(e.target.value);
     };
+    const handleChangeNote = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+        setNote(e.target.value);
+    };
     
 
     //!Put request function when submit button is pressed then navigate back to profile
@@ -79,10 +82,10 @@ function EditProfile(this: any) {
                 <button onClick={cancel}>cancel</button>
                 <form>
                     <label>
-                        Name:
-                        <input type="text" name="name" />
+                        Note:
+                        <input type="text" name="name" onChange={handleChangeNote}/>
                     </label>
-                    <input type="submit" value="Submit" />
+                    
                 </form>
                 <div >
 

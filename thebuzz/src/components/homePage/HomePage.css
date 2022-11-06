@@ -35,3 +35,10 @@ body {
 .modalBox{
     background-color: white;
 }
+
+.commentsContainer{
+    background-color: red;
+    width: 300px;
+    text-align: center;
+    /* background-color: #fff9d0; */
+}
