@@ -7,6 +7,7 @@ import './ProfilePage.css';
 const background = require('../loginPage/honeyCombBackground.webp');
 const orangeHex = require('../loginPage/Orange_hexagon.png');
 
+//!!add delete google cookies when logout button is clicked then logout will work :)
 function ProfilePage(this: any) {
 
     let navigate = useNavigate();
@@ -150,7 +151,7 @@ function ProfilePage(this: any) {
                 <text className="gender">Gender:  {profile.mGender}</text>
                 <text className="sex">Sexual orientation: {profile.mSex_orient}</text>
                 <div className='logoutBtn'>
-                    <button><a href='/home'>Logout</a></button>
+                    <button><a href='/home'>Logout</a></button> 
                     <Logout />
                     <button onClick={edit}>edit Profile</button>
                 </div>

@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import '../headerBar/HeaderBar.css';
 import './HomePage.css';
-import { Box, IconButton, List, ListItem, ListItemText, Modal, Typography } from '@mui/material';
+import { Avatar, Box, IconButton, List, ListItem, ListItemAvatar, ListItemText, Modal, Typography } from '@mui/material';
 import CommentIcon from '@mui/icons-material/Comment';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import Divider from '@mui/material/Divider';
 import { Navigate, useLocation, useNavigate, Params, useParams} from 'react-router-dom';
 const background = require('../loginPage/honeyCombBackground.webp');
+const avatar = require('./Avatar_bee.png');
 
 /**
  * Component for displaying messages and message information, as well as liking and deleting messages.
@@ -51,9 +52,9 @@ function HomePage() {
     const [isDisliked, setisDisliked] = useState(false);
     const [fakeLikes, setFakeLikes] = useState(2);
     const [comments, setComments] = useState<any[]>([]);
-    const [users, setUsers] = useState<any[]>([
-        { mComment_id: 0, mPost_id: 0, mUser_id: 0, mComment: 'testComment' }
-    ]);
+    // const [users, setUsers] = useState<any[]>([
+    //     { mComment_id: 0, mPost_id: 0, mUser_id: 0, mComment: 'testComment' }
+    // ]);
 
     //useEffect runs inside code whenever the page is loaded
     useEffect(() => {
@@ -77,11 +78,7 @@ function HomePage() {
                         })
                         .then((usrResponse) => usrResponse.json())
                         .then((usrData) => {
-                            console.log('in fetch user')
                             console.log(usrData)
-                            setUsers(usrData)
-                            console.log('users: ')
-                            console.log(users)
                             // tempUsers = users;
                             // if(!(users.includes(usrData))){
                             //     setUsers(usrData)
@@ -112,22 +109,24 @@ function HomePage() {
 
     function comment(id: number) {
 
-        fetch(`https://thebuzzomega.herokuapp.com/${sessionId}/comments/${id}`,
-            {
-                method: "GET"
+        navigate(`/comments/${id}`, { state: { sessionId: sessionId, email: email, imageUrl: imageUrl } })
 
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                setComments(data)
-                //!! store user Id and info in local storage: if userId matches on comment set com.editable=true
-                // comments.forEach((com) =>{
-                //     if(com.mUser_id ==)
-                // })
-                console.log(data)
-            });
+        // fetch(`https://thebuzzomega.herokuapp.com/${sessionId}/comments/${id}`,
+        //     {
+        //         method: "GET"
 
-            console.log(comments)
+        //     })
+        //     .then((response) => response.json())
+        //     .then((data) => {
+        //         setComments(data)
+        //         //!! store user Id and info in local storage: if userId matches on comment set com.editable=true
+        //         // comments.forEach((com) =>{
+        //         //     if(com.mUser_id ==)
+        //         // })
+        //         console.log(data)
+        //     });
+
+        //     console.log(comments)
         // if (id == 1) {
         //     setComments('???? what')
         // }
@@ -231,6 +230,11 @@ function HomePage() {
         window.location.reload()
     }
 
+    function otherProfile(id: number) {
+        //navigate to profile page of user who is clicked
+        navigate(`/users/${id}`, { state: { sessionId: sessionId, email: email, imageUrl: imageUrl } });
+    }
+
     //This is like the main function. Whatever is in div gets run when the component is used in App.tsx
     //Prints a title, and maps the messages json to a list format
     return (
@@ -257,23 +261,7 @@ function HomePage() {
                
             <div className='postsContainer'>
             
-                {/* <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <Box className="modalBox">
-                        <Typography id="modal-modal-title" variant="h3" component="h2">
-                            Comments:
-                        </Typography>
-                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                            {comments[0]}
-                        </Typography>
-                    </Box>
-                </Modal> */}
                 
-
                 <List sx={{ width: '100%', maxWidth: 900, bgcolor: '#fff9d0' }}>
                     <div className='postTextContainer'>
                         {messages.map((value) => (
@@ -292,14 +280,15 @@ function HomePage() {
                                     <IconButton aria-label="comment" onClick={() => comment(value['mPost_id'])}>
                                         <CommentIcon />
                                     </IconButton>
-                                    {/* <IconButton aria-label="comment" onClick={comment}>
-                                <CommentIcon />
-                            </IconButton> */}
+                                   
                                 </div>}
                             >
+                                <ListItemAvatar onClick={() => otherProfile(value['mUser_id'])}>
+                                    <Avatar alt="user" src={avatar} />
+                                </ListItemAvatar>
 
                                 <ListItemText
-                                    primary={`User ${value['mPost_id']}'s post: ${value['mTitle']}`}
+                                    primary={`${value['mTitle']}`}
                                     secondary={`${value['mText']}`}
                                     className={'postText'}
                                 />
@@ -310,7 +299,7 @@ function HomePage() {
 
                     </div>
                 </List>
-                <div className='commentsContainer'>
+                {/* <div className='commentsContainer'>
                     <h1>Comments</h1>
                         {
                             comments && comments.map((item) => (
@@ -319,7 +308,7 @@ function HomePage() {
                                 </li>
                             ))
                         }
-                    </div>
+                </div> */}
             </div>
             
             <div className='headerContainer'>

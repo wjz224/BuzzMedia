@@ -22,10 +22,10 @@ function Login() {
             })
             .then((response) => response.json())
             .then((data) => {
-                // setMessages(data.mData)
+                
+                console.log(Response)
                 console.log(data)
-                //navigate('/profile', {  state: {sessionId: data.mData}})
-                //navigate('/profile', {  state: {sessionId: data.mData, email: email, familyName: familyName, givenName: givenName, googleId: googleId, imageUrl: imageUrl, name: name}})
+                
                 navigate('/profile', 
                     { state: {
                         sessionId: data.mData,
