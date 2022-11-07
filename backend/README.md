@@ -4,8 +4,9 @@
 ## Running the Backend
 1. Open up git bash
 2. Navigate to the backend folder
-3. Run mvn package
-4. Run mvn heroku:deploy
+3. Run mvn clean compile
+4. Run mvn package
+5. Run mvn heroku:deploy
 
 ## Testing
 1. Does the database exist
