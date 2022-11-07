@@ -109,7 +109,7 @@ public class Database {
     private PreparedStatement mGetColNames;
     private PreparedStatement mGetUserId;
     private PreparedStatement mGetUserProfile;
-
+    private PreparedStatement mGetUserIdComment;
     /**
      * A prepared statement edit functions
      */
@@ -359,6 +359,7 @@ public class Database {
             db.mInsertComment = db.mConnection.prepareStatement("INSERT INTO commentTable VALUES (default, ?, ?, ?)");
             db.mGetUserId = db.mConnection.prepareStatement("SELECT user_id from userTable WHERE email = ?");
             db.mGetUserProfile= db.mConnection.prepareStatement("SELECT profile from userTable WHERE email = ?");
+            db.mGetUserIdComment = db.mConnection.prepareStatement("SELECT user_id from commentTable where comment_id = ?");
             //Edit functions
             db.mEditUserUsername = db.mConnection.prepareStatement("UPDATE userTable SET username =? WHERE user_id =?");
             //db.mEditUserName = db.mConnection.prepareStatement("UPDATE userTable SET name =? WHERE user_id =?");
@@ -586,7 +587,7 @@ public class Database {
             mSelectAllCommentPost.setInt(1, post_id);
             ResultSet rs = mSelectAllCommentPost.executeQuery();
             while (rs.next()) {
-                res.add(new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("comment_val")));
+                res.add(new CommentRowData(rs.getInt("comment_id"), rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("comment_val")));
             }
             rs.close();
             return res;
@@ -712,6 +713,20 @@ public class Database {
             mGetUserId.setString(1, email);
             // user_id = mGetUserId.executeUpdate();
             ResultSet rs = mGetUserId.executeQuery();
+            while(rs.next()){
+                user_id = rs.getInt("USER_ID");
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return user_id; 
+    }
+    int getUserIdComment(int comment_id){
+        int user_id = 0;
+        try{
+            mGetUserIdComment.setInt(1, comment_id);
+            // user_id = mGetUserId.executeUpdate();
+            ResultSet rs = mGetUserIdComment.executeQuery();
             while(rs.next()){
                 user_id = rs.getInt("USER_ID");
             }
