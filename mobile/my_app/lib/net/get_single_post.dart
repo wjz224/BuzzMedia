@@ -9,11 +9,11 @@ import 'package:my_app/model/item_model.dart';
 const urlPrefix = 'https://thebuzzomega.herokuapp.com';
 
 
-Future<List<Post>>fetchMessage(String sessionID) async {
+Future<Post>fetchSinglePost(String sessionID, String post_id) async {
   /// Gets the posts from the database 
 
   // Get request to /messages route
-	final response = await http.get(Uri.parse('$urlPrefix/$sessionID/posts'));
+	final response = await http.get(Uri.parse('$urlPrefix/$sessionID/posts/$post_id'));
 
   // Variable to contain the data from the get request
 	var returnData;
@@ -21,8 +21,8 @@ Future<List<Post>>fetchMessage(String sessionID) async {
   // If get requet is succesful parse through the data and return as a list of strings
     var res = jsonDecode(response.body);
     
-		var resData = res['mData'] as List;
-    List<Post> postObjs = resData.map((tagJson) => Post.fromJson(tagJson)).toList();
+		 
+    Post postObjs = res['mData'];
     print(postObjs.toString());
     //String cleanup = response.body.substring(25,);
     //String cleanup2 = cleanup.substring(0, cleanup.length - 2);

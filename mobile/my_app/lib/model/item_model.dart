@@ -7,30 +7,32 @@ import 'dart:convert';
 
 //Create object from a post in the database
 //each post should have a unique id(int), a title(String), and a message(String)
-class Message {
-	final int? mId;
-	final String? mTitle;
-	final String? mContent;
-	final String? mLikes;
-	final String? mCreated;
+class Post {
+	int postId;
+  int userID;
+	String title;
+	String text;
+	int likes;
+  //int? dislikes;
 
-	const Message({
-		required this.mId,
-		required this.mTitle,
-		required this.mContent,
-		required this.mLikes,
-		required this.mCreated,
+  Post(
+    this.postId,
+    this.userID,
+    this.title,
+    this.text,
+    this.likes,
+    //this.dislikes,
+  );
+
 	
-	});
-
-	factory Message.fromJson(Map<String, dynamic> json) {
-		return Message(
-			mId: json['mId'],
-			mTitle: json['mTitle'],
-			mContent: json['mContent'],
-			mLikes: json['mLikes'],
-			mCreated: json['mCreated'],
-		);
+	factory Post.fromJson(dynamic json) {
+		return Post(json['mPost_id'] as int, json['mUser_id'] as int, json['mTitle'] as String, json['mText'] as String,  json['mLikes'] as int);
 	}
+
+
+  @override
+  String toString() {
+    return '{ ${this.postId}, ${this.userID}, ${this.title},${this.text},${this.likes}}';
+  }
 }
 

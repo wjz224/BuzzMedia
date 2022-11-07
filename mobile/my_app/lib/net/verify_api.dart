@@ -5,7 +5,7 @@ import 'dart:convert';
 const urlPrefix = 'https://thebuzzomega.herokuapp.com';
 
 
-Future<int> verify(
+Future<String> verify(
   Future<String> id_tokenFuture,
 ) async {
   /// Pass in variables mTitle and mContent to make a post to the database
@@ -13,7 +13,7 @@ Future<int> verify(
   // Creates final url, headers, and a json containing mTitle and mContent variable and passes them through the post request
   String id_token = await id_tokenFuture;
   
-	final url = Uri.parse('$urlPrefix/verify/$id_token'); 
+	final url = Uri.parse('$urlPrefix/verifymobile/$id_token'); 
 	final headers = {"Content-type": "application/json"};
 	//final json = jsonEncode({"id_token": "$id_token"});
 	final response = await post(url, headers: headers);
@@ -24,5 +24,5 @@ Future<int> verify(
 	print('Body: ${response.body}');
   
   // Return the response status code for testing purposes
-  return response.statusCode;
+  return response.body;
 }

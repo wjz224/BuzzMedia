@@ -7,11 +7,18 @@ import 'package:my_app/net/get_items_api.dart';
 import 'package:my_app/net/put_dislike_api.dart';
 import 'package:my_app/pages/IdeaPostPage.dart';
 import 'package:my_app/pages/CommentPage.dart';
+import 'package:my_app/net/get_userID.dart';
 
 import 'package:my_app/net/put_like_api.dart';
 import 'package:my_app/net/put_dislike_api.dart';
 import 'package:my_app/provider/google_sign_in.dart';
 import 'package:provider/provider.dart';
+
+import 'package:my_app/model/user_other.dart';
+import 'package:my_app/model/user_preferances.dart';
+import 'package:my_app/model/item_model.dart';
+import 'dart:convert';
+import 'package:my_app/widgets/LikeDislikeButtonWidget.dart';
 
 class MyHomePage extends StatefulWidget {
   /// This stateful widget is the home page of the application
@@ -50,7 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               )),
           TextButton(
-              child: Text('Abandon the Hive',style: TextStyle(color: Colors.white)),
+              child: Text('Abandon the Hive',
+                  style: TextStyle(color: Colors.white)),
               onPressed: () {
                 final provider =
                     Provider.of<GoogleSignInProvider>(context, listen: false);
@@ -81,29 +89,38 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
   /// Method for HttpReqPosts setState
   final user = FirebaseAuth.instance.currentUser!;
 
-  late Future<List<String>> _future_list_message;
+  late Future<List<Post>> _future_list_message;
+
+  late Future<List<String>> userInformartion;
 
   final _biggerFont = const TextStyle(fontSize: 18);
 
   final sizeButton = 50.0;
 
+  final userOther = UserPreferences.myUser;
+  List<bool> _selections = List.generate(2, (_) => false);
+
+
   @override
   void initState() {
     super.initState();
-    print(fetchMessage().runtimeType);
-    _future_list_message = fetchMessage();
+    print(fetchMessage(userOther.sessionID).runtimeType);
+    _future_list_message = fetchMessage(userOther.sessionID);
   }
 
-  List<bool> _selections = List.generate(2, (_) => false);
+  
   @override
   Widget build(BuildContext context) {
     /// The main view of the home screen on the app containing a list of posts, like, and dislike buttons
+    
+    
 
-    var fb = FutureBuilder<List<String>>(
+
+
+    var fb = FutureBuilder<List<Post>>(
       future: _future_list_message,
-      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
         Widget child;
-
         if (snapshot.hasData) {
           // Create  listview to show one row per array element of json response
           child = ListView.builder(
@@ -111,17 +128,30 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
               itemCount: snapshot.data!.length,
               itemBuilder: /*1*/ (context, i) {
                 // DataStr is the string of data for each post in json format !This is Tech Debt!
-                var dataStr = snapshot.data?[i];
+                Post? dataStr = snapshot.data?[i];
                 // Split the components of dataString up
-                var dataArr = dataStr?.split(',');
-                var titleArr = dataArr?[1]?.split(':');
-                var messageArr = dataArr?[2]?.split(':');
-                var likesArr = dataArr?[3]?.split(':');
+   
+                // DataStr is the string of data for each post in json format !This is Tech Debt!
+                // Split the components of dataString up
+                
+
                 //seperate out the title, message, id, and numLikes into their own variables
-                var title = titleArr?[1];
-                var message = messageArr?[1];
-                var likes = likesArr?[1];
-                var id = dataStr?[6];
+                String mPost_ID = dataStr!.postId.toString();
+                String mUser_ID = dataStr!.userID.toString();
+                String mTitle = dataStr!.title;
+                String mText = dataStr!.text;
+                String mLikes = dataStr!.likes.toString();
+                
+
+
+                //var userInformartion = fetchUserInfo(userOther.sessionID, mUser_ID!);
+
+                
+                
+                //String userName = userInformartion[0];
+                //String email = userInformartion[1];
+
+                
 
                 return Column(
                   children: <Widget>[
@@ -131,15 +161,15 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                       leading: Image.network(user.photoURL!),
                       title: RichText(
                         text: TextSpan(
-                            text: ' $title ',
+                            text: mTitle,
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
-                              fontSize: 36,
+                              fontSize: 24,
                             ),
                             children: [
                               TextSpan(
-                                text: "\n" + "$message",
+                                text: "\n " + mText!,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.normal,
@@ -150,82 +180,11 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                       ),
 
                       subtitle:
-                          Text("by " + user.displayName! + "\n" + user.email!),
+                          Text("by " + "Wilson" + "\n" + "wjz224@lehigh.edu"),
                     ),
                     // Row widget puts the like count and buttons in one horizontal row together
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        // The dislike button display and functionality
-                        ToggleButtons(
-                          children: <Widget>[
-                            Icon(Icons.thumb_down),
-                            Icon(Icons.thumb_up),
-                          ],
-                          isSelected: _selections,
-                          onPressed: (int index) {
-                            setState(() {
-                              _selections[index] = !_selections[index];
-                              
-                              //likeCode
-                              if (index == 0 && _selections[index]) {
-                                addLike('$id');
-                                _selections[1] = false;
-                              } else if (index == 0 && !_selections[index]) {
-
-                                dislike('$id');
-                              }
-
-                              //dislike Code
-                              if (index == 1 && _selections[index]) {
-                                _selections[0] = false;
-                                dislike('$id');
-                              } else if (index == 1 && !_selections[index]) {
-                                addLike('$id');
-                              }
-                            });
-                          },
-                          color: Colors.grey,
-                          fillColor: Colors.yellow,
-                        ),
-
-
-
-
-
-
-
-
-
-
-                        // Spacing between button and text
-                        SizedBox(width: 20),
-                        // Number of likes displayed
-                        Text(
-                          '10',
-                          style: _biggerFont,
-                        ),
-                        //Spacing between button and text
-                        SizedBox(width: 20),
-
-                        // The like button display and functionality
-
-                        ElevatedButton(
-                            child: Text('View Comments',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16)),
-                            style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(50))),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>  CommentPage(title: '$title')),
-                              );
-                            })
-                      ],
-                    ),
+                    LikeWidget(mPost_ID, userOther),
+                    
                     // Space between each post item
                     Divider(height: 1.0),
                   ],

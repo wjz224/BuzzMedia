@@ -21,12 +21,13 @@ import 'package:my_app/net/verify_api.dart';
 Future<void> main() async {
 
   //checks if the get messages function works
+  /*
   test('get request messages from server',() async{
       expect(
           (await makeGetRequest()).statusCode,
           200,
         );
-    });
+    });*/
 
     test('Login Page Appears',() async{
       expect(

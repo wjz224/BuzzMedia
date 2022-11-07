@@ -5,6 +5,7 @@ import 'package:my_app/model/user_preferances.dart';
 import 'package:my_app/net/verify_api.dart';
 import 'package:my_app/pages/ProfilePage.dart';
 import 'package:my_app/net/put_change_profile.dart';
+import 'package:my_app/widgets/DropDownWidget.dart';
 
 import 'package:my_app/widgets/TextFieldWidget.dart';
 
@@ -17,11 +18,16 @@ import 'package:provider/provider.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
+   UserOther user;
+
+   EditProfilePage({
+    required this.user
+   });
+
   _EditProfilePageState createState() => _EditProfilePageState();
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  UserOther user = UserPreferences.myUser;
 
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(),
@@ -30,28 +36,26 @@ class _EditProfilePageState extends State<EditProfilePage> {
           physics: BouncingScrollPhysics(),
           children: [
             const SizedBox(height: 24),
-            TextFieldWidget(
-                label: 'Gender',
-                text: user.gender,
-                onChanged: (gender) {
-                  putChangeProfile(gender, user.sexualOrientation, user.bio,
-                      "Id session", "Session Key");
-                }),
+            Text("Sexual Orientation", style: TextStyle(fontWeight: FontWeight.bold)),
+            DropdownButtonField(list: ["N/A","striaght", "gay", "bi", "queer", "dk", "decline", "other"], dropdownValue: widget.user.gender,
+            onChanged: (gender){
+              putChangeProfile(gender, widget.user.sexualOrientation, widget.user.bio,
+                    "yap224@lehigh.edu", widget.user.sessionID);
+            },),
             const SizedBox(height: 24),
-            TextFieldWidget(
-                label: 'Sexual Orientation',
-                text: user.sexualOrientation,
-                onChanged: (sexualOrientation) {
-                  putChangeProfile(user.gender, sexualOrientation, user.bio,
-                      "Id session", "Session Key");
-                }),
+            Text("Gender", style: TextStyle(fontWeight: FontWeight.bold)),
+            DropdownButtonField(list: ["N/A","male", "female", "transm", "transw", "nonconf", "decline", "other"], dropdownValue: widget.user.sexualOrientation,
+            onChanged: (so){
+              putChangeProfile(widget.user.gender, so, widget.user.bio,
+                    "yap224@lehigh.edu", widget.user.sessionID);
+            },),
             const SizedBox(height: 24),
             TextFieldWidget(
               label: 'Bio',
-              text: user.bio,
+              text: widget.user.bio,
               onChanged: (bio) {
-                putChangeProfile(user.gender, user.sexualOrientation, bio,
-                    "Id session", "Session Key");
+                putChangeProfile(widget.user.gender, widget.user.sexualOrientation, bio,
+                    "yap224@lehigh.edu", widget.user.sessionID);
               },
               maxLines: 5,
             ),
@@ -68,3 +72,4 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
       );
 }
+

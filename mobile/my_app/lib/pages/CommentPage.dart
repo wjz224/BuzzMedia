@@ -1,21 +1,36 @@
 // ignore_for_file: prefer_const_constructors
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
-import 'package:my_app/net/get_comments_api.dart';
+import 'package:like_button/like_button.dart';
 import 'package:my_app/net/get_items_api.dart';
 import 'package:my_app/net/put_dislike_api.dart';
+import 'package:my_app/pages/CommentPutPage.dart';
+import 'package:my_app/pages/HomePage.dart';
 import 'package:my_app/pages/IdeaPostPage.dart';
+import 'package:my_app/pages/CommentPage.dart';
+import 'package:my_app/net/get_userID.dart';
+import 'package:my_app/net/get_comments_api.dart';
+
 import 'package:my_app/net/put_like_api.dart';
+import 'package:my_app/net/put_dislike_api.dart';
 import 'package:my_app/provider/google_sign_in.dart';
 import 'package:provider/provider.dart';
-import 'package:my_app/pages/CommentPostPage.dart';
+import 'package:my_app/pages/CommentAddPage.dart';
+import 'package:my_app/model/user_other.dart';
+import 'package:my_app/model/user_preferances.dart';
+import 'package:my_app/model/item_model.dart';
+import 'package:my_app/model/comment_model.dart';
+import 'dart:convert';
+import 'package:my_app/widgets/LikeDislikeButtonWidget.dart';
 
 class CommentPage extends StatefulWidget {
   /// This stateful widget is the home page of the application
+  
+  final String postID;
+  const CommentPage({super.key, required this.postID});
 
-  const CommentPage({super.key, required this.title});
-
-  final String title;
+  
 
   @override
   State<CommentPage> createState() => _CommentPageState();
@@ -29,7 +44,7 @@ class _CommentPageState extends State<CommentPage> {
     return Scaffold(
       // Set appBar title to "The Buzz"
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text("Comments"),
         actions: <Widget>[
           Padding(
               padding: EdgeInsets.only(right: 20.0),
@@ -38,64 +53,80 @@ class _CommentPageState extends State<CommentPage> {
                 onTap: () {
                   /// When the "+" button is clicked, navigate to the post page (post_view.dart)
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const CommentPostPage(title: 'The Buzz');
+                    return CommentAddPage(postId: widget.postID);
                   }));
                 },
                 child: Text(
                   '+',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                 ),
-              )),
-          TextButton(
-              child: Text('Go Back to Home',style: TextStyle(color: Colors.white) ),
-              
+              )
+              ),TextButton(
+              child: Text('Go Back',
+                  style: TextStyle(color: Colors.white)),
               onPressed: () {
+                final provider =
+                    Provider.of<GoogleSignInProvider>(context, listen: false);
+                provider.logout();
                 Navigator.of(context).pop();
               }),
+          
         ],
       ),
 
-      body: const Center(
+      body: Center(
         // Center is a layout widget. It takes a single child and positions it in the middle of the parent
         // Displays a list of posts data
-        child: HttpReqPosts(),
+        child: HttpReqComment(postID: widget.postID),
       ),
     );
   }
 }
 
-class HttpReqPosts extends StatefulWidget {
+class HttpReqComment extends StatefulWidget {
   /// Stateful widget get and display the posts from the database
-  const HttpReqPosts({Key? key}) : super(key: key);
+  final String postID;
+  HttpReqComment({Key? key, required this.postID}) : super(key: key);
 
   @override
-  State<HttpReqPosts> createState() => _HttpReqPostsState();
+  State<HttpReqComment> createState() => _HttpReqCommentState();
 }
 
-class _HttpReqPostsState extends State<HttpReqPosts> {
-  /// Method for HttpReqPosts setState
+class _HttpReqCommentState extends State<HttpReqComment> {
+  /// Method for HttpReqComment setState
+  final user = FirebaseAuth.instance.currentUser!;
 
-  late Future<List<String>> _future_list_message;
+  late Future<List<Comment>> _future_list_message;
+
+  late Future<List<String>> userInformartion;
 
   final _biggerFont = const TextStyle(fontSize: 18);
+
+  final sizeButton = 50.0;
+
+  final userOther = UserPreferences.myUser;
+
 
   @override
   void initState() {
     super.initState();
-    print(fetchComments(1).runtimeType);
-    _future_list_message = fetchComments(1);
+    print(fetchMessage(userOther.sessionID).runtimeType);
+    _future_list_message = fetchComments(userOther.sessionID, widget.postID);
   }
 
-  List<bool> _selections = List.generate(2, (_) => false);
+  
   @override
   Widget build(BuildContext context) {
     /// The main view of the home screen on the app containing a list of posts, like, and dislike buttons
+    
+    
 
-    var fb = FutureBuilder<List<String>>(
+
+
+    var fb = FutureBuilder<List<Comment>>(
       future: _future_list_message,
-      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<List<Comment>> snapshot) {
         Widget child;
-
         if (snapshot.hasData) {
           // Create  listview to show one row per array element of json response
           child = ListView.builder(
@@ -103,102 +134,57 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
               itemCount: snapshot.data!.length,
               itemBuilder: /*1*/ (context, i) {
                 // DataStr is the string of data for each post in json format !This is Tech Debt!
-                var dataStr = snapshot.data?[i];
+                Comment? dataStr = snapshot.data?[i];
                 // Split the components of dataString up
-                var dataArr = dataStr?.split(',');
-                var postID = dataArr?[0]?.split(':');
-                var userID = dataArr?[1]?.split(':');
-                var titleID = dataArr?[2]?.split(':');
-                var textID = dataArr?[3]?.split(':');
+   
+                // DataStr is the string of data for each post in json format !This is Tech Debt!
+                // Split the components of dataString up
+                
+
                 //seperate out the title, message, id, and numLikes into their own variables
-                var title = postID?[1];
-                var message = userID?[1];
-                var likes = titleID?[1];
-                var id = textID?[6];
+                String commentID = dataStr!.commentID.toString();
+                String mUser_ID = dataStr!.userID.toString();
+                String postID = dataStr!.postID.toString();
+                String mText = dataStr!.text;
+                
+                
+
+
+                //var userInformartion = fetchUserInfo(userOther.sessionID, mUser_ID!);
+
+                
+                
+                //String userName = userInformartion[0];
+                //String email = userInformartion[1];
+
+                
 
                 return Column(
                   children: <Widget>[
                     // One item in the list
                     ListTile(
                       // Displays the text and message of a post
-                      //leading: Image.network(user.photoURL!),
                       title: RichText(
                         text: TextSpan(
-                            text: ' $title ',
+                            text: mText,
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
-                              fontSize: 36,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: "\n" + "$message",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 20,
-                                ),
-                              )
-                            ]),
+                              fontSize: 24,
+                            ),                            
+                          ),
                       ),
-
-                      subtitle:
-                          Text("by " + "Some dude" + "\n" + "This email"),
+                    trailing: IconButton(onPressed: (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CommentPutPage(commentID: commentID, postID: postID),
+                              ));
+                            }, icon: Icon(Icons.mode)),
+                      
                     ),
                     // Row widget puts the like count and buttons in one horizontal row together
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        // The dislike button display and functionality
-                        ToggleButtons(
-                          children: <Widget>[
-                            Icon(Icons.thumb_down),
-                            Icon(Icons.thumb_up),
-                          ],
-                          isSelected: _selections,
-                          onPressed: (int index) {
-                            setState(() {
-                              _selections[index] = !_selections[index];
-
-                              //likeCode
-                              if (index == 0 && _selections[index]) {
-                                addLike('$id');
-                                _selections[1] = false;
-                              } else if (index == 0 && !_selections[index]) {
-                                dislike('$id');
-                              }
-
-                              //dislike Code
-                              if (index == 1 && _selections[index]) {
-                                _selections[0] = false;
-                                dislike('$id');
-                              } else if (index == 1 && !_selections[index]) {
-                                addLike('$id');
-                              }
-                            });
-                          },
-                          color: Colors.grey,
-                          fillColor: Colors.yellow,
-                        ),
-
-                        // Spacing between button and text
-                        SizedBox(width: 20),
-                        // Number of likes displayed
-                        Text(
-                          '10',
-                          style: _biggerFont,
-                        ),
-                        //Edit button for comments
-                        SizedBox(width: 20),
-                        IconButton(onPressed: (){
-                              editComment();
-                            }, icon: Icon(Icons.mode))
-                            ,
-                        // The like button display and functionality
-
-                        
-                      ],
-                    ),
+                    
                     // Space between each post item
                     Divider(height: 1.0),
                   ],
@@ -216,6 +202,4 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
 
     return fb;
   }
-  
-  void editComment() {}
 }

@@ -1,28 +1,32 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:my_app/pages/CommentPage.dart';
 import 'package:my_app/pages/HomePage.dart';
 import 'package:my_app/net/post_items_api.dart';
+import 'package:my_app/net/put_comment.dart';
 
-class CommentPostPage extends StatelessWidget {
+class CommentPutPage extends StatelessWidget {
   /// The main view of the post screen on the app containing a blank form with title and message fields and an add and cancel button
-
-  const CommentPostPage({Key? key, required this.title}) : super(key: key);
-  final String title;
+  final String commentID;
+  final String postID;
+  const CommentPutPage({Key? key, required this.commentID, required this.postID}): super(key: key);
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text("Edit Comment"),
       ),
-      body: const MyCustomForm(),
-    );
+      body:  MyCustomForm(commentID: this.commentID, postID: this.postID));
   }
 }
 
 class MyCustomForm extends StatefulWidget {
   /// Creates a blank form for user to fill out title and message to post
-  const MyCustomForm({super.key});
+  final String commentID;
+  final String postID;
+  const MyCustomForm({super.key, required this.commentID, required this.postID});
   @override
   State<MyCustomForm> createState() => _MyCustomFormState();
 }
@@ -32,7 +36,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
 
   // Create a text controller and use it to retrieve the current value of the text field
   final myController = TextEditingController();
-  final myController2 = TextEditingController();
+  //final myController2 = TextEditingController();
 
   @override
   void dispose() {
@@ -53,30 +57,20 @@ class _MyCustomFormState extends State<MyCustomForm> {
             controller: myController,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
-              hintText: 'Enter a Title',
+              hintText: 'Change Comment',
             ),
           ),
         ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-          child: TextField(
-            controller: myController2,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Enter a Message',
-            ),
-          ),
-        ),
+        
         TextButton(
           style: ButtonStyle(
             foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
           ),
           onPressed: () {
             String title = myController.text;
-            String message = myController2.text;
-            print('title: $title');
-            print('messsage: $message');
-            createPost(context, title, message);
+            //String message = myController2.text;
+            //print('title: $title');
+            createPost(context, title);
           },
           child: Text('Add'),
         ),
@@ -93,15 +87,16 @@ class _MyCustomFormState extends State<MyCustomForm> {
     );
   }
 
-  void createPost(BuildContext context, String title, String message) {
+  void createPost(BuildContext context, String title) {
     print(title);
-    print(message);
-    makePostRequest(title, message);
+    
+    putComment(title, "yap224@lehigh.edu", "-1909482473", widget.commentID);
     //switches page back to home page
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
+     Navigator.push(context, MaterialPageRoute(builder: (context) {
       
-      return const MyHomePage();
+      return CommentPage(postID: widget.postID);
     }));
+    
   }
 
   void cancelPost(BuildContext context) {

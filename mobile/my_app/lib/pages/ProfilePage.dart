@@ -4,17 +4,27 @@ import 'package:my_app/model/user_preferances.dart';
 import 'package:my_app/net/verify_api.dart';
 import 'package:my_app/pages/HomePage.dart';
 import 'package:my_app/pages/EditProfilePage.dart';
+import 'package:my_app/model/user_other.dart';
 
 import 'LoginPage.dart';
-
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:my_app/net/get_userID.dart';
 
 import 'package:my_app/provider/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatelessWidget{
   final user = FirebaseAuth.instance.currentUser!;
   final userOther = UserPreferences.myUser;
+
+
+  void initState(){
+    print("ran");
+    addingSessionID(userOther);
+    getTheProfileData(userOther);
+  }
+
   
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -26,8 +36,8 @@ class ProfilePage extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => EditProfilePage()),
-                              );
+                                    builder: (context) => EditProfilePage(user: userOther),
+                              ));
                             }, icon: Icon(Icons.mode)),
             TextButton(
               child: Text('Abandon the Hive',
@@ -93,4 +103,26 @@ class ProfilePage extends StatelessWidget {
               ],
             )),
       );
+}
+
+void getTheProfileData(UserOther userOther) async{
+  final user = FirebaseAuth.instance.currentUser!;
+  String userInformation = await fetchUserInfo(userOther.sessionID, user.email!);
+  var tmp = jsonDecode(userInformation);
+  userOther.gender = tmp["mGender"].toString();
+  userOther.sexualOrientation = tmp["mSex"].toString();
+  userOther.bio = tmp["mNote"].toString();
+
+}
+
+
+void addingSessionID(UserOther userOther) async {
+  final user = FirebaseAuth.instance.currentUser!;
+  //print(user.getIdToken());
+  String responseBody = await verify(user.getIdToken(true));
+  var tmp = jsonDecode(responseBody);
+  responseBody = tmp["mData"].toString();
+  print(responseBody);
+  userOther.setSessionID(responseBody);
+  //return responseBody;
 }
