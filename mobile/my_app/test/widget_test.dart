@@ -41,7 +41,7 @@ Future<void> main() async {
   //checks if the post request function works
   test('make a post request',() async{
       expect(
-          (await makePostRequest('Unit Test', 'Tested')),
+          (await makePostRequest('Unit Test', 'Tested', "-1909482473")),
           200,
         );
     });

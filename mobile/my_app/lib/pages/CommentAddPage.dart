@@ -16,7 +16,7 @@ class CommentAddPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Edit Comment"),
+        title: Text("Add Comment"),
       ),
       body:  MyCustomForm(postId: this.postId,));
   }

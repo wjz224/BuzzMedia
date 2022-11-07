@@ -20,6 +20,6 @@ class UserOther{
   void setSessionID(String sessionID){
       this.sessionID = sessionID;
   }
-
+  
 
 }

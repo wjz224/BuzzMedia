@@ -14,31 +14,39 @@ import 'package:my_app/net/get_userID.dart';
 import 'package:my_app/provider/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
-class ProfilePage extends StatelessWidget{
+class ProfilePage extends StatefulWidget {
+  ProfilePage();
+
+
+  
+
+  _ProfilePageState createState() => _ProfilePageState();
+
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   final user = FirebaseAuth.instance.currentUser!;
-  final userOther = UserPreferences.myUser;
+  UserOther userOther = UserPreferences.myUser;
 
 
-  void initState(){
-    print("ran");
-    addingSessionID(userOther);
-    getTheProfileData(userOther);
-  }
-
+  
   
   @override
   Widget build(BuildContext context) => Scaffold(
+        
         appBar: AppBar(
           title: Text('Logged In'),
           centerTitle: true,
           actions: [
-            IconButton(onPressed: (){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => EditProfilePage(user: userOther),
-                              ));
-                            }, icon: Icon(Icons.mode)),
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditProfilePage(user: userOther),
+                      ));
+                },
+                icon: Icon(Icons.mode)),
             TextButton(
               child: Text('Abandon the Hive',
                   style: TextStyle(color: Colors.white)),
@@ -103,20 +111,8 @@ class ProfilePage extends StatelessWidget{
               ],
             )),
       );
-}
 
-void getTheProfileData(UserOther userOther) async{
-  final user = FirebaseAuth.instance.currentUser!;
-  String userInformation = await fetchUserInfo(userOther.sessionID, user.email!);
-  var tmp = jsonDecode(userInformation);
-  userOther.gender = tmp["mGender"].toString();
-  userOther.sexualOrientation = tmp["mSex"].toString();
-  userOther.bio = tmp["mNote"].toString();
-
-}
-
-
-void addingSessionID(UserOther userOther) async {
+      void addingSessionID(UserOther userOther) async {
   final user = FirebaseAuth.instance.currentUser!;
   //print(user.getIdToken());
   String responseBody = await verify(user.getIdToken(true));
@@ -126,3 +122,16 @@ void addingSessionID(UserOther userOther) async {
   userOther.setSessionID(responseBody);
   //return responseBody;
 }
+
+}
+
+
+/*
+
+String userInformation =
+       fetchUserInfo(userOther.sessionID, user.email!);
+  var tmp = jsonDecode(userInformation);
+  userOther.gender = tmp["mGender"].toString();
+  userOther.sexualOrientation = tmp["mSex"].toString();
+  userOther.bio = tmp["mNote"].toString();
+  */
