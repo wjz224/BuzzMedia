@@ -1,0 +1,41 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    /* background-color: hsl(196, 100%, 82%); */
+}
+.hexContainer {
+    display: flex;
+    justify-content: center;  
+
+}
+
+.title {
+    text-align: center;
+    color: white;
+    font-family:fantasy;
+    margin-top: 5pc;
+    font-size: 70px;
+}
+
+.titleContainer {
+    display: flex;
+    justify-content: center;  
+}
+
+.enter {
+    margin-top: 8pc;
+    position: absolute;
+    text-align: center;
+    color: white;
+    font-family: fantasy;
+    font-size: 40px;
+}
+
+.loginBtn {
+    position: absolute;
+    margin-top: 17pc;
+
+}

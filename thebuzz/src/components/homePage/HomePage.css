@@ -1,0 +1,30 @@
+body {
+    background-color: #fff9d0;
+    margin: 0;
+    padding: 0;
+}
+
+
+
+.postsContainer {
+    padding-top: 4pc;
+    margin-left: 15pc;
+    margin-right: 15pc;
+    
+    display: flex;
+    justify-content: center;
+    padding-bottom: 3pc;
+    background-color: #fff9d0;
+}
+
+.addBtnNav {
+    margin-left: 36pc;
+    padding: 5px;
+}
+
+
+
+.postText{
+    padding-left: 20px;
+}
+
