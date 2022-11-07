@@ -16,8 +16,14 @@ describe("Homepage Component" , () => {
   //Test 1: looking for the text "TheBuzz: Home Page"
   test('Render ProfilePage', () => {
     render(<ProfilePage />);
-    const linkElement = screen.getByText('bio');
+    const linkElement = screen.getByText('bio:');
     expect(linkElement).toBeInTheDocument();
   }) 
   
+  test('Render ProfilePage', () => {
+    render(<ProfilePage />);
+    const genderElement = screen.getByText('gender');
+    expect(genderElement).toBeInTheDocument();
+  }) 
+
 })
