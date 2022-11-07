@@ -208,11 +208,19 @@ Use Database.java to test the different methods in the Database.java class
 
 ![Login Page](images/Login.PNG)
 
-![Main Page](images/Main Page.PNG)
+![Main Page](images/PostPage.jpg)
 
-![User Profile Page](images/user profile Page.PNG)
+![User Profile Page](images/ProfilePage.jpg)
 
-![Comment Page](images/comment page.PNG)
+![Comment Page](images/Comments.jpg)
+
+![Edit Comment Page](images/EditComment.jpg)
+
+![Add Comment Page](images/AddComment.jpg)
+
+![Add Post Page](images/AddingPost.jpg)
+
+
 
 ## Invite Trello Link 
  https://trello.com/invite/b/ktZREaYO/6223f419fbe085536c4393c2cb3ff528/tutorial-board-1
