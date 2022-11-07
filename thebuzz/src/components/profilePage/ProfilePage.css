@@ -80,21 +80,35 @@ body {
 
 .logoutBtn {
     position: absolute;
-    margin-top: 26pc;
+    margin-top: 33pc;
 
 }
 
-.bio {
+.bioTitle {
     position: absolute;
-    margin-top: 23pc;
+    margin: 23pc;
 }
-
-.gender {
+.bio {
     position: absolute;
     margin-top: 24pc;
 }
 
+.genTitle {
+    position: absolute;
+    margin: 26pc;
+}
+
+.gender {
+    position: absolute;
+    margin-top: 27pc;
+}
+
+.sexTitle {
+    position: absolute;
+    margin: 29pc;
+}
+
 .sex {
     position: absolute;
-    margin-top: 25pc;
+    margin-top: 30pc;
 }

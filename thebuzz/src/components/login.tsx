@@ -5,14 +5,14 @@ const clientId = (process.env.REACT_APP_CLIENT_ID as string)
 
 function Login() {
 
-    
-
     let navigate = useNavigate();
 
-    const onSuccess = (res: any) => {
-         console.log("Login Success", res.profileObj)
 
-         fetch(`https://thebuzzomega.herokuapp.com/verify/${res.profileObj.googleId}`,
+    const onSuccess = (res: any) => {
+         console.log("Login Success", res.tokenId)
+         
+
+        fetch(`https://thebuzzomega.herokuapp.com/verify/${res.tokenId}`,
             {
                 method: "POST",
                 headers: {
@@ -20,16 +20,26 @@ function Login() {
                 },
                 mode: "cors",
             })
+            .then((response) => response.json())
+            .then((data) => {
+                
+                console.log(Response)
+                console.log(data)
+                
+                navigate('/profile', 
+                    { state: {
+                        sessionId: data.mData,
+                        email: res.profileObj.email,
+                        familyName: res.profileObj.familyName,
+                        givenName: res.profileObj.givenName,
+                        googleId: res.profileObj.googleId,
+                        imageUrl: res.profileObj.imageUrl,
+                        name: res.profileObj.name } 
+                    })
 
-         navigate('/profile', 
-            { state: {
-                email: res.profileObj.email,
-                familyName: res.profileObj.familyName,
-                givenName: res.profileObj.givenName,
-                googleId: res.profileObj.googleId,
-                imageUrl: res.profileObj.imageUrl,
-                name: res.profileObj.name } 
-            })
+            });
+
+         
 
     }
 
