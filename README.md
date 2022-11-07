@@ -78,6 +78,8 @@ Mobile:
      - "mUser_id" = int
      - "mTitle" = String
      - "mText" = String
+     - "mLikes" = int
+     - "mDislikes" = int
      
 - __Get__: returns one entity from the table post
     - \GET #sessionKey/posts/#post_id
@@ -86,6 +88,8 @@ Mobile:
         - "mUser_id" = String
         - "mTitle" = String
         - "mText" = String
+        - "mLikes" = int
+        - "mDislikes" = int
 - __Get__: returns one entity from the table user
     - \GET #sessionKey/users/#email
     - JSON Route:
@@ -104,14 +108,6 @@ Mobile:
         - "mPost_id" = int
         - "mUser_Id" = int
         - "mComment" = String  
-
--  __Get__: returns one entity from the table comment
-    - \GET #sessionKey/comments/#comment_id
-    - JSON Route:
-        - "mComment_id" = int
-        - "mPost_id" = int
-        - "mUser_Id" = int
-        - "mComment" = String    
         
 - __Post__: Verifies the access token and adds a new user to the associated user id
    - \POST /verify/#google_idtoken
@@ -122,30 +118,12 @@ Mobile:
     - \POST #sessionKey/posts
     - JSON Route: 
         - "mPost_id" = int
-        - "mUser_id" = int
-        - "mTitle" = String
-        - "mText" = String
+        
 - __Post__ : Adds a new comment associated with the user
-    - \POST #sessionKey/comments
+    - \POST #sessionKey/comments/#post_id
     - JSON Route: 
         - "mComment_id" = int
-        - "mPost_id" = int
-        - "mUser_id" = int
-        - "mComment" = String
   
-- __Delete__: Removes a post specified by an ID number from the table post
-    - \DELETE #sessionKey/posts/#email/#post_id
-    - JSON Route: 
-        - "mPost_id" = int
-  
-- __Delete__: Removes a comment specified by the commentId
-    - \DELETE #sessionKey/comments/#email/#comment_id
-    - JSON Route: 
-        - "mComment_id" =  int
-         
-- __Delete__: Delete a user specified by the email
-    - \DELETE #sessionKey/users/#email
-        - "mUser_id" = int
         
 - __Put__: Updates an existing post in the table by specifying an post id and the user id
     - \PUT #sessionKey/posts/#email/#post_id
