@@ -36,8 +36,6 @@ public class AppTest extends TestCase{
     {
         assertTrue( true );
     }
-<<<<<<< HEAD
-=======
     /* 
     public void testGetPosts(){
         App.users.put(1,0);
@@ -75,7 +73,6 @@ public class AppTest extends TestCase{
         App.users.put(1,0);
         RestAssured.baseURI = "https://thebuzzomega.herokuapp.com/";
         RequestSpecification request = RestAssured.given();
->>>>>>> backend
 
         request.header("Content-Type", "application/json");
         Response response = request.body("{\"mTitle\": \"unitTestPost\", \"mMessage\": \"unitTestPostMessage\"}").post("1/posts");
@@ -145,15 +142,7 @@ public class AppTest extends TestCase{
         Response response = request.put("/messages/3/dislikes");
         assertEquals(response.getStatusCode(), 200);
     }
-<<<<<<< HEAD
-    
-    
-
-
-
-=======
     */
 
 
->>>>>>> backend
 }
