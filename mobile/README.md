@@ -16,9 +16,7 @@
 3. Make sure that the scroll feature for the main page and comment page work
 4. Make sure that buttons are connected to the right routes and the data changes on the webpage
 
-# How to run
+# Backlog
 
-
-
-
-
+1. Fixing the verify route
+2. Fixing the verify test route and getting them running

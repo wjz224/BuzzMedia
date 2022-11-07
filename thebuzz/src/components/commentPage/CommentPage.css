@@ -1,0 +1,45 @@
+.header {
+    padding-left: 1.5pc;
+    /* padding-top: .5pc; */
+    
+}
+
+.headerContainer {
+    height: 4pc;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    display: flex;
+    background-color: #f4eaa7;
+    
+}
+
+.commentTitle {
+    font-size: 40px;
+    margin-left: 37pc;
+
+}
+
+.btnContainer {
+    display: flex;
+    justify-content: right;
+    margin-left: 65pc;
+    
+}
+
+.commentContainer {
+        padding-top: 1pc;
+        margin-left: 15pc;
+        margin-right: 15pc;
+        display: flex;
+        justify-content: center;
+        padding-bottom: 1pc;
+        background-color: #fff9d0;
+    
+    
+}
+.input {
+    width: 30pc;
+    height: 10pc;
+    margin-top: 2pc;
+}
