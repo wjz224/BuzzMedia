@@ -373,7 +373,7 @@ public class App {
             // get session key for the user making the post
             int sessionKey = Integer.parseInt(request.params("sessionKey"));
             int post_id = Integer.parseInt(request.params("post_id"));
-                // ensure status 200 OK, with a MIME type of JSON
+            // ensure status 200 OK, with a MIME type of JSON
             // NB: even on error, we return 200, but with a JSON object that
             // describes the error.
             response.status(200);
@@ -469,6 +469,7 @@ public class App {
         });
 
         Spark.put(":sessionKey/comments/:email/:comment_id", (request, response) -> {
+            // get session key for the user making the put
             int sessionKey = Integer.parseInt(request.params("sessionKey"));
             // ensure status 200 OK, with a MIME type of JSON
             // NB: even on error, we return 200, but with a JSON object that
@@ -499,7 +500,11 @@ public class App {
         });
         
         Spark.put(":sessionKey/users/:email", (request,response) -> { 
+             // get session key for the user making the put
             int sessionKey = Integer.parseInt(request.params("sessionKey"));
+            // ensure status 200 OK, with a MIME type of JSON
+            // NB: even on error, we return 200, but with a JSON object that
+            // describes the error.
             response.status(200);
             response.type("application/json");
             // implement session key check, if it exists in the hashtable then continue, if not return error.
@@ -508,11 +513,13 @@ public class App {
             }
             String email = (String) request.params("email");
             int user_id =  db.getUserId(email);
+            // Get Json in form of UserRequest Object.
             UserRequest req = gson.fromJson(request.body(), UserRequest.class);
             // check if userid from sessionKey matches with the userid from the email
             if(user_id != users.get(sessionKey)){
                 return gson.toJson(new StructuredResponse("error", "invalid permissions, mismatching user id", null));
             }
+            // edit user information in database
             int result = db.editUserSexOrient(user_id, req.mSex);
             result = db.editUserGender(user_id, req.mGender);
             result = db.editUserNote(user_id, req.mNote);
@@ -523,7 +530,7 @@ public class App {
             }
 
         });
-         
+
         Spark.delete(":sessionKey/posts/:post_id", (request, response) -> {
             // get session key for the user making the post
             int sessionKey = Integer.parseInt(request.params("sessionKey"));
