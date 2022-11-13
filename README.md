@@ -55,16 +55,22 @@ Mobile:
 
 4. U4: As an Admin  I want to manage new tables because I want to maintain the database as a whole. (Manual Test) 
 
-5. U5: As an Authenticated User I want to like and unlike posts so I can show support for the posts I like. (Automatic test)
+5. U5: As an Admin I want to manage the file uploads from users because I want control over valid and invalid files. (Manual Test)
+6. U6: As an Admin  I want to manage the photos of the users because I want to be able to remove inappropriate photos. (Manual Test)
 
-6. U6: As an Authenticated User I want to post text so I can share my ideas to others. (Automatic test)
+7. U7: As an Authenticated User I want to like and unlike posts so I can show support for the posts I like. (Automatic test)
 
-7. U7: As an Authenticated user  I want to like posts because I want to interact with other idea creators. (Automatic test)
+8. U8: As an Authenticated User I want to post text so I can share my ideas to others. (Automatic test)
 
-8. U8: As an Authenticated user  I want to edit my own comments because I may have typos on my comments. (Automatic test)
+9. U9: As an Authenticated user  I want to like posts because I want to interact with other idea creators. (Automatic test)
 
-9. U9: As an Authenticated user  I want to create a user profile with personal information because I want people to know who is posting the text. (Automatic test)
+10. U10: As an Authenticated user  I want to edit my own comments because I may have typos on my comments. (Automatic test)
 
+11. U11: As an Authenticated user  I want to create a user profile with personal information because I want people to know who is posting the text. (Automatic test)
+12. U12: As an Authenticated user I want to be able to attach files to my posts because of convenience. (Automatic test)
+13. U13: As an Authenticated user I want to be able to attach files to my comments because of convenience. (Automatic test)
+14. U14: As an Authenticated user  I want to be able to take photos while making a post because I want to share something from the present. (Automatic test)
+15. U15: As an Authenticated user  I want to be able to upload photos from my gallery because I want to share photos I have saved. (Automatic test)
 
 
 
