@@ -179,7 +179,7 @@ Use Database.java to test the different methods in the Database.java class
 
 ## State Machines (idea, user)
 
-![State Machine](images/StateMachine.png)
+![State Machine](images/StateMachine.jpg)
 
 ![State Machine](images/userStateMachineUpdate.png)
 
