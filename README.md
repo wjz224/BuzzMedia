@@ -201,6 +201,8 @@ Use Database.java to test the different methods in the Database.java class
 
 ![Desktop 6](images/postWeb.png)
 
+![Desktop 6](images/commentsWeb.png)
+
 
 ## Mobile Page
 
