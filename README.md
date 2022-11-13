@@ -15,15 +15,15 @@
 2. Go into backend folder and run "mvn package; mvn heroku:deploy"
 
 ## Current Backlog
-Web: Cannot log out, more robust unit tests, fix verification error, fix deploy.sh
+Web: Cannot log out
 
-Admin: Unit tests, removing old unnecessary code
+Admin: None
 
-Backend: Improve unit tests, adding new routes for updating
+Backend: Improve unit tests
 
-Mobile: Adding unit tests, fixing verify route, refactoring different pages
+Mobile: Adding unit tests, fixing verify route
 
-## Unit Test Descriptions for Phase 2
+## Unit Test Descriptions for Phase 3
 Web: 
 1. Make sure user can be authenticated
 2. Test that user can make a comment/edit a comment
@@ -36,9 +36,7 @@ Admin:
 4. Be able to remove rows from the post table
 
 Backend: 
-1. Get access token from google using google api
-2. Make sure authenticated user information is stored in local hashtable
-3. Make sure new routes for comment table works
+1. Test that the memcache system works by storing and retriving some information 
 
 Mobile:  
 1. Make sure like and dislike changes the appearance of the buttons
@@ -78,6 +76,8 @@ Mobile:
      - "mUser_id" = int
      - "mTitle" = String
      - "mText" = String
+     - "mLikes" = int
+     - "mDislikes" = int
      
 - __Get__: returns one entity from the table post
     - \GET #sessionKey/posts/#post_id
@@ -86,6 +86,8 @@ Mobile:
         - "mUser_id" = String
         - "mTitle" = String
         - "mText" = String
+        - "mLikes" = int
+        - "mDislikes" = int
 - __Get__: returns one entity from the table user
     - \GET #sessionKey/users/#email
     - JSON Route:
@@ -104,14 +106,6 @@ Mobile:
         - "mPost_id" = int
         - "mUser_Id" = int
         - "mComment" = String  
-
--  __Get__: returns one entity from the table comment
-    - \GET #sessionKey/comments/#comment_id
-    - JSON Route:
-        - "mComment_id" = int
-        - "mPost_id" = int
-        - "mUser_Id" = int
-        - "mComment" = String    
         
 - __Post__: Verifies the access token and adds a new user to the associated user id
    - \POST /verify/#google_idtoken
@@ -122,30 +116,12 @@ Mobile:
     - \POST #sessionKey/posts
     - JSON Route: 
         - "mPost_id" = int
-        - "mUser_id" = int
-        - "mTitle" = String
-        - "mText" = String
+        
 - __Post__ : Adds a new comment associated with the user
-    - \POST #sessionKey/comments
+    - \POST #sessionKey/comments/#post_id
     - JSON Route: 
         - "mComment_id" = int
-        - "mPost_id" = int
-        - "mUser_id" = int
-        - "mComment" = String
   
-- __Delete__: Removes a post specified by an ID number from the table post
-    - \DELETE #sessionKey/posts/#email/#post_id
-    - JSON Route: 
-        - "mPost_id" = int
-  
-- __Delete__: Removes a comment specified by the commentId
-    - \DELETE #sessionKey/comments/#email/#comment_id
-    - JSON Route: 
-        - "mComment_id" =  int
-         
-- __Delete__: Delete a user specified by the email
-    - \DELETE #sessionKey/users/#email
-        - "mUser_id" = int
         
 - __Put__: Updates an existing post in the table by specifying an post id and the user id
     - \PUT #sessionKey/posts/#email/#post_id
@@ -203,7 +179,7 @@ Use Database.java to test the different methods in the Database.java class
 
 ## State Machines (idea, user)
 
-![State Machine](images/StateMachine.png)
+![State Machine](images/StateMachine.jpg)
 
 ![State Machine](images/userStateMachineUpdate.png)
 
@@ -230,11 +206,19 @@ Use Database.java to test the different methods in the Database.java class
 
 ![Login Page](images/Login.PNG)
 
-![Main Page](images/Main Page.PNG)
+![Main Page](images/PostPage.jpg)
 
-![User Profile Page](images/user profile Page.PNG)
+![User Profile Page](images/ProfilePage.jpg)
 
-![Comment Page](images/comment page.PNG)
+![Comment Page](images/Comments.jpg)
+
+![Edit Comment Page](images/EditComment.jpg)
+
+![Add Comment Page](images/AddComment.jpg)
+
+![Add Post Page](images/AddingPost.jpg)
+
+
 
 ## Invite Trello Link 
  https://trello.com/invite/b/ktZREaYO/6223f419fbe085536c4393c2cb3ff528/tutorial-board-1
