@@ -15,15 +15,15 @@
 2. Go into backend folder and run "mvn package; mvn heroku:deploy"
 
 ## Current Backlog
-Web: Cannot log out, more robust unit tests, fix verification error, fix deploy.sh
+Web: Cannot log out
 
-Admin: Unit tests, removing old unnecessary code
+Admin: None
 
-Backend: Improve unit tests, adding new routes for updating
+Backend: Improve unit tests
 
-Mobile: Adding unit tests, fixing verify route, refactoring different pages
+Mobile: Adding unit tests, fixing verify route
 
-## Unit Test Descriptions for Phase 2
+## Unit Test Descriptions for Phase 3
 Web: 
 1. Make sure user can be authenticated
 2. Test that user can make a comment/edit a comment
@@ -36,9 +36,7 @@ Admin:
 4. Be able to remove rows from the post table
 
 Backend: 
-1. Get access token from google using google api
-2. Make sure authenticated user information is stored in local hashtable
-3. Make sure new routes for comment table works
+1. Test that the memcache system works by storing and retriving some information 
 
 Mobile:  
 1. Make sure like and dislike changes the appearance of the buttons
