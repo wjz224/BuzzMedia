@@ -15,37 +15,13 @@ Future<Post>fetchSinglePost(String sessionID, String post_id) async {
   // Get request to /messages route
 	final response = await http.get(Uri.parse('$urlPrefix/$sessionID/posts/$post_id'));
 
-  // Variable to contain the data from the get request
-	var returnData;
 
-  // If get requet is succesful parse through the data and return as a list of strings
-    var res = jsonDecode(response.body);
+  var res = jsonDecode(response.body);
     
-		 
-    Post postObjs = res['mData'];
-    print(postObjs.toString());
-    //String cleanup = response.body.substring(25,);
-    //String cleanup2 = cleanup.substring(0, cleanup.length - 2);
-    //print("Cleanup" + cleanup2);
-
-		
-    /*
-		if (resData is List) {
-			returnData = (resData).map((x) => x.toString()).toList();
-		} else if (resData is Map) {
-			returnData = jsonDecode((resData as Map<String, dynamic>).toString());
-			print('map');
-			print('$returnData');
-		} else {
-			developer
-				.log('ERROR: Unexpected json response type (was not a List or Map).');
-			returnData = List.empty();
-			throw Exception(
-				'Failed to retrieve web data (server returned ${response.statusCode})');
-		}*/
-	
+	print("Post" + res.toString()); 
+  Post postObjs = res['mData'];
   
-  // Return all posts as a list of strings
+    
 	return postObjs;
 
 }

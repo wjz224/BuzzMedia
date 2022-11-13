@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/model/user_other.dart';
 import 'package:my_app/net/put_change_profile.dart';
 
 
-class DropdownButtonField extends StatefulWidget {
+class SexualOrientationDropDown extends StatefulWidget {
   
   final List<String> list;
-  String dropdownValue;
-  final ValueChanged<String> onChanged;
-  DropdownButtonField({
-  required this.list, required this.dropdownValue, required this.onChanged});
+  UserOther user;
+  //final ValueChanged<String> onChanged;
+  SexualOrientationDropDown({
+  required this.list, required this.user});
   
 
 
 
   @override
-  State<DropdownButtonField> createState() => _DropdownButtonFieldState();
+  State<SexualOrientationDropDown> createState() => _SexualOrientationDropDownState();
 }
 
-class _DropdownButtonFieldState extends State<DropdownButtonField> {
+class _SexualOrientationDropDownState extends State<SexualOrientationDropDown> {
+  String dropdownValue = "change";
   void initState(){
     super.initState();
-    String dropdownValue = widget.list.first;
+    dropdownValue = widget.user.sexualOrientation;
   }
   
 
@@ -28,7 +30,7 @@ class _DropdownButtonFieldState extends State<DropdownButtonField> {
   Widget build(BuildContext context) {
     return DropdownButton<String>(
       
-      value: widget.dropdownValue,
+      value: dropdownValue,
       icon: const Icon(Icons.arrow_downward),
       
       style: const TextStyle(color: Colors.black),
@@ -36,11 +38,11 @@ class _DropdownButtonFieldState extends State<DropdownButtonField> {
         height: 2,
       ),
       onChanged: (String? value) {
+        Null;
         // This is called when the user selects an item.
         setState(() {
-          widget.dropdownValue = value!;
-          putChangeProfile(value, "random", "testing",
-                    "yap224@lehigh.edu", "-1909482473");
+          dropdownValue = value!;
+          putChangeProfile(widget.user.gender,value,widget.user.bio,widget.user.email, widget.user.sessionID);
             },
         );
       },

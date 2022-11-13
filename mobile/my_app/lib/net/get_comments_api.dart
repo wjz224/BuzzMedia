@@ -18,7 +18,7 @@ Future<List<Comment>> fetchComments(String sessionKey, String postid) async {
 
   // If get requet is succesful parse through the data and return as a list of strings
     var res = jsonDecode(response.body) as List;
-		
+		print(res.toString());
     List<Comment> postObjs = res.map((tagJson) => Comment.fromJson(tagJson)).toList();
     print(postObjs.toString());
     //String cleanup = response.body.substring(25,);

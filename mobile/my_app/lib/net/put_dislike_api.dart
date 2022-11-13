@@ -2,7 +2,7 @@ import 'package:http/http.dart';
 
 
 Future<void> dislike(
-    String postID,
+    String? postID,
   	String sessionKey,
     
 ) async {

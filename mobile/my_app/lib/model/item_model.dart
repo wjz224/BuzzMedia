@@ -13,7 +13,7 @@ class Post {
 	String title;
 	String text;
 	int likes;
-  //int? dislikes;
+  int dislikes;
 
   Post(
     this.postId,
@@ -21,18 +21,18 @@ class Post {
     this.title,
     this.text,
     this.likes,
-    //this.dislikes,
+    this.dislikes,
   );
 
 	
 	factory Post.fromJson(dynamic json) {
-		return Post(json['mPost_id'] as int, json['mUser_id'] as int, json['mTitle'] as String, json['mText'] as String,  json['mLikes'] as int);
+		return Post(json['mPost_id'] as int, json['mUser_id'] as int, json['mTitle'] as String, json['mText'] as String,  json['mLikes'] as int, json['mDislikes'] as int);
 	}
 
 
   @override
   String toString() {
-    return '{ ${this.postId}, ${this.userID}, ${this.title},${this.text},${this.likes}}';
+    return '{ ${this.postId}, ${this.userID}, ${this.title},${this.text},${this.likes},${this.dislikes}}';
   }
 }
 

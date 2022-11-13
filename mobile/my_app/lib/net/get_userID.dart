@@ -2,38 +2,39 @@
 
 import 'dart:collection';
 import 'dart:developer' as developer;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:my_app/model/user_other.dart';
 //import 'package';
 
 //the server url
 const urlPrefix = 'https://thebuzzomega.herokuapp.com';
 
 
-Future<String> fetchUserInfo(String sessionID, String userID) async {
+Future<UserOther> fetchUserInfo(String sessionID, String email) async {
   /// Gets the posts from the database 
 
   // Get request to /messages route
-	final response = await http.get(Uri.parse('$urlPrefix/$sessionID/users/$userID'));
+	final response = await http.get(Uri.parse('$urlPrefix/-1909482473/users/$email'));
 
-  Future<String> returnData;
-
+  var res = jsonDecode(response.body);
+    
+		//print(res.toString());
+    UserOther postObjs = UserOther.fromJson(res);
+    print(postObjs.toString());
+    
+	return postObjs;
   // If get requet is succesful parse through the data and return as a list of strings
-	if (response.statusCode == 200) {
-    Future<String> resData = jsonDecode(response.body);
+	
     
 		//var resData = res['mData'];
     //String cleanup = response.body.substring(25,);
     //String cleanup2 = cleanup.substring(0, cleanup.length - 2);
     //print("Cleanup" + cleanup2);
 
-		returnData = resData;
-    return returnData;
-	}else{
-    returnData = " invalid" as Future<String>;
-    return returnData;
-  }
-  
+		
   
   // Return all posts as a list of strings
 	

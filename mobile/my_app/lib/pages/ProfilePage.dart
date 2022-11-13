@@ -13,8 +13,8 @@ import 'package:my_app/net/get_userID.dart';
 
 import 'package:my_app/provider/google_sign_in.dart';
 import 'package:provider/provider.dart';
-
-class ProfilePage extends StatefulWidget {
+/*
+class ProfilePagex extends StatefulWidget {
   ProfilePage();
 
 
@@ -126,7 +126,7 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 
-/*
+
 
 String userInformation =
        fetchUserInfo(userOther.sessionID, user.email!);
@@ -134,4 +134,6 @@ String userInformation =
   userOther.gender = tmp["mGender"].toString();
   userOther.sexualOrientation = tmp["mSex"].toString();
   userOther.bio = tmp["mNote"].toString();
-  */
+
+
+*/

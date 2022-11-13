@@ -22,6 +22,7 @@ Future<List<Post>>fetchMessage(String sessionID) async {
     var res = jsonDecode(response.body);
     
 		var resData = res['mData'] as List;
+    print(resData.toString());
     List<Post> postObjs = resData.map((tagJson) => Post.fromJson(tagJson)).toList();
     print(postObjs.toString());
     //String cleanup = response.body.substring(25,);

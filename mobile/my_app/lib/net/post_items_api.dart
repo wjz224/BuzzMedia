@@ -17,9 +17,9 @@ Future<int> makePostRequest(
 	final headers = {"Content-type": "application/json"};
 	final json = jsonEncode({"mTitle": "$mTitle", "mMessage": "$mContent"});
 	final response = await post(url, headers: headers, body: json);
-
+  print(json);
   // Print statements to confirm post success
-	print('Status code: ${response.statusCode}');
+	print('Status code adding: ${response.statusCode}');
 	print('Body: ${response.body}');
   
   // Return the response status code for testing purposes

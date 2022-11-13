@@ -12,6 +12,7 @@ import 'package:my_app/net/get_userID.dart';
 import 'package:my_app/net/put_like_api.dart';
 import 'package:my_app/net/put_dislike_api.dart';
 import 'package:my_app/provider/google_sign_in.dart';
+import 'package:my_app/widgets/ShowTheProfile.dart';
 import 'package:provider/provider.dart';
 
 import 'package:my_app/model/user_other.dart';
@@ -100,7 +101,6 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
   final userOther = UserPreferences.myUser;
   List<bool> _selections = List.generate(2, (_) => false);
 
-
   @override
   void initState() {
     super.initState();
@@ -108,14 +108,9 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
     _future_list_message = fetchMessage(userOther.sessionID);
   }
 
-  
   @override
   Widget build(BuildContext context) {
     /// The main view of the home screen on the app containing a list of posts, like, and dislike buttons
-    
-    
-
-
 
     var fb = FutureBuilder<List<Post>>(
       future: _future_list_message,
@@ -130,35 +125,33 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                 // DataStr is the string of data for each post in json format !This is Tech Debt!
                 Post? dataStr = snapshot.data?[i];
                 // Split the components of dataString up
-   
+
                 // DataStr is the string of data for each post in json format !This is Tech Debt!
                 // Split the components of dataString up
-                
 
                 //seperate out the title, message, id, and numLikes into their own variables
                 String mPost_ID = dataStr!.postId.toString();
                 String mUser_ID = dataStr!.userID.toString();
                 String mTitle = dataStr!.title;
                 String mText = dataStr!.text;
-                String mLikes = dataStr!.likes.toString();
+                int mLikes = dataStr!.likes;
+                int mDislikes = dataStr!.dislikes;
                 
-
+                UserOther posterInfo = UserPreferences.myUser;
+                
 
                 //var userInformartion = fetchUserInfo(userOther.sessionID, mUser_ID!);
 
-                
-                
                 //String userName = userInformartion[0];
                 //String email = userInformartion[1];
 
-                
-
+                //To implement which thing is being shown make a get route using
                 return Column(
                   children: <Widget>[
                     // One item in the list
                     ListTile(
                       // Displays the text and message of a post
-                      leading: Image.network(user.photoURL!),
+                      //leading: Image.network(user.photoURL!),
                       title: RichText(
                         text: TextSpan(
                             text: mTitle,
@@ -175,16 +168,16 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                                   fontWeight: FontWeight.normal,
                                   fontSize: 20,
                                 ),
-                              )
+                              ), 
                             ]),
                       ),
 
-                      subtitle:
-                          Text("by " + "Wilson" + "\n" + "wjz224@lehigh.edu"),
+                      subtitle: ShowProfile(mUser_ID),
                     ),
                     // Row widget puts the like count and buttons in one horizontal row together
-                    LikeWidget(mPost_ID, userOther),
-                    
+
+                    LikeWidget(mPost_ID, mLikes, userOther, mDislikes),
+
                     // Space between each post item
                     Divider(height: 1.0),
                   ],
