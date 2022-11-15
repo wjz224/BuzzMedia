@@ -160,32 +160,6 @@ Mobile:
 ## Javadoc documentation
 Read HTML file for App.java and Database.java [here](./backend\src\main\java\edu\lehigh\cse216\yap224\backend\JavadocHTMLFiles\index-all.html) 
 
-  
-## Test Description
-- __Backend__: Use the AppTest.java file to create script that automatically runs the routes for get, post, put, and delete then makes sures then Make sure that posts added through the front end/mobile actually appear in database
-
-Use Database.java to test the different methods in the Database.java class
-
-- __Admin__: 
-1. Check that tables can be edited and created/deleted
-2. See if the admin can access the Google Drive 
-3. Deleting and adding users works
-4. Deleting and adding links/posts/comments/likes works
-
-
-
-
-- __Web front-end__: Make sure buttons correctly display respective behavior, make sure user is able to add text to necessary fields, make sure messages are displayed correctly
-
-- __Mobile__: 
-
-  1. Make sure like and dislike changes the appearance of the buttons 
-  2. Use MobileTest to see if pages change with the appropriate click
-  3. Make sure that the scroll feature for the main page and comment page work
-  4. Make sure that buttons are connected to the right routes and the data changes on the webpage
-
-
-
 ## ERD
 
 ![ERD Diagram for backend](images/ED_Diagram_phase2.jpeg)
