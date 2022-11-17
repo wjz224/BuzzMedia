@@ -131,11 +131,11 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
 
                 //seperate out the title, message, id, and numLikes into their own variables
                 String mPost_ID = dataStr!.postId.toString();
-                String mUser_ID = dataStr!.userID.toString();
-                String mTitle = dataStr!.title;
-                String mText = dataStr!.text;
-                int mLikes = dataStr!.likes;
-                int mDislikes = dataStr!.dislikes;
+                String mUser_ID = dataStr.userID.toString();
+                String mTitle = dataStr.title;
+                String mText = dataStr.text;
+                int mLikes = dataStr.likes;
+                int mDislikes = dataStr.dislikes;
                 
                 UserOther posterInfo = UserPreferences.myUser;
                 
@@ -162,7 +162,7 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                             ),
                             children: [
                               TextSpan(
-                                text: "\n " + mText!,
+                                text: "\n " + mText,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.normal,

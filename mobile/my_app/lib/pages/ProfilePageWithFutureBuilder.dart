@@ -107,10 +107,10 @@ class _ProfileContentState extends State<ProfileContent> {
         if (snapshot.hasData) {
           UserOther? dataStr = snapshot.data;
           String gender = dataStr!.gender;
-          String sexualOrientation = dataStr!.sexualOrientation;
-          String bio = dataStr!.bio;
-          String userName = dataStr!.userName;
-          String likes = dataStr!.sessionID;
+          String sexualOrientation = dataStr.sexualOrientation;
+          String bio = dataStr.bio;
+          String userName = dataStr.userName;
+          String likes = dataStr.sessionID;
           
           // Create  listview to show one row per array element of json response
           child = Container(

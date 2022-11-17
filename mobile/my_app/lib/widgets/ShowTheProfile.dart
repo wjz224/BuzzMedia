@@ -57,7 +57,7 @@ class _ShowProfileState extends State<ShowProfile> {
         if (snapshot.hasData) {
           UserOther? dataStr = snapshot.data;
           String userName = dataStr!.userName;
-          String email = dataStr!.email;
+          String email = dataStr.email;
           // Create  listview to show one row per array element of json response
           child = TextButton(
             onPressed: () {
