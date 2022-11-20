@@ -52,7 +52,6 @@ import com.google.firebase.auth.FirebaseToken;
  * For now, our app creates an HTTP server that can only get and add data.
  */
 
-
 public class App {
     /***
      * Inner session class for the session object.
@@ -153,6 +152,11 @@ public class App {
         }
 
         
+
+
+
+        //ROUTES------------------------------------------------------------------------\/
+
         // Set up a route for serving the main page
         Spark.get("/", (req, res) -> {
             res.redirect("/index.html");
@@ -339,6 +343,10 @@ public class App {
             return gson.toJson(db.selectAllCommentPost(post_id));
         });
     
+
+
+
+
         // POST route for adding a new post to the post table in the db. This will read 
         // sessionKey from the body of the request and turn it into an int
         // JSON from the body of the request, turn it into a SimpleRequest
@@ -362,7 +370,7 @@ public class App {
            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
            int user_id = users.get(sessionKey);
            // NB: createEntry checks for null title and message
-           int post_id = db.insertPost(user_id, req.mTitle, req.mMessage);
+           int post_id = db.insertPost(user_id, req.mTitle, req.mMessage, req.mLink, req.mFile);
            if (post_id <= 0) {
                return gson.toJson(new StructuredResponse("error", "error adding post", null));
            } else {
@@ -389,7 +397,7 @@ public class App {
             // get user_id from hash table
             int user_id = users.get(sessionKey);
             // get comment_id from the sql execution.
-            int comment_id = db.insertComment(user_id,post_id, req.mMessage);
+            int comment_id = db.insertComment(user_id,post_id, req.mMessage, req.mLink, req.mFile);
             // NB: createEntry checks for null title and message
             if (post_id <= 0) {
                 return gson.toJson(new StructuredResponse("error", "error adding comment", null));

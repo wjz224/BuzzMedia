@@ -19,8 +19,12 @@ public class SimpleRequest {
     public String mMessage;
 
     /**
-     * The number of likes being added by the client
+     * The link attached to the post
      */
+    public String mLink;
 
-    //public int mLikes;
+    /**
+     * The File attached to the post
+     */
+    public String mFile;
 }
