@@ -9,6 +9,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
+
+import edu.lehigh.cse216.yap224.admin.Database.PostRowData;
+import edu.lehigh.cse216.yap224.admin.Database.UserRowData;
+
 import java.util.Date;
 
 /**
@@ -59,6 +63,7 @@ public class App {
         System.out.println("  [<] Invalidate a User");
         System.out.println("  [>] Validate a User");
         System.out.println("  [i] Edit a comment");
+        System.out.println("  [k] Alter a Table");
         System.out.println("  [~] Update a row");
         System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
@@ -75,7 +80,7 @@ public class App {
         /**
          * The valid characters that the user can enter 
          */
-        String actions = "TDABICDLEFKGHJOMNPQRSTYabcdefghi<>j~q?";
+        String actions = "TDABICDLEFKGHJOMNPQRSTYabcdefghi<>jk~q?";
 
         /**
          *  While loop that continues until the user enters the q character.
@@ -286,7 +291,10 @@ public class App {
                 }
                 System.out.println();
                 for (Database.PostRowData rd : res) {
-                    System.out.println(rd.mPost_id +  " " + rd.mUser_id +  " " + rd.mTitle + " " + rd.mText);
+                    UserRowData temp = db.selectmOneUser(rd.mUser_id);
+                    if (temp.mValid){
+                        System.out.println(rd.mPost_id +  " " + rd.mUser_id +  " " + rd.mTitle + " " + rd.mText + " " + rd.mLastAccessed + " " + rd.mLink + " " + rd.mFile);
+                    }
                 }
             }
 
@@ -311,7 +319,10 @@ public class App {
 
                 System.out.println();
                 for (Database.CommentRowData rd : res) {
-                    System.out.println(rd.mComment_id + " " + rd.mPost_id +  " " + rd.mUser_id +  " " + rd.mComment);
+                    UserRowData temp = db.selectmOneUser(rd.mUser_id);
+                    if (temp.mValid){
+                        System.out.println(rd.mComment_id + " " + rd.mPost_id +  " " + rd.mUser_id +  " " + rd.mComment + " " + rd.mLink + " " + rd.mFile);
+                    }
                 }
             }
 
@@ -332,20 +343,21 @@ public class App {
                 int numberDeleted;
                 if (res == null)
                     continue;
-                System.out.println("  Current Times For Each Post");
-                System.out.println("  -------------------------");
+                //System.out.println("  Current Times For Each Post");
+                //System.out.println("  -------------------------");
                 // print all column names
                 
                 System.out.println();
                 for (Database.PostRowData rd : res) {
                     Date postDate = new Date(Date.parse(rd.mLastAccessed));
                     Date currentTime = new Date();
-                    if ((currentTime.getTime() - postDate.getTime()) > 60000){
+                    if ((currentTime.getTime() - postDate.getTime()) > (60000*2)){
                         System.out.println(rd.mPost_id +  " " + rd.mLastAccessed + " Deleted: " + postDate);
-                        //numberDeleted = db.deletePost(rd.mPost_id);
-                    }else{
-                        System.out.println(rd.mPost_id +  " " + rd.mLastAccessed + " Not Going TO be Deleted: " + postDate);
+                        numberDeleted = db.deletePost(rd.mPost_id);
                     }
+                    /*else{
+                        System.out.println(rd.mPost_id +  " " + rd.mLastAccessed + " Not Going To be Deleted: " + postDate);
+                    }*/
 
                 }
             }
@@ -559,6 +571,14 @@ public class App {
                 int res = db.editCommentComment(comment_id, newComment);
             }
 
+            else if (action == 'k') {
+                String tableName = getString(in, "Enter the table that needs to be edited");
+                String columnName = getString(in, "Enter the column that is to be added");
+
+            
+
+                int res = db.alterDataSet(tableName, columnName);
+            }
 
 
             //Like a post
@@ -648,7 +668,7 @@ public class App {
                 System.out.println("  " + res + " User Invalidated updated");
             }
 
-            else if (action == '<') {
+            else if (action == '>') {
                 int id = getInt(in, "Enter the User_ID to Validate :> ");
                 if (id == -1)
                     continue;

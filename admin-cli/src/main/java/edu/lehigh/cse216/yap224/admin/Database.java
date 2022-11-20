@@ -123,6 +123,8 @@ public class Database {
     private PreparedStatement mEditPostText;
     private PreparedStatement mEditPostLink;
     private PreparedStatement mEditPostFile;
+    private PreparedStatement mAlterTable;
+
 
     private PreparedStatement mEditCommentComment;
     private PreparedStatement mEditAccessTime;
@@ -333,7 +335,7 @@ public class Database {
             db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblData");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET subject = ?, message = ?,  likes = ? WHERE id = ?");
-            db.mGetColNames = db.mConnection.prepareStatement("SELECT * FROM tblData");
+            db.mGetColNames = db.mConnection.prepareStatement("SELECT * FROM postTable");
 
             db.mSelectAllUser = db.mConnection.prepareStatement("SELECT * FROM userTable");
             db.mSelectAllPost = db.mConnection.prepareStatement("SELECT * FROM postTable");
@@ -375,6 +377,7 @@ public class Database {
             db.mEditPostLink = db.mConnection.prepareStatement("UPDATE postTable SET file =? WHERE post_id =?");
             db.mEditAccessTime = db.mConnection.prepareStatement("UPDATE postTable SET access_time =? WHERE post_id =? ");
             db.mEditCommentComment = db.mConnection.prepareStatement("UPDATE commentTable SET comment_val =? WHERE comment_id =?");
+            db.mAlterTable = db.mConnection.prepareStatement("ALTER TABLE ? ADD ? VARCHAR(100)");
 
             //Insert Like
             db.mInsertLike = db.mConnection.prepareStatement("INSERT INTO likeTable VALUES ( ?, ? )");
@@ -975,6 +978,8 @@ public class Database {
         return res;
     }
 
+
+
     int editPostText(int post_id, String newText) { 
         int res = -1;
         try {
@@ -1080,6 +1085,18 @@ public class Database {
             res = mRemoveDislike.executeUpdate();
             updateAccessTime(post_id);
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int alterDataSet(String tableName, String newColumnName) { 
+        int res = -1;
+        try {
+            mEditPostTitle.setString(1, tableName);
+            mEditPostTitle.setString(2, newColumnName);
+            res = mEditPostTitle.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
