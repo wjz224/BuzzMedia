@@ -580,6 +580,30 @@ public class App {
                 int res = db.alterDataSet(tableName, columnName);
             }
 
+            else if (action == 'l') {
+                int comment_id = getInt(in, "Enter the comment ID");
+                if (comment_id == -1)
+                    continue;
+                
+                Scanner scn = new Scanner(System.in);
+                System.out.print("What would you like the new comment link to be: ");
+                String newLink = scn.nextLine();
+
+                int res = db.editCommentLink(comment_id, newLink);
+            }
+
+            else if (action == 'm') {
+                int comment_id = getInt(in, "Enter the comment ID");
+                if (comment_id == -1)
+                    continue;
+                
+                Scanner scn = new Scanner(System.in);
+                System.out.print("What would you like the new comment file to be: ");
+                String newFile = scn.nextLine();
+
+                int res = db.editCommentFile(comment_id, newFile);
+            }
+
 
             //Like a post
             else if (action == 'M') {

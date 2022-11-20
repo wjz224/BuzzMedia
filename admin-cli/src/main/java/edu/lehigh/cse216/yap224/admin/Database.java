@@ -123,6 +123,8 @@ public class Database {
     private PreparedStatement mEditPostText;
     private PreparedStatement mEditPostLink;
     private PreparedStatement mEditPostFile;
+    private PreparedStatement mEditCommentLink;
+    private PreparedStatement mEditCommentFile;
     private PreparedStatement mAlterTable;
 
 
@@ -373,11 +375,13 @@ public class Database {
             db.mEditPostUser = db.mConnection.prepareStatement("UPDATE postTable SET user_id =? WHERE post_id =?");
             db.mEditPostTitle = db.mConnection.prepareStatement("UPDATE postTable SET title =? WHERE post_id =?");
             db.mEditPostText = db.mConnection.prepareStatement("UPDATE postTable SET text =? WHERE post_id =?");
-            db.mEditPostFile = db.mConnection.prepareStatement("UPDATE postTable SET link =? WHERE post_id =?");
-            db.mEditPostLink = db.mConnection.prepareStatement("UPDATE postTable SET file =? WHERE post_id =?");
+            db.mEditPostFile = db.mConnection.prepareStatement("UPDATE postTable SET file =? WHERE post_id =?");
+            db.mEditPostLink = db.mConnection.prepareStatement("UPDATE postTable SET link =? WHERE post_id =?");
             db.mEditAccessTime = db.mConnection.prepareStatement("UPDATE postTable SET access_time =? WHERE post_id =? ");
             db.mEditCommentComment = db.mConnection.prepareStatement("UPDATE commentTable SET comment_val =? WHERE comment_id =?");
             db.mAlterTable = db.mConnection.prepareStatement("ALTER TABLE ? ADD ? VARCHAR(100)");
+            db.mEditCommentLink = db.mConnection.prepareStatement("UPDATE commentTable SET link =? WHERE comment_id =?");
+            db.mEditCommentFile = db.mConnection.prepareStatement("UPDATE commentTable SET file =? WHERE comment_id =?");
 
             //Insert Like
             db.mInsertLike = db.mConnection.prepareStatement("INSERT INTO likeTable VALUES ( ?, ? )");
@@ -1094,9 +1098,37 @@ public class Database {
     int alterDataSet(String tableName, String newColumnName) { 
         int res = -1;
         try {
-            mEditPostTitle.setString(1, tableName);
-            mEditPostTitle.setString(2, newColumnName);
-            res = mEditPostTitle.executeUpdate();
+            mAlterTable.setString(1, tableName);
+            mAlterTable.setString(2, newColumnName);
+            res = mAlterTable.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int editCommentLink(int comment_id, String newLink) { 
+        int res = -1;
+        try {
+            mEditCommentLink.setString(1, newLink);
+            mEditCommentLink.setInt(2, comment_id);
+            res = mEditCommentLink.executeUpdate();
+            updateAccessTime(comment_id);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int editCommentFile(int comment_id, String newFile) { 
+        int res = -1;
+        try {
+            mEditCommentFile.setString(1, newFile);
+            mEditCommentFile.setInt(2, comment_id);
+            res = mEditCommentFile.executeUpdate();
+            updateAccessTime(comment_id);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
