@@ -539,6 +539,62 @@ public class App {
 
         });
 
+        //PUT route for adding a link to a post
+        Spark.put(":sessionKey/posts/:post_id", (request, response) -> {
+            // get session key for the user making the post
+            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+            // ensure status 200 OK, with a MIME type of JSON
+            // NB: even on error, we return 200, but with a JSON object that
+            // describes the error.
+            response.status(200);
+            response.type("application/json");
+
+            // implement session key check, if it exists in the hashtable then continue, if not return error.
+            if (users.containsKey(sessionKey) == false) {
+                return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+            }
+            // If we can't get an ID, Spark will send a status 500
+            int post_id = Integer.parseInt(request.params("post_id"));
+            String link = request.params("link");
+            
+            // NB: we won't concern ourselves too much with the quality of the
+            // message sent on a successful delete
+            int result = db.editPostLink(post_id, link);
+            if (result <= 0) {
+                return gson.toJson(new StructuredResponse("error", "unable to insert link" + post_id, null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, null));
+            }
+        });
+
+        //PUT route for adding a link to a comment
+        Spark.put(":sessionKey/comments/:comment_id", (request, response) -> {
+            // get session key for the user making the post
+            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+            // ensure status 200 OK, with a MIME type of JSON
+            // NB: even on error, we return 200, but with a JSON object that
+            // describes the error.
+            response.status(200);
+            response.type("application/json");
+
+            // implement session key check, if it exists in the hashtable then continue, if not return error.
+            if (users.containsKey(sessionKey) == false) {
+                return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+            }
+            // If we can't get an ID, Spark will send a status 500
+            int comment_id = Integer.parseInt(request.params("comment_id"));
+            String link = request.params("link");
+            
+            // NB: we won't concern ourselves too much with the quality of the
+            // message sent on a successful delete
+            int result = db.editCommentLink(comment_id, link);
+            if (result <= 0) {
+                return gson.toJson(new StructuredResponse("error", "unable to insert link" + comment_id, null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, null));
+            }
+        });
+
         Spark.delete(":sessionKey/posts/:post_id", (request, response) -> {
             // get session key for the user making the post
             int sessionKey = Integer.parseInt(request.params("sessionKey"));
@@ -564,6 +620,7 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null, null));
             }
         });
+
         // delete and get routes that we are not using right now
         /* 
             Spark.get(":sessionKey/:post_id/likes", (request, response) ->{

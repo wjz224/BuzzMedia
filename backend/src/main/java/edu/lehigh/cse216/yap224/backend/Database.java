@@ -135,6 +135,8 @@ public class Database {
     private PreparedStatement mInvalidateUser;
     private PreparedStatement mValidateUser;
     private PreparedStatement mUpdateComment;
+    private PreparedStatement mEditCommentLink;
+    private PreparedStatement mEditCommentFile;
 
 
     /**
@@ -400,10 +402,12 @@ public class Database {
             db.mEditPostUser = db.mConnection.prepareStatement("UPDATE postTable SET user_id =? WHERE post_id =?");
             db.mEditPostTitle = db.mConnection.prepareStatement("UPDATE postTable SET title =? WHERE post_id =?");
             db.mEditPostText = db.mConnection.prepareStatement("UPDATE postTable SET text =? WHERE post_id =?");
-            db.mEditPostFile = db.mConnection.prepareStatement("UPDATE postTable SET link =? WHERE post_id =?");
-            db.mEditPostLink = db.mConnection.prepareStatement("UPDATE postTable SET file =? WHERE post_id =?");
+            db.mEditPostFile = db.mConnection.prepareStatement("UPDATE postTable SET file =? WHERE post_id =?");
+            db.mEditPostLink = db.mConnection.prepareStatement("UPDATE postTable SET link =? WHERE post_id =?");
             db.mEditAccessTime = db.mConnection.prepareStatement("UPDATE postTable SET access_time =? WHERE post_id =? ");
             db.mEditCommentComment = db.mConnection.prepareStatement("UPDATE commentTable SET comment_val =? WHERE comment_id =?");
+            db.mEditCommentLink = db.mConnection.prepareStatement("UPDATE commentTable SET link =? WHERE comment_id =?");
+            db.mEditCommentFile = db.mConnection.prepareStatement("UPDATE commentTable SET file =? WHERE comment_id =?");
 
             // check if user already liked
             db.mCheckLike = db.mConnection.prepareStatement("SELECT COUNT(*) as checkLikes FROM likeTable WHERE post_id = ? AND user_id = ?");
@@ -1144,6 +1148,34 @@ public class Database {
             mEditCommentComment.setInt(2, comment_id);
             res = mEditCommentComment.executeUpdate();
             
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int editCommentLink(int comment_id, String newLink) { 
+        int res = -1;
+        try {
+            mEditCommentLink.setString(1, newLink);
+            mEditCommentLink.setInt(2, comment_id);
+            res = mEditCommentLink.executeUpdate();
+            updateAccessTime(comment_id);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int editCommentFile(int comment_id, String newFile) { 
+        int res = -1;
+        try {
+            mEditCommentFile.setString(1, newFile);
+            mEditCommentFile.setInt(2, comment_id);
+            res = mEditCommentFile.executeUpdate();
+            updateAccessTime(comment_id);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
