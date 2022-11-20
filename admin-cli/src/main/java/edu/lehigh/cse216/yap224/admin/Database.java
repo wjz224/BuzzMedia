@@ -2,6 +2,7 @@ package edu.lehigh.cse216.yap224.admin;
 
 
 import java.sql.Connection;
+import java.util.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -120,8 +121,13 @@ public class Database {
     private PreparedStatement mEditPostUser;
     private PreparedStatement mEditPostTitle;
     private PreparedStatement mEditPostText;
+    private PreparedStatement mEditPostLink;
+    private PreparedStatement mEditPostFile;
+
     private PreparedStatement mEditCommentComment;
-    
+    private PreparedStatement mEditAccessTime;
+    private PreparedStatement mInvalidateUser;
+    private PreparedStatement mValidateUser;
 
 
     /**
@@ -174,8 +180,9 @@ public class Database {
         String mGender;
         String mNote;
         String mProfile;
+        boolean mValid;
         
-        public UserRowData(int user_id, String username, String email, String sex_orient, String gender, String note, String profile) {
+        public UserRowData(int user_id, String username, String email, String sex_orient, String gender, String note, String profile, boolean valid) {
             mUser_id = user_id;
             mUsername = username;
             mEmail = email;
@@ -183,6 +190,8 @@ public class Database {
             mGender = gender;
             mNote = note;
             mProfile = profile;
+            mValid = valid;
+            
         }
     }
 
@@ -191,12 +200,20 @@ public class Database {
         int mUser_id;
         String mTitle;
         String mText;
+        String mLastAccessed;
+        String mLink;
+        String mFile;
 
-        public PostRowData(int post_id, int user_id, String title, String text) {
+        public PostRowData(int post_id, int user_id, String title, String text, String access_time, String link, String file) {
             mPost_id = post_id;
             mUser_id = user_id;
             mTitle = title;
             mText = text;
+            mLastAccessed = access_time;
+            mLink = link;
+            mFile = file;
+
+            
         }
     }
 
@@ -205,12 +222,16 @@ public class Database {
         int mPost_id;
         int mUser_id;
         String mComment;
+        String mLink;
+        String mFile;
 
-        public CommentRowData(int comment_id, int post_id, int user_id, String comment) {
+        public CommentRowData(int comment_id, int post_id, int user_id, String comment, String link, String file) {
             mComment_id = comment_id;
             mPost_id = post_id;
             mUser_id = user_id;
             mComment = comment;
+            mLink = link;
+            mFile = file;
         }
     }
 
@@ -282,15 +303,15 @@ public class Database {
             
             //Create USER table
             db.mCreateTableUser = db.mConnection.prepareStatement(
-                "CREATE TABLE userTable (user_id SERIAL, username VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL, sex_orient VARCHAR(50) NOT NULL, gender VARCHAR(50), note VARCHAR(50), profile VARCHAR(5000000), primary key (user_id))");
+                "CREATE TABLE userTable (user_id SERIAL, username VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL, sex_orient VARCHAR(50) NOT NULL, gender VARCHAR(50), note VARCHAR(50), profile VARCHAR(5000000), valid BOOLEAN, primary key (user_id))");
 
             //Create POST table
             db.mCreateTablePost = db.mConnection.prepareStatement(
-                "CREATE TABLE postTable (post_id SERIAL, user_id int NOT NULL, title VARCHAR(50) NOT NULL, text VARCHAR(500) NOT NULL, primary key (user_id), foreign key (user_id) references userTable)");
+                "CREATE TABLE postTable (post_id SERIAL, user_id int NOT NULL, title VARCHAR(50) NOT NULL, text VARCHAR(500) NOT NULL, access_time VARCHAR(500) NOT NULL, link VARCHAR(500), file VARCHAR(500), primary key (post_id), foreign key (user_id) references userTable)");
 
             //Create COMMENT table
             db.mCreateTableComment = db.mConnection.prepareStatement(
-                "CREATE TABLE commentTable (comment_id SERIAL, user_id int NOT NULL, post_id int NOT NULL, comment_val VARCHAR(500) NOT NULL, primary key (comment_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+                "CREATE TABLE commentTable (comment_id SERIAL, user_id int NOT NULL, post_id int NOT NULL, comment_val VARCHAR(500) NOT NULL, link VARCHAR(500), file VARCHAR(500), primary key (comment_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
 
             //Create LIKE table
             db.mCreateTableLike = db.mConnection.prepareStatement(
@@ -308,7 +329,7 @@ public class Database {
 
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, ?)");
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, ?, ?)");
             db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblData");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET subject = ?, message = ?,  likes = ? WHERE id = ?");
@@ -331,11 +352,11 @@ public class Database {
              //Delete Comment Row
              db.mDeleteComment = db.mConnection.prepareStatement("DELETE FROM commentTable WHERE comment_id=?");
             //Insert User
-            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO userTable VALUES (default, ?, ?, ?, ?, ?, ?)");
+            db.mInsertUser = db.mConnection.prepareStatement("INSERT INTO userTable VALUES (default, ?, ?, ?, ?, ?, ?, TRUE)");
             //Insert Post
-            db.mInsertPost = db.mConnection.prepareStatement("INSERT INTO postTable VALUES (default, ?, ?, ?)");
+            db.mInsertPost = db.mConnection.prepareStatement("INSERT INTO postTable VALUES (default, ?, ?, ?, ?, ?, ?)");
             //Comment Post
-            db.mInsertComment = db.mConnection.prepareStatement("INSERT INTO commentTable VALUES (default, ?, ?, ?)");
+            db.mInsertComment = db.mConnection.prepareStatement("INSERT INTO commentTable VALUES (default, ?, ?, ?, ?, ?)");
 
             //Edit functions
             db.mEditUserUsername = db.mConnection.prepareStatement("UPDATE userTable SET username =? WHERE user_id =?");
@@ -344,10 +365,15 @@ public class Database {
             db.mEditUserGender = db.mConnection.prepareStatement("UPDATE userTable SET gender =? WHERE user_id =?");
             db.mEditUserSexOrient = db.mConnection.prepareStatement("UPDATE userTable SET sex_orient =? WHERE user_id =?");
             db.mEditUserNote = db.mConnection.prepareStatement("UPDATE userTable SET note =? WHERE user_id =?");
+            db.mInvalidateUser = db.mConnection.prepareStatement("UPDATE userTable SET valid =FALSE WHERE user_id =?");
+            db.mValidateUser = db.mConnection.prepareStatement("UPDATE userTable SET valid =TRUE WHERE user_id =?");
 
             db.mEditPostUser = db.mConnection.prepareStatement("UPDATE postTable SET user_id =? WHERE post_id =?");
             db.mEditPostTitle = db.mConnection.prepareStatement("UPDATE postTable SET title =? WHERE post_id =?");
             db.mEditPostText = db.mConnection.prepareStatement("UPDATE postTable SET text =? WHERE post_id =?");
+            db.mEditPostFile = db.mConnection.prepareStatement("UPDATE postTable SET link =? WHERE post_id =?");
+            db.mEditPostLink = db.mConnection.prepareStatement("UPDATE postTable SET file =? WHERE post_id =?");
+            db.mEditAccessTime = db.mConnection.prepareStatement("UPDATE postTable SET access_time =? WHERE post_id =? ");
             db.mEditCommentComment = db.mConnection.prepareStatement("UPDATE commentTable SET comment_val =? WHERE comment_id =?");
 
             //Insert Like
@@ -420,26 +446,52 @@ public class Database {
 
     int insertUser(String username, String email, String sex_orient, String gender, String note, String profile) {
         int count = 0;
-        try {
-            mInsertUser.setString(1, username);
-            mInsertUser.setString(2, email);
-            mInsertUser.setString(3, sex_orient);
-            mInsertUser.setString(4, gender);
-            mInsertUser.setString(5, note);
-            mInsertUser.setString(6, profile);
-            count += mInsertUser.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        ArrayList <UserRowData> listOfUsers = selectAllUser();
+        if (listOfUsers.size() == 0){
+            try {
+                mInsertUser.setString(1, username);
+                mInsertUser.setString(2, email);
+                mInsertUser.setString(3, sex_orient);
+                mInsertUser.setString(4, gender);
+                mInsertUser.setString(5, note);
+                mInsertUser.setString(6, profile);
+                count += mInsertUser.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return count;
+        }else{
+            for (UserRowData users:listOfUsers){
+                if (email.equals(users.mEmail) & (users.mValid == false)){
+                    System.out.println("Email is invalid. Cannot sign up for The Buzz");
+                    return count+1;
+                }
+            }
+            try {
+                mInsertUser.setString(1, username);
+                mInsertUser.setString(2, email);
+                mInsertUser.setString(3, sex_orient);
+                mInsertUser.setString(4, gender);
+                mInsertUser.setString(5, note);
+                mInsertUser.setString(6, profile);
+                count += mInsertUser.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return count;
         }
-        return count;
+        
     }
 
-    int insertPost(int user_id, String title, String text) {
+    int insertPost(int user_id, String title, String text, String link, String file) {
         int count = 0;
         try {
             mInsertPost.setInt(1, user_id);
             mInsertPost.setString(2, title);
             mInsertPost.setString(3, text);
+            mInsertPost.setString(4, new Date().toString());
+            mInsertPost.setString(5, link);
+            mInsertPost.setString(6 , file);
             count += mInsertPost.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -447,13 +499,17 @@ public class Database {
         return count;
     }
 
-    int insertComment(int user_id, int post_id, String comment_val) {
+    int insertComment(int user_id, int post_id, String comment_val, String link, String file) {
         int count = 0;
         try {
             mInsertComment.setInt(1, user_id);
             mInsertComment.setInt(2, post_id);
             mInsertComment.setString(3, comment_val);
+            mInsertComment.setString(4, link);
+            mInsertComment.setString(5, file);
+            updateAccessTime(post_id);
             count += mInsertComment.executeUpdate();
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -490,7 +546,7 @@ public class Database {
         try {
             ResultSet rs = mSelectAllUser.executeQuery();
             while (rs.next()) {
-                res.add(new UserRowData(rs.getInt("user_id"), rs.getString("username"),rs.getString("email"),rs.getString("sex_orient"),rs.getString("gender"),rs.getString("note"), rs.getString("profile")));
+                res.add(new UserRowData(rs.getInt("user_id"), rs.getString("username"),rs.getString("email"),rs.getString("sex_orient"),rs.getString("gender"),rs.getString("note"), rs.getString("profile"), rs.getBoolean("valid")));
             }
             rs.close();
             return res;
@@ -505,7 +561,7 @@ public class Database {
         try {
             ResultSet rs = mSelectAllPost.executeQuery();
             while (rs.next()) {
-                res.add(new PostRowData(rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("title"), rs.getString("text")));
+                res.add(new PostRowData(rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("title"), rs.getString("text"), rs.getString("access_time"), rs.getString("link"), rs.getString("file")));
             }
             rs.close();
             return res;
@@ -515,12 +571,14 @@ public class Database {
         }
     }
 
+    
+
     ArrayList<CommentRowData> selectAllComment() {
         ArrayList<CommentRowData> res = new ArrayList<CommentRowData>();
         try {
             ResultSet rs = mSelectAllComment.executeQuery();
             while (rs.next()) {
-                res.add(new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("comment_val")));
+                res.add(new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("comment_val"), rs.getString("link"), rs.getString("file")));
             }
             rs.close();
             return res;
@@ -543,7 +601,7 @@ public class Database {
             mOneUser.setInt(1, user_id);
             ResultSet rs = mOneUser.executeQuery();
             if (rs.next()) {
-                res = new UserRowData(rs.getInt("user_id"), rs.getString("username"),rs.getString("email"),rs.getString("sex_orient"),rs.getString("gender"),rs.getString("note"), rs.getString("profile"));
+                res = new UserRowData(rs.getInt("user_id"), rs.getString("username"),rs.getString("email"),rs.getString("sex_orient"),rs.getString("gender"),rs.getString("note"), rs.getString("profile"), rs.getBoolean("valid"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -564,7 +622,7 @@ public class Database {
             mOnePost.setInt(1, post_id);
             ResultSet rs = mOnePost.executeQuery();
             if (rs.next()) {
-                res = new PostRowData(rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("title"), rs.getString("text"));
+                res = new PostRowData(rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("title"), rs.getString("text"), rs.getString("access_time"), rs.getString("link"), rs.getString("file"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -585,7 +643,7 @@ public class Database {
             mOneComment.setInt(1, comment_id);
             ResultSet rs = mOneComment.executeQuery();
             if (rs.next()) {
-                res = new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("comment_val"));
+                res = new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("comment_val"), rs.getString("link"), rs.getString("file"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -701,6 +759,7 @@ public class Database {
         try {
             mDeleteComment.setInt(1, id);
             res = mDeleteComment.executeUpdate();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -729,6 +788,37 @@ public class Database {
         }
         return res;
     }
+
+    /**
+     * Update the time for a row in the database
+     * 
+     * @param id The id of the Post to update
+     * @return The number of rows that were updated.  -1 indicates an error.
+     */
+    int updateAccessTime(int id) { 
+        int res = -1;
+        
+        try {
+            Date newTime = new Date();
+            System.out.println(newTime.toString());
+            mEditAccessTime.setString(1, newTime.toString());
+            mEditAccessTime.setInt(2, id);
+            res = mEditAccessTime.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+    // /**
+    //  * Create tblData.  If it already exists, this will print an error
+    //  */
+    // void createTable() {
+    //     try {
+    //         mCreateTable.execute();
+    //     } catch (SQLException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
     /**
      * Create all tables.  If it already exists, this will print an error
@@ -760,6 +850,33 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    /***
+     * Invalidate the User
+     */
+
+
+    int invalidateUser(int user_id) { 
+        int res = -1;
+        try {
+            mInvalidateUser.setInt(1, user_id);
+            res = mInvalidateUser.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int validateUser(int user_id) { 
+        int res = -1;
+        try {
+            mValidateUser.setInt(1, user_id);
+            res = mValidateUser.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 
     int editUserUsername(int user_id, String newUsername) { 
@@ -864,11 +981,42 @@ public class Database {
             mEditPostText.setString(1, newText);
             mEditPostText.setInt(2, post_id);
             res = mEditPostText.executeUpdate();
+            updateAccessTime(post_id);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return res;
     }
+
+    int editPostLink(int post_id, String newLink) { 
+        int res = -1;
+        try {
+            mEditPostLink.setString(1, newLink);
+            mEditPostLink.setInt(2, post_id);
+            res = mEditPostLink.executeUpdate();
+            updateAccessTime(post_id);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int editPostFile(int post_id, String newFile) { 
+        int res = -1;
+        try {
+            mEditPostFile.setString(1, newFile);
+            mEditPostFile.setInt(2, post_id);
+            res = mEditPostFile.executeUpdate();
+            updateAccessTime(post_id);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
 
     int editCommentComment(int comment_id, String newComment) { 
         int res = -1;
@@ -876,6 +1024,7 @@ public class Database {
             mEditCommentComment.setString(1, newComment);
             mEditCommentComment.setInt(2, comment_id);
             res = mEditCommentComment.executeUpdate();
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -889,6 +1038,7 @@ public class Database {
             mInsertLike.setInt(1, user_id);
             mInsertLike.setInt(2, post_id);
             count += mInsertLike.executeUpdate();
+            updateAccessTime(post_id);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -901,6 +1051,7 @@ public class Database {
             mInsertDislike.setInt(1, user_id);
             mInsertDislike.setInt(2, post_id);
             count += mInsertDislike.executeUpdate();
+            updateAccessTime(post_id);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -913,6 +1064,8 @@ public class Database {
             mRemoveLike.setInt(1, user_id);
             mRemoveLike.setInt(2, post_id);
             res = mRemoveLike.executeUpdate();
+            updateAccessTime(post_id);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -925,6 +1078,8 @@ public class Database {
             mRemoveDislike.setInt(1, user_id);
             mRemoveDislike.setInt(2, post_id);
             res = mRemoveDislike.executeUpdate();
+            updateAccessTime(post_id);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
