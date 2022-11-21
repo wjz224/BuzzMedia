@@ -186,7 +186,7 @@ Read HTML file for App.java and Database.java [here](./backend\src\main\java\edu
 
 ## ERD
 
-![ERD Diagram for backend](images/ED_Diagram_phase2.jpeg)
+![ERD Diagram for backend](images/ED_Diagram_phase2.jpg)
 
 ## State Machines (idea, user)
 
