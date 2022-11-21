@@ -155,6 +155,30 @@ Mobile:
     -  JSON Route:
         - "mPost_id" = int
         - "mDislikes" = int
+        
+- __Put__: Link for post
+    - \PUT #:sessionKey/posts/:post_id
+    - JSON Route:
+        - "mPost_id" = int
+        - "mLink" = String
+        
+- __Put__: Link for comment
+    - \PUT #:sessionKey/comments/:comment_id
+    - JSON Route:
+        - "mComment_id" = int
+        - "mLink" = String
+        
+- __Put__: File for Post
+    - \ #:sessionKey/posts/:post_id
+    - JSON Route:
+        - "mPost_id" = int
+        - "mFile" = String
+        
+- __Put__: File for Comment
+    - \ #:sessionKey/comments/:comment_id
+    - JSON Route:
+        - "mComment_id" = int
+        - "mFile" = String
 
   
 ## Javadoc documentation
