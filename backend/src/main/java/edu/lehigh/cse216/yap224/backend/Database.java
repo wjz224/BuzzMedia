@@ -249,14 +249,18 @@ public class Database {
         int mUser_id;
         String mTitle;
         String mText;
+        String mLink;
+        String mFile;
         int mLikes;
         int mDislikes;
 
-        public PostLikesData(int post_id, int user_id, String title, String text, int likes, int dislikes) {
+        public PostLikesData(int post_id, int user_id, String title, String text, String link, String file, int likes, int dislikes) {
             mPost_id = post_id;
             mUser_id = user_id;
             mTitle = title;
             mText = text;
+            mLink = link;
+            mFile = file;
             mLikes = likes;
             mDislikes = dislikes;
         }
@@ -609,7 +613,7 @@ public class Database {
                 while(dislikes.next()){
                     numDislikes = dislikes.getInt("Dislikes");
                 }
-                PostLikesData newData = new PostLikesData(cur.mPost_id,cur.mUser_id,cur.mTitle,cur.mText, numLikes, numDislikes);
+                PostLikesData newData = new PostLikesData(cur.mPost_id,cur.mUser_id,cur.mTitle,cur.mText, cur.mLink, cur.mFile, numLikes, numDislikes);
                 PostLikes.add(newData);
             }
          }catch (SQLException e) {

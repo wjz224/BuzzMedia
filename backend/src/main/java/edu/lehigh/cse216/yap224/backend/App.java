@@ -16,6 +16,7 @@ import com.google.gson.*;
 
 import edu.lehigh.cse216.yap224.backend.Database.CommentRowData;
 
+import java.io.ByteArrayOutputStream;
 /***
  * Import java map
  */
@@ -29,7 +30,9 @@ import java.util.Map;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Scanner;
 import java.util.*;
@@ -37,10 +40,15 @@ import java.util.*;
  * Importing google oauth2 package
  */
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.json.jackson.JacksonFactory;
+import com.google.auth.http.HttpCredentialsAdapter;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 
 /**
@@ -342,10 +350,6 @@ public class App {
             }
             return gson.toJson(db.selectAllCommentPost(post_id));
         });
-    
-
-
-
 
         // POST route for adding a new post to the post table in the db. This will read 
         // sessionKey from the body of the request and turn it into an int
@@ -555,11 +559,11 @@ public class App {
             }
             // If we can't get an ID, Spark will send a status 500
             int post_id = Integer.parseInt(request.params("post_id"));
-            String link = request.params("link");
+            LinkRequest req = gson.fromJson(request.body(), LinkRequest.class);
             
             // NB: we won't concern ourselves too much with the quality of the
             // message sent on a successful delete
-            int result = db.editPostLink(post_id, link);
+            int result = db.editPostLink(post_id, req.link);
             if (result <= 0) {
                 return gson.toJson(new StructuredResponse("error", "unable to insert link" + post_id, null));
             } else {
@@ -583,13 +587,78 @@ public class App {
             }
             // If we can't get an ID, Spark will send a status 500
             int comment_id = Integer.parseInt(request.params("comment_id"));
-            String link = request.params("link");
+            LinkRequest req = gson.fromJson(request.body(), LinkRequest.class);
             
             // NB: we won't concern ourselves too much with the quality of the
             // message sent on a successful delete
-            int result = db.editCommentLink(comment_id, link);
+            int result = db.editCommentLink(comment_id, req.link);
             if (result <= 0) {
                 return gson.toJson(new StructuredResponse("error", "unable to insert link" + comment_id, null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, null));
+            }
+        });
+
+        //PUT route for adding a file to post
+        Spark.put(":sessionKey/posts/:post_id/:file", (request, response) -> {
+            // get session key for the user making the post
+            int sessionKey = Integer.parseInt(request.params("sessionKey"));
+            // ensure status 200 OK, with a MIME type of JSON
+            // NB: even on error, we return 200, but with a JSON object that
+            // describes the error.
+            response.status(200);
+            response.type("application/json");
+
+            // implement session key check, if it exists in the hashtable then continue, if not return error.
+            if (users.containsKey(sessionKey) == false) {
+                return gson.toJson(new StructuredResponse("error", "Invalid Session Key", null));
+            }
+            // If we can't get an ID, Spark will send a status 500
+            int post_id = Integer.parseInt(request.params("post_id"));
+            String file = request.params("file");
+
+            //byte[] decodedFileBin = Base64.getDecoder().decode(file);
+            //String decodedFile = new String(decodedFileBin, StandardCharsets.UTF_8);
+            //File finalFile = new File(decodedFile);
+
+            GoogleCredentials credentials = GoogleCredentials.getApplicationDefault()
+            .createScoped(Arrays.asList(DriveScopes.DRIVE_FILE));
+            HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(
+            credentials);
+
+            // Build a new authorized API client service.
+            Drive service = new Drive.Builder(new NetHttpTransport(),
+                GsonFactory.getDefaultInstance(),
+                requestInitializer)
+                .setApplicationName("Drive samples")
+                .build();
+
+            try {
+                OutputStream outputStream = new ByteArrayOutputStream();
+
+                service.files().get(realFileId)
+                    .executeMediaAndDownloadTo(outputStream);
+                return (ByteArrayOutputStream) outputStream;
+            } catch (GoogleJsonResponseException e) {
+            // TODO(developer) - handle error appropriately
+            System.err.println("Unable to move file: " + e.getDetails());
+            throw e;
+            }
+
+
+
+
+
+
+
+
+
+            
+            // NB: we won't concern ourselves too much with the quality of the
+            // message sent on a successful delete
+            int result = db.editPostFile(post_id, file);
+            if (result <= 0) {
+                return gson.toJson(new StructuredResponse("error", "unable to insert link" + post_id, null));
             } else {
                 return gson.toJson(new StructuredResponse("ok", null, null));
             }
