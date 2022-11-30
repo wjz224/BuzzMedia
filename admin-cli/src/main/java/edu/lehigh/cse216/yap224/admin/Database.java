@@ -12,7 +12,6 @@ import java.sql.SQLException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.LinkPermission;
 import java.util.ArrayList;
 
 public class Database {
@@ -121,9 +120,9 @@ public class Database {
     private PreparedStatement mEditPostUser;
     private PreparedStatement mEditPostTitle;
     private PreparedStatement mEditPostText;
-    private PreparedStatement mEditPostLink;
+    private PreparedStatement mEditPostFilename;
     private PreparedStatement mEditPostFile;
-    private PreparedStatement mEditCommentLink;
+    private PreparedStatement mEditCommentFilename;
     private PreparedStatement mEditCommentFile;
     private PreparedStatement mAlterTable;
 
@@ -205,16 +204,16 @@ public class Database {
         String mTitle;
         String mText;
         String mLastAccessed;
-        String mLink;
+        String mFilename;
         String mFile;
 
-        public PostRowData(int post_id, int user_id, String title, String text, String access_time, String link, String file) {
+        public PostRowData(int post_id, int user_id, String title, String text, String access_time, String Filename, String file) {
             mPost_id = post_id;
             mUser_id = user_id;
             mTitle = title;
             mText = text;
             mLastAccessed = access_time;
-            mLink = link;
+            mFilename = Filename;
             mFile = file;
 
             
@@ -226,15 +225,15 @@ public class Database {
         int mPost_id;
         int mUser_id;
         String mComment;
-        String mLink;
+        String mFilename;
         String mFile;
 
-        public CommentRowData(int comment_id, int post_id, int user_id, String comment, String link, String file) {
+        public CommentRowData(int comment_id, int post_id, int user_id, String comment, String Filename, String file) {
             mComment_id = comment_id;
             mPost_id = post_id;
             mUser_id = user_id;
             mComment = comment;
-            mLink = link;
+            mFilename = Filename;
             mFile = file;
         }
     }
@@ -311,11 +310,11 @@ public class Database {
 
             //Create POST table
             db.mCreateTablePost = db.mConnection.prepareStatement(
-                "CREATE TABLE postTable (post_id SERIAL, user_id int NOT NULL, title VARCHAR(50) NOT NULL, text VARCHAR(500) NOT NULL, access_time VARCHAR(500) NOT NULL, link VARCHAR(500), file VARCHAR(500), primary key (post_id), foreign key (user_id) references userTable)");
+                "CREATE TABLE postTable (post_id SERIAL, user_id int NOT NULL, title VARCHAR(50) NOT NULL, text VARCHAR(500) NOT NULL, access_time VARCHAR(500) NOT NULL, Filename VARCHAR(500), file VARCHAR(500), primary key (post_id), foreign key (user_id) references userTable)");
 
             //Create COMMENT table
             db.mCreateTableComment = db.mConnection.prepareStatement(
-                "CREATE TABLE commentTable (comment_id SERIAL, user_id int NOT NULL, post_id int NOT NULL, comment_val VARCHAR(500) NOT NULL, link VARCHAR(500), file VARCHAR(500), primary key (comment_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+                "CREATE TABLE commentTable (comment_id SERIAL, user_id int NOT NULL, post_id int NOT NULL, comment_val VARCHAR(500) NOT NULL, Filename VARCHAR(500), file VARCHAR(500), primary key (comment_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
 
             //Create LIKE table
             db.mCreateTableLike = db.mConnection.prepareStatement(
@@ -376,11 +375,11 @@ public class Database {
             db.mEditPostTitle = db.mConnection.prepareStatement("UPDATE postTable SET title =? WHERE post_id =?");
             db.mEditPostText = db.mConnection.prepareStatement("UPDATE postTable SET text =? WHERE post_id =?");
             db.mEditPostFile = db.mConnection.prepareStatement("UPDATE postTable SET file =? WHERE post_id =?");
-            db.mEditPostLink = db.mConnection.prepareStatement("UPDATE postTable SET link =? WHERE post_id =?");
+            db.mEditPostFilename = db.mConnection.prepareStatement("UPDATE postTable SET Filename =? WHERE post_id =?");
             db.mEditAccessTime = db.mConnection.prepareStatement("UPDATE postTable SET access_time =? WHERE post_id =? ");
             db.mEditCommentComment = db.mConnection.prepareStatement("UPDATE commentTable SET comment_val =? WHERE comment_id =?");
             db.mAlterTable = db.mConnection.prepareStatement("ALTER TABLE ? ADD ? VARCHAR(100)");
-            db.mEditCommentLink = db.mConnection.prepareStatement("UPDATE commentTable SET link =? WHERE comment_id =?");
+            db.mEditCommentFilename = db.mConnection.prepareStatement("UPDATE commentTable SET Filename =? WHERE comment_id =?");
             db.mEditCommentFile = db.mConnection.prepareStatement("UPDATE commentTable SET file =? WHERE comment_id =?");
 
             //Insert Like
@@ -490,14 +489,14 @@ public class Database {
         
     }
 
-    int insertPost(int user_id, String title, String text, String link, String file) {
+    int insertPost(int user_id, String title, String text, String Filename, String file) {
         int count = 0;
         try {
             mInsertPost.setInt(1, user_id);
             mInsertPost.setString(2, title);
             mInsertPost.setString(3, text);
             mInsertPost.setString(4, new Date().toString());
-            mInsertPost.setString(5, link);
+            mInsertPost.setString(5, Filename);
             mInsertPost.setString(6 , file);
             count += mInsertPost.executeUpdate();
         } catch (SQLException e) {
@@ -506,13 +505,13 @@ public class Database {
         return count;
     }
 
-    int insertComment(int user_id, int post_id, String comment_val, String link, String file) {
+    int insertComment(int user_id, int post_id, String comment_val, String Filename, String file) {
         int count = 0;
         try {
             mInsertComment.setInt(1, user_id);
             mInsertComment.setInt(2, post_id);
             mInsertComment.setString(3, comment_val);
-            mInsertComment.setString(4, link);
+            mInsertComment.setString(4, Filename);
             mInsertComment.setString(5, file);
             updateAccessTime(post_id);
             count += mInsertComment.executeUpdate();
@@ -568,7 +567,7 @@ public class Database {
         try {
             ResultSet rs = mSelectAllPost.executeQuery();
             while (rs.next()) {
-                res.add(new PostRowData(rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("title"), rs.getString("text"), rs.getString("access_time"), rs.getString("link"), rs.getString("file")));
+                res.add(new PostRowData(rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("title"), rs.getString("text"), rs.getString("access_time"), rs.getString("Filename"), rs.getString("file")));
             }
             rs.close();
             return res;
@@ -585,7 +584,7 @@ public class Database {
         try {
             ResultSet rs = mSelectAllComment.executeQuery();
             while (rs.next()) {
-                res.add(new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("comment_val"), rs.getString("link"), rs.getString("file")));
+                res.add(new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("comment_val"), rs.getString("Filename"), rs.getString("file")));
             }
             rs.close();
             return res;
@@ -629,7 +628,7 @@ public class Database {
             mOnePost.setInt(1, post_id);
             ResultSet rs = mOnePost.executeQuery();
             if (rs.next()) {
-                res = new PostRowData(rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("title"), rs.getString("text"), rs.getString("access_time"), rs.getString("link"), rs.getString("file"));
+                res = new PostRowData(rs.getInt("post_id"), rs.getInt("user_id"), rs.getString("title"), rs.getString("text"), rs.getString("access_time"), rs.getString("Filename"), rs.getString("file"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -650,7 +649,7 @@ public class Database {
             mOneComment.setInt(1, comment_id);
             ResultSet rs = mOneComment.executeQuery();
             if (rs.next()) {
-                res = new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("comment_val"), rs.getString("link"), rs.getString("file"));
+                res = new CommentRowData(rs.getInt("comment_id"), rs.getInt("user_id"), rs.getInt("post_id"), rs.getString("comment_val"), rs.getString("Filename"), rs.getString("file"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -998,12 +997,12 @@ public class Database {
         return res;
     }
 
-    int editPostLink(int post_id, String newLink) { 
+    int editPostFilename(int post_id, String newFilename) { 
         int res = -1;
         try {
-            mEditPostLink.setString(1, newLink);
-            mEditPostLink.setInt(2, post_id);
-            res = mEditPostLink.executeUpdate();
+            mEditPostFilename.setString(1, newFilename);
+            mEditPostFilename.setInt(2, post_id);
+            res = mEditPostFilename.executeUpdate();
             updateAccessTime(post_id);
 
         } catch (SQLException e) {
@@ -1107,12 +1106,12 @@ public class Database {
         return res;
     }
 
-    int editCommentLink(int comment_id, String newLink) { 
+    int editCommentFilename(int comment_id, String newFilename) { 
         int res = -1;
         try {
-            mEditCommentLink.setString(1, newLink);
-            mEditCommentLink.setInt(2, comment_id);
-            res = mEditCommentLink.executeUpdate();
+            mEditCommentFilename.setString(1, newFilename);
+            mEditCommentFilename.setInt(2, comment_id);
+            res = mEditCommentFilename.executeUpdate();
             updateAccessTime(comment_id);
 
         } catch (SQLException e) {

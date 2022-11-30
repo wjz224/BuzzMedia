@@ -293,7 +293,7 @@ public class App {
                 for (Database.PostRowData rd : res) {
                     UserRowData temp = db.selectmOneUser(rd.mUser_id);
                     if (temp.mValid){
-                        System.out.println(rd.mPost_id +  " " + rd.mUser_id +  " " + rd.mTitle + " " + rd.mText + " " + rd.mLastAccessed + " " + rd.mLink + " " + rd.mFile);
+                        System.out.println(rd.mPost_id +  " " + rd.mUser_id +  " " + rd.mTitle + " " + rd.mText + " " + rd.mLastAccessed + " " + rd.mFilename + " " + rd.mFile);
                     }
                 }
             }
@@ -321,7 +321,7 @@ public class App {
                 for (Database.CommentRowData rd : res) {
                     UserRowData temp = db.selectmOneUser(rd.mUser_id);
                     if (temp.mValid){
-                        System.out.println(rd.mComment_id + " " + rd.mPost_id +  " " + rd.mUser_id +  " " + rd.mComment + " " + rd.mLink + " " + rd.mFile);
+                        System.out.println(rd.mComment_id + " " + rd.mPost_id +  " " + rd.mUser_id +  " " + rd.mComment + " " + rd.mFilename + " " + rd.mFile);
                     }
                 }
             }
@@ -351,7 +351,7 @@ public class App {
                 for (Database.PostRowData rd : res) {
                     Date postDate = new Date(Date.parse(rd.mLastAccessed));
                     Date currentTime = new Date();
-                    if ((currentTime.getTime() - postDate.getTime()) > (60000*2)){
+                    if ((currentTime.getTime() - postDate.getTime()) > (30000)){
                         System.out.println(rd.mPost_id +  " " + rd.mLastAccessed + " Deleted: " + postDate);
                         numberDeleted = db.deletePost(rd.mPost_id);
                     }
@@ -426,11 +426,11 @@ public class App {
                 int user_id = getInt(in, "Enter the user ID");
                 String title = getString(in, "Enter the title");
                 String text = getString(in, "Enter the text");
-                String link = getString(in, "Enter the link");
+                String Filename = getString(in, "Enter the Filename");
                 String file = getString(in, "Enter the file");
                 // if (subject.equals("") || message.equals(""))
                 //     continue;
-                int res = db.insertPost(user_id, title, text, link, file);
+                int res = db.insertPost(user_id, title, text, Filename, file);
                 System.out.println(res + " rows added");
             } 
 
@@ -439,11 +439,11 @@ public class App {
                 int user_id = getInt(in, "Enter the user ID: ");
                 int post_id = getInt(in, "Enter post ID: ");
                 String comment = getString(in, "Enter the commment: ");
-                String link = getString(in, "Enter the link");
+                String Filename = getString(in, "Enter the Filename");
                 String file = getString(in, "Enter the file");
                 // if (subject.equals("") || message.equals(""))
                 //     continue;
-                int res = db.insertComment(user_id, post_id, comment, link, file);
+                int res = db.insertComment(user_id, post_id, comment, Filename, file);
                 System.out.println(res + " rows added");
             } 
 
@@ -586,10 +586,10 @@ public class App {
                     continue;
                 
                 Scanner scn = new Scanner(System.in);
-                System.out.print("What would you like the new comment link to be: ");
-                String newLink = scn.nextLine();
+                System.out.print("What would you like the new comment Filename to be: ");
+                String newFilename = scn.nextLine();
 
-                int res = db.editCommentLink(comment_id, newLink);
+                int res = db.editCommentFilename(comment_id, newFilename);
             }
 
             else if (action == 'm') {
