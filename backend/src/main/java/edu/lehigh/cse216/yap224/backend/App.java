@@ -374,7 +374,7 @@ public class App {
            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
            int user_id = users.get(sessionKey);
            // NB: createEntry checks for null title and message
-           int post_id = db.insertPost(user_id, req.mTitle, req.mMessage, req.mLink, req.mFile);
+           int post_id = db.insertPost(user_id, req.mTitle, req.mMessage, "", "");
            if (post_id <= 0) {
                return gson.toJson(new StructuredResponse("error", "error adding post", null));
            } else {
@@ -401,7 +401,7 @@ public class App {
             // get user_id from hash table
             int user_id = users.get(sessionKey);
             // get comment_id from the sql execution.
-            int comment_id = db.insertComment(user_id,post_id, req.mMessage, req.mLink, req.mFile);
+            int comment_id = db.insertComment(user_id,post_id, req.mMessage, "", "");
             // NB: createEntry checks for null title and message
             if (post_id <= 0) {
                 return gson.toJson(new StructuredResponse("error", "error adding comment", null));
@@ -559,11 +559,11 @@ public class App {
             }
             // If we can't get an ID, Spark will send a status 500
             int post_id = Integer.parseInt(request.params("post_id"));
-            LinkRequest req = gson.fromJson(request.body(), LinkRequest.class);
+            FilenameRequest req = gson.fromJson(request.body(), FilenameRequest.class);
             
             // NB: we won't concern ourselves too much with the quality of the
             // message sent on a successful delete
-            int result = db.editPostLink(post_id, req.link);
+            int result = db.editPostFilename(post_id, req.mFileName, req.mFile);
             if (result <= 0) {
                 return gson.toJson(new StructuredResponse("error", "unable to insert link" + post_id, null));
             } else {
@@ -587,11 +587,12 @@ public class App {
             }
             // If we can't get an ID, Spark will send a status 500
             int comment_id = Integer.parseInt(request.params("comment_id"));
-            LinkRequest req = gson.fromJson(request.body(), LinkRequest.class);
             
             // NB: we won't concern ourselves too much with the quality of the
             // message sent on a successful delete
-            int result = db.editCommentLink(comment_id, req.link);
+            FilenameRequest req = gson.fromJson(request.body(), FilenameRequest.class);
+
+            int result = db.editCommentFilename(comment_id, req.mFileName, req.mFile);
             if (result <= 0) {
                 return gson.toJson(new StructuredResponse("error", "unable to insert link" + comment_id, null));
             } else {
@@ -621,29 +622,28 @@ public class App {
             //String decodedFile = new String(decodedFileBin, StandardCharsets.UTF_8);
             //File finalFile = new File(decodedFile);
 
-            GoogleCredentials credentials = GoogleCredentials.getApplicationDefault()
-            .createScoped(Arrays.asList(DriveScopes.DRIVE_FILE));
-            HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(
-            credentials);
+            //GoogleCredentials credentials = GoogleCredentials.getApplicationDefault()
+            //.createScoped(Arrays.asList(DriveScopes.DRIVE_FILE));
+            //HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
 
             // Build a new authorized API client service.
-            Drive service = new Drive.Builder(new NetHttpTransport(),
-                GsonFactory.getDefaultInstance(),
-                requestInitializer)
-                .setApplicationName("Drive samples")
-                .build();
+            //Drive service = new Drive.Builder(new NetHttpTransport(),
+                //GsonFactory.getDefaultInstance(),
+                //requestInitializer)
+                //.setApplicationName("Drive samples")
+                //.build();
 
-            try {
+            /*try {
                 OutputStream outputStream = new ByteArrayOutputStream();
 
-                service.files().get(realFileId)
-                    .executeMediaAndDownloadTo(outputStream);
+                //service.files().get(realFileId)
+                    //.executeMediaAndDownloadTo(outputStream);
                 return (ByteArrayOutputStream) outputStream;
             } catch (GoogleJsonResponseException e) {
             // TODO(developer) - handle error appropriately
             System.err.println("Unable to move file: " + e.getDetails());
             throw e;
-            }
+            }*/
 
 
 

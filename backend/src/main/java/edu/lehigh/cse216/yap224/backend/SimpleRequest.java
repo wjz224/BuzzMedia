@@ -21,7 +21,7 @@ public class SimpleRequest {
     /**
      * The link attached to the post
      */
-    public String mLink;
+    public String mFileName;
 
     /**
      * The File attached to the post
