@@ -24,7 +24,7 @@ class LoginPage extends StatelessWidget {
               } else if (snapshot.hasData) {
                 final user = FirebaseAuth.instance.currentUser!;
                 //verify(user.getIdToken(true));
-                addingSessionID();
+                //addingSessionID();
                 /*Center( child: 
                 TextButton(
                     child: Text('Logout', style: TextStyle(fontSize: 24, color: Colors.black)),
@@ -46,7 +46,7 @@ class LoginPage extends StatelessWidget {
             }),
       );
 }
-
+/*
 Future<String> addingSessionID() async {
   final userOther = UserPreferences.myUser;
   final user = FirebaseAuth.instance.currentUser!;
@@ -58,3 +58,4 @@ Future<String> addingSessionID() async {
   userOther.setSessionID(responseBody);
   return responseBody;
 }
+*/

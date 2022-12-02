@@ -1,19 +1,23 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:my_app/model/user_other.dart';
+import 'package:my_app/net/put_change_profile.dart';
 
 class TextFieldWidget extends StatefulWidget {
   final String label;
   final String text;
-  final ValueChanged<String> onChanged;
   final int maxLines;
+  UserOther user;
 
-  const TextFieldWidget({
+
+
+  TextFieldWidget({
     Key? key,
     required this.label,
     required this.text,
-    required this.onChanged,
     this.maxLines = 1,
+    required this.user,
   }) : super(key: key);
 
 
@@ -45,8 +49,15 @@ class _TextFieldWidgetState extends State<TextFieldWidget>{
       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
     ),
     const SizedBox(height: 8),
-    TextField(controller: controller,
+    TextField(
+      
+    controller: controller,
     maxLines: widget.maxLines,
+    onChanged: (text){
+      setState(() {
+        putChangeProfile(widget.user.gender,widget.user.sexualOrientation, text ,widget.user.email, widget.user.sessionID);
+      });
+    },
     decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)))),
    ]);
 }

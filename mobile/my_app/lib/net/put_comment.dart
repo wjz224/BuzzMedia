@@ -11,7 +11,7 @@ Future<void> putComment(
   /// Adds dislike to a post specified by the messageId variable
   
   // Makes put request with url specifying messageId and /dislikes route
-	final url = Uri.parse('https://thebuzzomega.herokuapp.com/$sessionID/comments/$email/$commentID');
+	final url = Uri.parse('https://thebuzzomega.herokuapp.com/1569641334/comments/$email/$commentID');
   final headers = {"Content-type": "application/json"};
   final json = jsonEncode({"mComment": "$comment"});
 	final response = await put(url, headers: headers, body: json);

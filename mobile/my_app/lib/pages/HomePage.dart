@@ -12,13 +12,21 @@ import 'package:my_app/net/get_userID.dart';
 import 'package:my_app/net/put_like_api.dart';
 import 'package:my_app/net/put_dislike_api.dart';
 import 'package:my_app/provider/google_sign_in.dart';
+import 'package:my_app/widgets/ShowTheProfile.dart';
 import 'package:provider/provider.dart';
 
 import 'package:my_app/model/user_other.dart';
 import 'package:my_app/model/user_preferances.dart';
 import 'package:my_app/model/item_model.dart';
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:my_app/widgets/LikeDislikeButtonWidget.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:my_app/widgets/FileProcess.dart';
+
 
 class MyHomePage extends StatefulWidget {
   /// This stateful widget is the home page of the application
@@ -100,22 +108,23 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
   final userOther = UserPreferences.myUser;
   List<bool> _selections = List.generate(2, (_) => false);
 
-
   @override
   void initState() {
     super.initState();
     print(fetchMessage(userOther.sessionID).runtimeType);
     _future_list_message = fetchMessage(userOther.sessionID);
   }
+_launchURL(String url) async {
+  if (await launch(url)) {
+    await canLaunch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
 
-  
   @override
   Widget build(BuildContext context) {
     /// The main view of the home screen on the app containing a list of posts, like, and dislike buttons
-    
-    
-
-
 
     var fb = FutureBuilder<List<Post>>(
       future: _future_list_message,
@@ -130,35 +139,34 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                 // DataStr is the string of data for each post in json format !This is Tech Debt!
                 Post? dataStr = snapshot.data?[i];
                 // Split the components of dataString up
-   
+
                 // DataStr is the string of data for each post in json format !This is Tech Debt!
                 // Split the components of dataString up
-                
 
                 //seperate out the title, message, id, and numLikes into their own variables
                 String mPost_ID = dataStr!.postId.toString();
                 String mUser_ID = dataStr!.userID.toString();
                 String mTitle = dataStr!.title;
                 String mText = dataStr!.text;
-                String mLikes = dataStr!.likes.toString();
+                String mFile = dataStr!.file;
+                String mFileName = dataStr!.filename;
+                int mLikes = dataStr!.likes;
+                int mDislikes = dataStr!.dislikes;
+                UserOther posterInfo = UserPreferences.myUser;
                 
-
 
                 //var userInformartion = fetchUserInfo(userOther.sessionID, mUser_ID!);
 
-                
-                
                 //String userName = userInformartion[0];
                 //String email = userInformartion[1];
 
-                
-
+                //To implement which thing is being shown make a get route using
                 return Column(
                   children: <Widget>[
                     // One item in the list
                     ListTile(
                       // Displays the text and message of a post
-                      leading: Image.network(user.photoURL!),
+                      //leading: Image.network(user.photoURL!),
                       title: RichText(
                         text: TextSpan(
                             text: mTitle,
@@ -167,24 +175,33 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                               fontWeight: FontWeight.bold,
                               fontSize: 24,
                             ),
-                            children: [
-                              TextSpan(
-                                text: "\n " + mText!,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 20,
-                                ),
-                              )
-                            ]),
+                          ),
                       ),
-
-                      subtitle:
-                          Text("by " + "Wilson" + "\n" + "wjz224@lehigh.edu"),
+                      
+                      //subtitle: ShowProfile(mUser_ID),
+                    ),
+                    Linkify(
+                      onOpen: (link) async {
+                        if (await canLaunch(link.url)) {
+                            await launch(link.url);
+                          } else {
+                            throw 'Could not launch $link';
+                          }
+                      },
+                      text: mText,
+                      style: TextStyle(color: Colors.black),
+                      linkStyle: TextStyle(color: Colors.blue),
                     ),
                     // Row widget puts the like count and buttons in one horizontal row together
-                    LikeWidget(mPost_ID, userOther),
-                    
+                    TextButton(
+                      child: Text(mFileName,
+                          style: TextStyle(color: Colors.green)),
+                      onPressed: () {
+                        FileProcess.downloadFile(mFile,mFileName);
+                        FileProcess.openFile(mFileName);
+                      }),
+                    ShowProfile(mUser_ID),
+                    LikeWidget(mPost_ID, mLikes, userOther, mDislikes),
                     // Space between each post item
                     Divider(height: 1.0),
                   ],
@@ -199,7 +216,7 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
         return child;
       },
     );
-
+    
     return fb;
   }
 }

@@ -23,7 +23,7 @@ import 'package:my_app/model/item_model.dart';
 import 'package:my_app/model/comment_model.dart';
 import 'dart:convert';
 import 'package:my_app/widgets/LikeDislikeButtonWidget.dart';
-
+import 'package:my_app/widgets/FileProcess.dart';
 class CommentPage extends StatefulWidget {
   /// This stateful widget is the home page of the application
   
@@ -146,6 +146,8 @@ class _HttpReqCommentState extends State<HttpReqComment> {
                 String mUser_ID = dataStr!.userID.toString();
                 String postID = dataStr!.postID.toString();
                 String mText = dataStr!.text;
+                String mFileName = dataStr!.filename;
+                String mFile = dataStr!.file;
                 
                 
 
@@ -183,6 +185,13 @@ class _HttpReqCommentState extends State<HttpReqComment> {
                             }, icon: Icon(Icons.mode)),
                       
                     ),
+                    TextButton(
+                      child: Text(mFileName,
+                          style: TextStyle(color: Colors.green)),
+                      onPressed: () {
+                        FileProcess.downloadFile(mFile,mFileName);
+                        FileProcess.openFile(mFileName);
+                      }),
                     // Row widget puts the like count and buttons in one horizontal row together
                     
                     // Space between each post item

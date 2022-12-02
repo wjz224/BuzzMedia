@@ -3,17 +3,23 @@ import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:my_app/model/item_model.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'dart:io';
 //import 'package';
 
 //the server url
 const urlPrefix = 'https://thebuzzomega.herokuapp.com';
+const String posts = "posts";
 
+Box? box;
 
 Future<List<Post>>fetchMessage(String sessionID) async {
-  /// Gets the posts from the database 
-
+  // open local cache for posts
+  box = await Hive.openBox(posts);
+  /// Gets the posts from the database
   // Get request to /messages route
-	final response = await http.get(Uri.parse('$urlPrefix/$sessionID/posts'));
+	final response = await http.get(Uri.parse('$urlPrefix/1569641334/posts'));
 
   // Variable to contain the data from the get request
 	var returnData;
@@ -22,7 +28,9 @@ Future<List<Post>>fetchMessage(String sessionID) async {
     var res = jsonDecode(response.body);
     
 		var resData = res['mData'] as List;
+    print(resData.toString());
     List<Post> postObjs = resData.map((tagJson) => Post.fromJson(tagJson)).toList();
+    Hive.box(posts).put("posts",postObjs);
     print(postObjs.toString());
     //String cleanup = response.body.substring(25,);
     //String cleanup2 = cleanup.substring(0, cleanup.length - 2);

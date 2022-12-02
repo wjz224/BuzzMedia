@@ -10,7 +10,7 @@ Future<void> addLike(
   
   // Makes put request with url specifying messageId and /likes route
   
-	final url = Uri.parse('https://thebuzzomega.herokuapp.com/${sessionKey}/${postID}/likes');
+	final url = Uri.parse('https://thebuzzomega.herokuapp.com/1569641334/${postID}/likes');
 	final response = await put(url);
 
   print("PostID:" + postID!);
