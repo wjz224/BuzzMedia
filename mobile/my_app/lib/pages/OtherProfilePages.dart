@@ -110,8 +110,8 @@ class _OtherProfileState extends State<OtherProfile> {
         if (snapshot.hasData) {
           UserOther? dataStr = snapshot.data;
           String bio = dataStr!.bio;
-          String userName = dataStr.userName;
-          String likes = dataStr.sessionID;
+          String userName = dataStr!.userName;
+          String likes = dataStr!.sessionID;
           
           // Create  listview to show one row per array element of json response
           child = Container(

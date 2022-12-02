@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_app/model/user_other.dart';
 import 'package:my_app/model/user_preferances.dart';
 import 'package:my_app/net/verify_api.dart';
-import 'package:my_app/pages/ProfilePageWithFutureBuilder.dart';
+import 'package:my_app/pages/ProfilePage.dart';
 import 'package:my_app/net/put_change_profile.dart';
 import 'package:my_app/widgets/SexualOreintationDropDown.dart';
 import 'package:my_app/widgets/GenderDropDown.dart';

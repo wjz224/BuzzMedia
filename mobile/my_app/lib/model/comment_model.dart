@@ -12,23 +12,27 @@ class Comment {
   int postID;
 	int userID;
 	String text;
+  String filename;
+  String file;
 
   Comment(
     this.commentID,
     this.postID,
     this.userID,
     this.text,
+    this.filename,
+    this.file,
   );
 
 	
 	factory Comment.fromJson(dynamic json) {
-		return Comment(json['mComment_id'] as int, json['mPost_id'] as int, json['mUser_id'] as int, json['mComment'] as String);
+		return Comment(json['mComment_id'] as int, json['mPost_id'] as int, json['mUser_id'] as int, json['mComment'] as String, json['mFilename'] as String, json['mFile'] as String);
 	}
 
 
   @override
   String toString() {
-    return '{ ${this.commentID}, ${this.postID}, ${this.userID},${this.text}}';
+    return '{ ${this.commentID}, ${this.postID}, ${this.userID},${this.text}, ${this.filename}, ${this.file}}';
   }
 }
 

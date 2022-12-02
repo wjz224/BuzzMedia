@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/pages/HomePage.dart';
-import 'package:my_app/pages/ProfilePageWithFutureBuilder.dart';
+import 'package:my_app/pages/ProfilePage.dart';
 import 'package:my_app/widgets/LoginWidget.dart';
 import 'package:provider/provider.dart';
 import 'package:my_app/provider/google_sign_in.dart';
@@ -24,7 +24,7 @@ class LoginPage extends StatelessWidget {
               } else if (snapshot.hasData) {
                 final user = FirebaseAuth.instance.currentUser!;
                 //verify(user.getIdToken(true));
-                addingSessionID();
+                //addingSessionID();
                 /*Center( child: 
                 TextButton(
                     child: Text('Logout', style: TextStyle(fontSize: 24, color: Colors.black)),
@@ -46,7 +46,7 @@ class LoginPage extends StatelessWidget {
             }),
       );
 }
-
+/*
 Future<String> addingSessionID() async {
   final userOther = UserPreferences.myUser;
   final user = FirebaseAuth.instance.currentUser!;
@@ -58,3 +58,4 @@ Future<String> addingSessionID() async {
   userOther.setSessionID(responseBody);
   return responseBody;
 }
+*/

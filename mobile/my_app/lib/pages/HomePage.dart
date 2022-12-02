@@ -19,7 +19,14 @@ import 'package:my_app/model/user_other.dart';
 import 'package:my_app/model/user_preferances.dart';
 import 'package:my_app/model/item_model.dart';
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:my_app/widgets/LikeDislikeButtonWidget.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:my_app/widgets/FileProcess.dart';
+
 
 class MyHomePage extends StatefulWidget {
   /// This stateful widget is the home page of the application
@@ -107,6 +114,13 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
     print(fetchMessage(userOther.sessionID).runtimeType);
     _future_list_message = fetchMessage(userOther.sessionID);
   }
+_launchURL(String url) async {
+  if (await launch(url)) {
+    await canLaunch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -131,12 +145,13 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
 
                 //seperate out the title, message, id, and numLikes into their own variables
                 String mPost_ID = dataStr!.postId.toString();
-                String mUser_ID = dataStr.userID.toString();
-                String mTitle = dataStr.title;
-                String mText = dataStr.text;
-                int mLikes = dataStr.likes;
-                int mDislikes = dataStr.dislikes;
-                
+                String mUser_ID = dataStr!.userID.toString();
+                String mTitle = dataStr!.title;
+                String mText = dataStr!.text;
+                String mFile = dataStr!.file;
+                String mFileName = dataStr!.filename;
+                int mLikes = dataStr!.likes;
+                int mDislikes = dataStr!.dislikes;
                 UserOther posterInfo = UserPreferences.myUser;
                 
 
@@ -160,24 +175,33 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
                               fontWeight: FontWeight.bold,
                               fontSize: 24,
                             ),
-                            children: [
-                              TextSpan(
-                                text: "\n " + mText,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 20,
-                                ),
-                              ), 
-                            ]),
+                          ),
                       ),
-
-                      subtitle: ShowProfile(mUser_ID),
+                      
+                      //subtitle: ShowProfile(mUser_ID),
+                    ),
+                    Linkify(
+                      onOpen: (link) async {
+                        if (await canLaunch(link.url)) {
+                            await launch(link.url);
+                          } else {
+                            throw 'Could not launch $link';
+                          }
+                      },
+                      text: mText,
+                      style: TextStyle(color: Colors.black),
+                      linkStyle: TextStyle(color: Colors.blue),
                     ),
                     // Row widget puts the like count and buttons in one horizontal row together
-
+                    TextButton(
+                      child: Text(mFileName,
+                          style: TextStyle(color: Colors.green)),
+                      onPressed: () {
+                        FileProcess.downloadFile(mFile,mFileName);
+                        FileProcess.openFile(mFileName);
+                      }),
+                    ShowProfile(mUser_ID),
                     LikeWidget(mPost_ID, mLikes, userOther, mDislikes),
-
                     // Space between each post item
                     Divider(height: 1.0),
                   ],
@@ -192,7 +216,7 @@ class _HttpReqPostsState extends State<HttpReqPosts> {
         return child;
       },
     );
-
+    
     return fb;
   }
 }

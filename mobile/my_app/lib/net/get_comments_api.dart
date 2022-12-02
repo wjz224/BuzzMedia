@@ -2,17 +2,18 @@ import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:my_app/model/comment_model.dart';
-
+import 'package:hive/hive.dart';
 //the server url
 const urlPrefix = 'https://thebuzzomega.herokuapp.com';
 
-
+const String comments = "comments";
 Future<List<Comment>> fetchComments(String sessionKey, String postid) async {
   /// Gets the posts from the database 
 
   // Get request to /messages route
-	final response = await http.get(Uri.parse('$urlPrefix/$sessionKey/comments/$postid'));
-
+   await Hive.openBox(comments);
+	final response = await http.get(Uri.parse('$urlPrefix/1569641334/comments/$postid'));
+ 
   // Variable to contain the data from the get request
 	var returnData;
 
@@ -20,6 +21,7 @@ Future<List<Comment>> fetchComments(String sessionKey, String postid) async {
     var res = jsonDecode(response.body) as List;
 		print(res.toString());
     List<Comment> postObjs = res.map((tagJson) => Comment.fromJson(tagJson)).toList();
+    Hive.box(comments).put("posts",postObjs);
     print(postObjs.toString());
     //String cleanup = response.body.substring(25,);
     //String cleanup2 = cleanup.substring(0, cleanup.length - 2);

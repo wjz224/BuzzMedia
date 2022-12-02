@@ -13,7 +13,7 @@ Future<Post>fetchSinglePost(String sessionID, String post_id) async {
   /// Gets the posts from the database 
 
   // Get request to /messages route
-	final response = await http.get(Uri.parse('$urlPrefix/$sessionID/posts/$post_id'));
+	final response = await http.get(Uri.parse('$urlPrefix/1569641334/posts/$post_id'));
 
 
   var res = jsonDecode(response.body);
