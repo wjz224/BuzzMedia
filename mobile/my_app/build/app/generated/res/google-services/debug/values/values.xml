@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">33869758256-j9rid9gfoml0gg0jc0up7pvfhus2so32.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">33869758256</string>
+    <string name="google_api_key" translatable="false">AIzaSyAMwwQCMR2CXSMC6KVyY95VE1Ji9ff0HBk</string>
+    <string name="google_app_id" translatable="false">1:33869758256:android:c2a82d6d90f8ea5cd212f5</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAMwwQCMR2CXSMC6KVyY95VE1Ji9ff0HBk</string>
+    <string name="google_storage_bucket" translatable="false">thebuzz-365819.appspot.com</string>
+    <string name="project_id" translatable="false">thebuzz-365819</string>
+</resources>
