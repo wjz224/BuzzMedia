@@ -374,7 +374,7 @@ public class App {
            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
            int user_id = users.get(sessionKey);
            // NB: createEntry checks for null title and message
-           int post_id = db.insertPost(user_id, req.mTitle, req.mMessage, "", "");
+           int post_id = db.insertPost(user_id, req.mTitle, req.mMessage, req.mFileName, req.mFile);
            if (post_id <= 0) {
                return gson.toJson(new StructuredResponse("error", "error adding post", null));
            } else {
@@ -401,7 +401,7 @@ public class App {
             // get user_id from hash table
             int user_id = users.get(sessionKey);
             // get comment_id from the sql execution.
-            int comment_id = db.insertComment(user_id,post_id, req.mMessage, "", "");
+            int comment_id = db.insertComment(user_id,post_id, req.mMessage, req.mFileName, req.mFile);
             // NB: createEntry checks for null title and message
             if (post_id <= 0) {
                 return gson.toJson(new StructuredResponse("error", "error adding comment", null));
