@@ -310,11 +310,11 @@ public class Database {
 
             //Create POST table
             db.mCreateTablePost = db.mConnection.prepareStatement(
-                "CREATE TABLE postTable (post_id SERIAL, user_id int NOT NULL, title VARCHAR(50) NOT NULL, text VARCHAR(500) NOT NULL, access_time VARCHAR(500) NOT NULL, Filename VARCHAR(500), file VARCHAR(500), primary key (post_id), foreign key (user_id) references userTable)");
+                "CREATE TABLE postTable (post_id SERIAL, user_id int NOT NULL, title VARCHAR(50) NOT NULL, text VARCHAR(500) NOT NULL, access_time VARCHAR(500) NOT NULL, Filename VARCHAR(500), file VARCHAR(10485760), primary key (post_id), foreign key (user_id) references userTable)");
 
             //Create COMMENT table
             db.mCreateTableComment = db.mConnection.prepareStatement(
-                "CREATE TABLE commentTable (comment_id SERIAL, user_id int NOT NULL, post_id int NOT NULL, comment_val VARCHAR(500) NOT NULL, Filename VARCHAR(500), file VARCHAR(500), primary key (comment_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
+                "CREATE TABLE commentTable (comment_id SERIAL, user_id int NOT NULL, post_id int NOT NULL, comment_val VARCHAR(500) NOT NULL, Filename VARCHAR(500), file VARCHAR(10485760), primary key (comment_id), foreign key (user_id) references userTable, foreign key (post_id) references postTable)");
 
             //Create LIKE table
             db.mCreateTableLike = db.mConnection.prepareStatement(
