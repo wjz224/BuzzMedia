@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.7cdbcc3a.css",
+    "main.js": "/static/js/main.5bffd7f2.js",
+    "static/media/honeyCombBackground.webp": "/static/media/honeyCombBackground.2610a26223f56088fdc7.webp",
+    "static/media/Avatar_bee.png": "/static/media/Avatar_bee.c5a7573c0d59a0069fc2.png",
+    "index.html": "/index.html",
+    "main.7cdbcc3a.css.map": "/static/css/main.7cdbcc3a.css.map",
+    "main.5bffd7f2.js.map": "/static/js/main.5bffd7f2.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7cdbcc3a.css",
+    "static/js/main.5bffd7f2.js"
+  ]
+}

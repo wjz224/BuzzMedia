@@ -38,7 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   #Google Sign In
-  firebase_auth: ^1.1.4
+  firebase_auth: ^4.1.3
   google_sign_in: ^5.0.3
   
   #Google Icon
@@ -51,8 +51,22 @@ dependencies:
   http: ^0.13.5
 
   like_button: ^2.0.5
-
-
+  # Url launcher and linkify for links
+  flutter_linkify: ^5.0.2
+  url_launcher: ^6.1.6
+  
+  #drive file upload
+  googleapis: ^7.0.0
+  googleapis_auth: ^1.3.0
+  flutter_secure_storage: ^5.0.2
+  # file picker for selecting files for upload
+  file_picker: ^4.6.1
+  # file path
+  path_provider: ^2.0.9
+  open_file: ^3.2.1
+  # caching using hive caching for rest api
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:

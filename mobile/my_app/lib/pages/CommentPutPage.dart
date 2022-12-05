@@ -90,7 +90,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
   void createPost(BuildContext context, String title) {
     print(title);
     
-    putComment(title, "yap224@lehigh.edu", "-1909482473", widget.commentID);
+    putComment(title, "wjz224@lehigh.edu", "1569641334", widget.commentID);
     //switches page back to home page
      Navigator.push(context, MaterialPageRoute(builder: (context) {
       

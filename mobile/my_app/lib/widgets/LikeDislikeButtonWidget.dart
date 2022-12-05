@@ -23,67 +23,116 @@ import 'dart:convert';
 
 class LikeWidget extends StatefulWidget {
   String mPost_ID;
+  int likes;
   UserOther userOther;
-
+  int dislikes;
 
   LikeWidget(
     this.mPost_ID,
+    this.likes,
     this.userOther,
+    this.dislikes,
   );
   @override
   _LikeWidgetState createState() => _LikeWidgetState();
 }
 
 class _LikeWidgetState extends State<LikeWidget> {
-  List<bool> _selections = List.generate(2, (_) => false);
-  int likes = 0;
-  void initState()  {
-    super.initState(); 
-    
+  //List<bool> _selections = List.generate(2, (_) => false);
+  late Future<Post> currentPost;
+  bool liked = false;
+  bool disliked = false;
+  int redLiked = 60;
+  int greenLiked = 60;
+  int blueLiked = 60;
+  int redDisLiked = 60;
+  int greenDisLiked = 60;
+  int blueDisLiked = 60;
+
+  //int likes = 0;
+  //int dislikes = 0;
+  void initState() {
+    super.initState();
   }
+  
+  
+  
 
   @override
-  Widget build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          // The dislike button display and functionality
-          ToggleButtons(
-            children: <Widget>[
-              Icon(Icons.thumb_down),
-              Icon(Icons.thumb_up),
-            ],
-            isSelected: _selections,
-            onPressed: (int index) {
-              setState(() {
-                _selections[index] = !_selections[index];
-                //likeCode
-                if (index == 0 && _selections[index]) {
-                  addLike(widget.mPost_ID!, widget.userOther.sessionID);
-                  _selections[1] = false;
-                } else if (index == 0 && !_selections[index]) {
-                  dislike(widget.mPost_ID!, widget.userOther.sessionID);
-                }
+  Widget build(BuildContext context) => Container(
+      padding: const EdgeInsets.all(10),
+      alignment: Alignment.center,
+      color: Color.fromARGB(255, 228, 166, 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(widget.likes.toString()),
+          SizedBox(width: 10),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Color.fromRGBO(redLiked, greenLiked, blueLiked, 1.0)),
+              child: Text("Likes"),
+              onPressed: () {
+                if(!liked & disliked){
+                  setState(() {
+                  redDisLiked = 60;
+                  greenLiked = 255;
+                  widget.likes++;
+                  liked = true;
+                  disliked = false;
+                  addLike(widget.mPost_ID, widget.userOther.sessionID);
 
-                //dislike Code
-                if (index == 1 && _selections[index]) {
-                  _selections[0] = false;
-                  dislike(widget.mPost_ID!, widget.userOther.sessionID);
-                } else if (index == 1 && !_selections[index]) {
-                  addLike(widget.mPost_ID!, widget.userOther.sessionID);
-                }               
-                
-              });
-            },
-            color: Colors.grey,
-            fillColor: Colors.yellow,
-          ),
+                });
+                }else if(liked){
+                  setState(() {
+                  greenLiked = 60;
+                  widget.likes--;
+                  liked = false;
+                  dislike(widget.mPost_ID, widget.userOther.sessionID);
+
+                });
+                }else{
+                  setState(() {
+                  greenLiked = 255;
+                  liked = true; 
+                  widget.likes++;
+                  addLike(widget.mPost_ID, widget.userOther.sessionID);
+                });
+                }
+              }),
 
           // Spacing between button and text
-          SizedBox(width: 20),
+          SizedBox(width: 10),
           // Number of likes displayed
-          
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Color.fromRGBO(redDisLiked, greenDisLiked, blueDisLiked, 1.0)),
+              child: Text("DisLikes"),
+              onPressed: () {
+                if(!disliked & liked){
+                  setState(() {
+                  greenLiked = 60;
+                  redDisLiked = 255;
+                   widget.likes--;
+                   dislike(widget.mPost_ID, widget.userOther.sessionID);
+                  liked = false;
+                  disliked = true;
+                });}else if(disliked){
+                  setState(() {
+                  redDisLiked = 60;
+                  disliked = false;
+                  widget.likes++;
+                  addLike(widget.mPost_ID, widget.userOther.sessionID);
+                });
+                }else{
+                  setState(() {
+                  redDisLiked = 255;
+                  disliked = true;
+                  widget.likes--;
+                  dislike(widget.mPost_ID, widget.userOther.sessionID);
+                });
+                }
+              }),
           //Spacing between button and text
-          SizedBox(width: 20),
+          SizedBox(width: 10),
 
           // The like button display and functionality
 
@@ -96,12 +145,12 @@ class _LikeWidgetState extends State<LikeWidget> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CommentPage(postID: widget.mPost_ID,)),
+                  MaterialPageRoute(
+                      builder: (context) => CommentPage(
+                            postID: widget.mPost_ID,
+                          )),
                 );
               })
         ],
-      );
-      
+      ));
 }
-
-

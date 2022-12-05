@@ -7,21 +7,31 @@ import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'pages/HomePage.dart';
 import 'pages/LoginPage.dart';
-
+import 'dart:io';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
   await Firebase.initializeApp();
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 // Man this Yash guy is a clown huh
-class MyApp extends StatelessWidget {
-  
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _MyAppState();
+  }
+}
 
-  /// This widget is the root of the application.
+class _MyAppState extends State<MyApp>{
+  /// This widget is the root of the application
+  /// 
+  var path = Directory.current.path;
   
   @override
 	Widget build(BuildContext context) => ChangeNotifierProvider(
